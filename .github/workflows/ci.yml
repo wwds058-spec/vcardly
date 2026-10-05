@@ -120,3 +120,34 @@ jobs:
           name: instrumented-reports
           path: app/build/reports/androidTests/**
           if-no-files-found: ignore
+
+  # Smaller sideload build: arm64 only, native libraries compressed. Published to its own branch.
+  apk-arm64:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build arm64 debug APK
+        run: ./gradlew :app:assembleDebug -Pabi=arm64-v8a --stacktrace
+
+      - name: Publish to the debug-apk-arm64 branch
+        if: github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'
+        run: |
+          set -e
+          apk=$(ls app/build/outputs/apk/debug/*.apk | head -1)
+          mkdir /tmp/pub && cp "$apk" /tmp/pub/vcardly-debug-arm64.apk
+          cd /tmp/pub
+          sha256sum vcardly-debug-arm64.apk > vcardly-debug-arm64.apk.sha256
+          printf 'arm64-v8a-only debug build of commit %s. Debug-signed with a throw-away key from the CI runner (uninstall older builds first). Test ad IDs only.\n' "$GITHUB_SHA" > README.txt
+          git init -q -b debug-apk-arm64
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -q -m "arm64 debug APK from $GITHUB_SHA"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" debug-apk-arm64

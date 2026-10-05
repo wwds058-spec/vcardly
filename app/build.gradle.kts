@@ -30,6 +30,11 @@ val releaseAppId = secrets.getProperty("admob.appId") ?: testAppId
 val releaseBannerId = secrets.getProperty("admob.bannerUnitId") ?: testBannerId
 val adsConfiguredForRelease = secrets.containsKey("admob.appId") && secrets.containsKey("admob.bannerUnitId")
 
+// Optional single-ABI build for sideloading, e.g. ./gradlew :app:assembleDebug -Pabi=arm64-v8a
+// (nearly all phones are arm64; x86 emulators are not). Also stores native libs compressed, which makes the APK much smaller.
+// Without the property every ABI is packaged, which the x86_64 emulator tests in CI need.
+val abiFilter: String? = providers.gradleProperty("abi").orNull
+
 android {
     namespace = "com.yasin.vcardly"
     compileSdk = 35
@@ -41,6 +46,7 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        if (abiFilter != null) ndk { abiFilters += abiFilter.split(",").map { it.trim() } }
     }
 
     signingConfigs {
@@ -85,6 +91,7 @@ android {
 
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        if (abiFilter != null) jniLibs.useLegacyPackaging = true
     }
 
     testOptions {
