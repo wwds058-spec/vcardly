@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +26,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.notifications.ReminderPermissions
+import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
+import com.yasin.vcardly.core.security.AuthAvailability
+import com.yasin.vcardly.core.security.AuthResult
+import com.yasin.vcardly.core.security.AutoLockOptions
+import com.yasin.vcardly.presentation.common.LocalAuthGate
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,6 +51,7 @@ fun SettingsScreen(
     onOpenTransfer: () -> Unit,
     onOpenReports: () -> Unit,
     onOpenBackup: () -> Unit,
+    onOpenPrivacy: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
@@ -65,6 +74,8 @@ fun SettingsScreen(
                     )
                 }
             }
+
+            SecuritySection(viewModel, onOpenPrivacy)
 
             ReminderStatusSection()
 
@@ -157,4 +168,82 @@ private fun SettingsLink(text: String, onClick: () -> Unit) {
             .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = MaterialTheme.spacing.sm),
     )
+}
+
+@Composable
+private fun SecuritySection(viewModel: SettingsViewModel, onOpenPrivacy: () -> Unit) {
+    val security by viewModel.security.collectAsStateWithLifecycle()
+    val gate = LocalAuthGate.current
+    val confirmTitle = stringResource(R.string.settings_lock_confirm)
+    var unavailable by remember { mutableStateOf(false) }
+    var erase by remember { mutableStateOf(false) }
+
+    SectionHeader(stringResource(R.string.settings_security))
+    SwitchRow(stringResource(R.string.settings_app_lock), stringResource(R.string.settings_app_lock_hint), security.appLockEnabled) { on ->
+        if (on) {
+            when (gate.availability()) {
+                AuthAvailability.NotSetUp, AuthAvailability.Temporary -> unavailable = true
+                // Prove the user can actually pass the lock before it is switched on, so they cannot lock themselves out.
+                AuthAvailability.Available -> gate.authenticate(confirmTitle) { if (it == AuthResult.Success) viewModel.enableAppLock() }
+            }
+        } else {
+            gate.authenticate(confirmTitle) { if (it == AuthResult.Success) viewModel.disableAppLock() }
+        }
+    }
+    if (security.appLockEnabled) {
+        Text(stringResource(R.string.settings_auto_lock), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = MaterialTheme.spacing.sm))
+        Column(Modifier.selectableGroup()) {
+            AutoLockOptions.seconds.forEach { seconds ->
+                ThemeOption(
+                    label = autoLockLabel(seconds),
+                    selected = seconds == security.autoLockSeconds,
+                    onSelect = { viewModel.setAutoLockSeconds(seconds) },
+                )
+            }
+        }
+    }
+    SwitchRow(stringResource(R.string.settings_secure_screen), stringResource(R.string.settings_secure_screen_hint), security.secureScreen, viewModel::setSecureScreen)
+    SettingsLink(stringResource(R.string.privacy_title), onOpenPrivacy)
+    SettingsLink(stringResource(R.string.settings_erase)) { erase = true }
+
+    if (unavailable) {
+        ConfirmDialog(
+            title = stringResource(R.string.settings_lock_unavailable_title),
+            message = stringResource(R.string.settings_lock_unavailable_message),
+            confirmText = stringResource(R.string.common_ok),
+            onConfirm = { unavailable = false },
+            onDismiss = { unavailable = false },
+        )
+    }
+    if (erase) {
+        ConfirmDialog(
+            title = stringResource(R.string.settings_erase_title),
+            message = stringResource(R.string.settings_erase_message),
+            confirmText = stringResource(R.string.settings_erase_confirm),
+            onConfirm = { erase = false; viewModel.eraseAllData { } },
+            onDismiss = { erase = false },
+        )
+    }
+}
+
+@Composable
+private fun autoLockLabel(seconds: Int): String = when {
+    seconds < 60 -> pluralStringResource(R.plurals.settings_auto_lock_seconds, seconds, seconds)
+    else -> pluralStringResource(R.plurals.settings_auto_lock_minutes, seconds / 60, seconds / 60)
+}
+
+@Composable
+private fun SwitchRow(title: String, hint: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().heightIn(min = MaterialTheme.spacing.minTouchTarget)
+            .toggleable(value = checked, role = Role.Switch, onValueChange = onChange)
+            .padding(vertical = MaterialTheme.spacing.xs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f).padding(end = MaterialTheme.spacing.md)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(hint, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Switch(checked = checked, onCheckedChange = null)
+    }
 }

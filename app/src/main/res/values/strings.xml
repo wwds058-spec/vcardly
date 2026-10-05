@@ -407,4 +407,54 @@
     <string name="backup_drive_not_configured">Not set up in this build</string>
     <string name="backup_drive_ready">Ready</string>
     <string name="backup_drive_explanation">Backing up to Google Drive needs a Google Cloud project and sign-in settings that the app developer must add. Until then, save the backup file wherever you like, including a Drive folder, using the button above.</string>
+
+    <!-- App lock -->
+    <string name="lock_title">VCardly is locked</string>
+    <string name="lock_message">Unlock with your fingerprint, face or device PIN to see your contacts.</string>
+    <string name="lock_unlock">Unlock</string>
+    <string name="lock_prompt_title">Unlock VCardly</string>
+    <string name="lock_error">Authentication is not available right now. Please try again.</string>
+    <string name="lock_removed_title">App lock turned off</string>
+    <string name="lock_removed_message">This device no longer has a screen lock or biometrics set up, so VCardly could not ask you to unlock. App lock was turned off. Set up a screen lock in Android settings, then turn it on again.</string>
+    <string name="settings_security">Security</string>
+    <string name="settings_app_lock">App lock</string>
+    <string name="settings_app_lock_hint">Ask for your fingerprint, face or device PIN when you open VCardly.</string>
+    <string name="settings_lock_confirm">Confirm it is you</string>
+    <string name="settings_lock_unavailable_title">Cannot turn on app lock</string>
+    <string name="settings_lock_unavailable_message">Set up a screen lock or add a fingerprint or face in Android settings first, then try again.</string>
+    <string name="settings_auto_lock">Lock after being away for</string>
+    <plurals name="settings_auto_lock_seconds">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
+    <plurals name="settings_auto_lock_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+    <string name="settings_secure_screen">Hide content in recent apps</string>
+    <string name="settings_secure_screen_hint">Also blocks screenshots and screen recording inside VCardly.</string>
+    <string name="settings_erase">Erase all my data</string>
+    <string name="settings_erase_title">Erase all data?</string>
+    <string name="settings_erase_message">All contacts, card images, tags, follow-ups and your digital card will be permanently deleted from this device. Backup files you saved are not affected. This cannot be undone.</string>
+    <string name="settings_erase_confirm">Erase</string>
+
+    <!-- Privacy -->
+    <string name="privacy_title">Privacy</string>
+    <string name="privacy_intro">VCardly is built to keep your contacts yours. Here is exactly what it does with your data.</string>
+    <string name="privacy_stays_title">Your data stays on this device</string>
+    <string name="privacy_stays_body">Contacts, card photos, notes, tags, follow-ups and settings are stored in the app\'s private storage on this phone. Other apps cannot read them. Android\'s automatic cloud backup is switched off for this app.</string>
+    <string name="privacy_no_account_title">No account, no servers</string>
+    <string name="privacy_no_account_body">There is no sign-in. In this version the app does not use the internet at all: it has no internet permission, and it sends nothing to us or to anyone else.</string>
+    <string name="privacy_permissions_title">Permissions and why</string>
+    <string name="privacy_permissions_body">Camera: only while you scan a card; photos stay on the device. Notifications: to show your follow-up reminders; on the lock screen they only say "Follow-up reminder". Exact alarms: so reminders arrive on time. Restart: so reminders come back after you restart the phone. Fingerprint and face: only to unlock the app; VCardly never sees your biometric data.</string>
+    <string name="privacy_ocr_title">Reading business cards</string>
+    <string name="privacy_ocr_body">Text on a card is recognised on the device. The recognised text is never stored or logged: you review it, and only what you save is kept. You can always edit or delete it.</string>
+    <string name="privacy_sharing_title">Sharing</string>
+    <string name="privacy_sharing_body">Nothing is shared unless you choose to. When you share a QR code or contact file you pick which details go in, and your private notes are never included. Exports and backups are saved to the place you choose.</string>
+    <string name="privacy_backup_title">Backups</string>
+    <string name="privacy_backup_body">A backup file contains all your contacts. Protect it with a password (recommended): it is then encrypted and cannot be opened without it. We cannot recover a forgotten password.</string>
+    <string name="privacy_lock_title">App lock and screen privacy</string>
+    <string name="privacy_lock_body">App lock asks for your fingerprint, face or device PIN, and locks again after the time you choose. Hiding content in recent apps keeps your contacts out of the app switcher and screenshots. App lock controls access to the app; it does not add a second layer of encryption to the stored data.</string>
+    <string name="privacy_control_title">You are in control</string>
+    <string name="privacy_control_body">You can export everything, restore it elsewhere, or erase all data from Settings at any time. Uninstalling the app removes its data from the phone.</string>
 </resources>

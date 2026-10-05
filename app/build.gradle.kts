@@ -118,6 +118,9 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     // QR generation: pure Java, offline.
     implementation(libs.zxing.core)
+    // App lock: BiometricPrompt needs a FragmentActivity.
+    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.kotlinx.coroutines.android)

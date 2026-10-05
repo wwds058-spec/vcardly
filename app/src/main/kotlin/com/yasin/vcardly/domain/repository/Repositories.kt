@@ -63,6 +63,14 @@ interface FollowUpRepository {
     suspend fun getReminderCandidates(): List<FollowUp>
 }
 
+data class SecuritySettings(
+    val appLockEnabled: Boolean = false,
+    /** How long the app may be out of sight before it locks again. */
+    val autoLockSeconds: Int = 60,
+    /** Hides the app in the recent-apps list and blocks screenshots (Android's secure-window flag). */
+    val secureScreen: Boolean = true,
+)
+
 interface PreferencesRepository {
     val themeMode: Flow<ThemeMode>
     val onboardingCompleted: Flow<Boolean>
@@ -70,6 +78,11 @@ interface PreferencesRepository {
     suspend fun setOnboardingCompleted(completed: Boolean)
 
     /** Epoch millis of the last successful local backup, or null if never. */
+    val securitySettings: Flow<SecuritySettings>
+    suspend fun setAppLockEnabled(enabled: Boolean)
+    suspend fun setAutoLockSeconds(seconds: Int)
+    suspend fun setSecureScreen(enabled: Boolean)
+
     val lastBackupAt: Flow<Long?>
     suspend fun setLastBackupAt(millis: Long)
 }

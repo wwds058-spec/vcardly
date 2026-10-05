@@ -28,6 +28,12 @@ object CoreModule {
     @Provides
     fun provideClock(): Clock = Clock.systemDefaultZone()
 
+    /** Auto-lock uses elapsedRealtime (monotonic) so changing the device date/time cannot bypass it. */
+    @Provides
+    @Singleton
+    fun provideAppLockManager(): com.yasin.vcardly.core.security.AppLockManager =
+        com.yasin.vcardly.core.security.AppLockManager { android.os.SystemClock.elapsedRealtime() }
+
     @Provides
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> = context.appDataStore

@@ -32,6 +32,7 @@ import com.yasin.vcardly.presentation.contacts.ContactEditScreen
 import com.yasin.vcardly.presentation.contacts.ContactsScreen
 import com.yasin.vcardly.presentation.backup.BackupScreen
 import com.yasin.vcardly.presentation.dashboard.DashboardScreen
+import com.yasin.vcardly.presentation.privacy.PrivacyScreen
 import com.yasin.vcardly.presentation.search.SearchScreen
 import com.yasin.vcardly.presentation.mycard.MyCardEditScreen
 import com.yasin.vcardly.presentation.mycard.MyCardScreen
@@ -165,6 +166,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     onOpenFollowUp = { navController.navigate(Routes.followUpEdit(it)) },
                 )
             }
+            composable(Routes.PRIVACY) { PrivacyScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.BACKUP) { BackupScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.REPORTS) { ReportsScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.MY_CARD) {
@@ -193,6 +195,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     onOpenTransfer = { navController.navigate(Routes.TRANSFER) },
                     onOpenReports = { navController.navigate(Routes.REPORTS) },
                     onOpenBackup = { navController.navigate(Routes.BACKUP) },
+                    onOpenPrivacy = { navController.navigate(Routes.PRIVACY) },
                 )
             }
         }

@@ -148,6 +148,11 @@ class CardImageStore @Inject constructor(
         }
     }
 
+    /** Deletes every stored card image (erase-all-data). */
+    suspend fun deleteAllStored() {
+        withContext(dispatchers.io) { cardsDir.deleteRecursively() }
+    }
+
     suspend fun delete(relativePath: String?) {
         if (relativePath == null) return
         withContext(dispatchers.io) { resolveStored(relativePath)?.delete() }

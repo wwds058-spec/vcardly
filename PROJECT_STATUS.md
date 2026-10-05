@@ -12,7 +12,7 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| Pure-Kotlin JVM tests (query builder, category breakdown, validators, initials, card parser, crop math, reminder planner, due time, vCard, QR round trip, reports, CSV, XLSX, backup archive, chunked AES-GCM, restore planner, search matcher) | 116/116 pass (tests caught three real bugs, fixed) |
+| Pure-Kotlin JVM tests (query builder, category breakdown, validators, initials, card parser, crop math, reminder planner, due time, vCard, QR round trip, reports, CSV, XLSX, backup archive, chunked AES-GCM, restore planner, search matcher, app-lock state machine) | 126/126 pass (tests caught three real bugs, fixed) |
 | Generated `.xlsx` opened with `openpyxl` (independent reader) | OK: sheets, bold frozen header, Unicode, text-only cells |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
@@ -33,9 +33,35 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 6 | Digital card, QR, vCard export/import | Written, **not build-verified** |
 | 7 | Reports + PDF/CSV/Excel export | Written, **not build-verified** |
 | 8 | Global search, backup/restore (`vcardly-backup-v1`), Drive preparation | Written, **not build-verified** (Drive: **needs your configuration**) |
-| 9 | Biometric lock + auto-lock, privacy screen | Planned |
+| 9 | Biometric lock + auto-lock, privacy screen | Written, **not build-verified** |
 | 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 9 contents
+
+- **App lock** (Settings -> Security): AndroidX `BiometricPrompt` with fingerprint/face and the device PIN/pattern/password as fallback
+  (`BIOMETRIC_WEAK | DEVICE_CREDENTIAL`, one combination valid on every supported API level; availability is checked at runtime).
+  Biometric data never reaches the app. Turning the lock on or off requires authenticating first, so a user cannot enable a lock they
+  cannot pass. `MainActivity` is now a `FragmentActivity` (a `ComponentActivity` subclass) because BiometricPrompt requires it.
+- **Auto-lock**: starts locked on every cold start; leaving the app starts a timer; returning after 15 s / 1 / 5 / 15 min (user choice,
+  default 1 min) locks. The timer uses `SystemClock.elapsedRealtime` (monotonic) so changing the phone's date/time cannot bypass it, and a
+  clock running backwards counts as "timed out". Rotation is not "leaving". The pure `AppLockManager` is unit-tested (10 tests).
+  The shortest option is 15 s, not "immediately", so file pickers and permission dialogs (which stop the activity) don't force a re-login.
+- **Lock screen**: opaque, swallows all touches, prompts automatically, "Unlock" button after a cancel. The app underneath stays
+  composed (nav state is kept) but is removed from the accessibility tree while locked; the splash screen is held until the lock
+  setting is known, so protected content can never flash before the lock. A notification tap still opens its contact after unlocking.
+- **No lock-out trap**: if the device loses its screen lock / biometrics while app lock is on, the app can no longer authenticate the user.
+  Staying locked would destroy access to their own data, so app lock switches itself off and tells the user (fail-open, by design,
+  because the OS-level protection the lock relies on is gone).
+- **Screen privacy** (default ON): `FLAG_SECURE` hides the app in the recents list and blocks screenshots/screen recording; toggle in
+  Settings for users who want screenshots.
+- **Privacy screen** (Settings -> Privacy): plain-language statement of what is stored, why each permission exists, OCR, sharing,
+  backups and app lock. It currently says the app has no internet permission, no ads and no analytics; **Phase 10 (AdMob/Billing) must
+  update this text, the manifest and the Play Data-safety answers in the same change.**
+- **Erase all my data** (Settings): confirmation, then wipes contacts, follow-ups, tags, categories (built-ins re-created), card images,
+  scan/restore caches, My card, and cancels reminders. Saved backup files are untouched.
+- Limits stated honestly: app lock gates the UI; it does not encrypt the database (Android's app sandbox and device encryption protect
+  data at rest). Rooted devices, a locked-out system and `adb` are out of scope.
 
 ## Phase 8 contents
 

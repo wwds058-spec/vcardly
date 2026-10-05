@@ -23,6 +23,8 @@ import com.yasin.vcardly.core.image.CardImageStore
 /** Provided once in MainActivity so composables can load card images without threading the store through every screen. */
 val LocalCardImageStore = staticCompositionLocalOf<CardImageStore> { error("CardImageStore not provided") }
 
+val LocalAuthGate = staticCompositionLocalOf<com.yasin.vcardly.core.security.AuthGate> { error("AuthGate not provided") }
+
 /** Decodes off the main thread; shows an empty placeholder until ready or if the file is gone. */
 @Composable
 fun CardImageView(ref: CardImageRef, contentDescription: String, modifier: Modifier = Modifier) {
