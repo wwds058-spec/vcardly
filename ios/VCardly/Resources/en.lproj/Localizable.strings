@@ -1,0 +1,361 @@
+/* VCardly for iOS. Every user-facing string lives here. %@ = text, %ld = number. */
+
+"app.name" = "VCardly";
+
+/* Navigation */
+"nav.home" = "Home";
+"nav.contacts" = "Contacts";
+"nav.followups" = "Follow-ups";
+"nav.settings" = "Settings";
+"scan.action" = "Scan Card";
+
+/* Common */
+"common.see_all" = "See all";
+"common.clear_search" = "Clear search";
+"common.back" = "Back";
+"common.next" = "Next";
+"common.save" = "Save";
+"common.cancel" = "Cancel";
+"common.close" = "Close";
+"common.delete" = "Delete";
+"common.edit" = "Edit";
+"common.more" = "More";
+"common.ok" = "OK";
+"common.copied" = "Copied";
+"common.copy_item" = "Copy %@";
+
+/* Home */
+"home.search" = "Search contacts, companies, tags…";
+"home.quick_actions" = "Quick actions";
+"home.upcoming" = "Upcoming follow-ups";
+"home.recent" = "Recent contacts";
+"home.greeting.morning" = "Good morning";
+"home.greeting.afternoon" = "Good afternoon";
+"home.greeting.evening" = "Good evening";
+"home.greeting.name" = "Hello, %@";
+"home.greeting.no_name" = "Welcome back";
+"home.subtitle" = "Your network, organised.";
+"home.stat.contacts" = "Contacts";
+"home.stat.favorites" = "Favorites";
+"home.stat.this_month" = "+%@ this month";
+"home.stat.due_today" = "%@ due today";
+
+"empty.network.title" = "Start building your network";
+"empty.network.message" = "Scan your first visiting card and VCardly fills in the details for you.";
+"empty.network.action" = "Scan your first card";
+
+/* Contacts */
+"contact.add" = "Add Contact";
+"contact.edit" = "Edit Contact";
+"contact.add_favorite" = "Add %@ to favorites";
+"contact.remove_favorite" = "Remove %@ from favorites";
+"contact.not_found.title" = "Contact not found";
+"contact.not_found.message" = "It may have been deleted.";
+"contact.delete.title" = "Delete contact?";
+"contact.delete.message" = "%@, their card photos and follow-ups will be removed from this device. This cannot be undone.";
+"contacts.shown" = "%ld shown";
+"contacts.count.one" = "%ld contact";
+"contacts.count.other" = "%ld contacts";
+"contacts.sort" = "Sort";
+"contacts.filter.all" = "All";
+"contacts.tags_selected" = "Tags (%ld)";
+"contacts.no_favorites.title" = "No favorites yet";
+"contacts.no_favorites.message" = "Tap the star on a contact to keep the people you reach most at the top.";
+"contacts.no_results.title" = "No matches";
+"contacts.no_results.message" = "Try another name, company or tag, or clear the filters.";
+"contacts.clear_filters" = "Clear filters";
+"contacts.empty.message" = "Scan a visiting card or add a contact to get started.";
+"contacts.filter_tags" = "Filter by tags";
+"contacts.filter_tags.hint" = "Show contacts that have every selected tag.";
+"sort.nameAsc" = "Name (A–Z)";
+"sort.nameDesc" = "Name (Z–A)";
+"sort.company" = "Company";
+"sort.recentlyAdded" = "Recently added";
+"sort.recentlyUpdated" = "Recently updated";
+
+/* Categories */
+"category.business" = "Business";
+"category.customer" = "Customer";
+"category.client" = "Client";
+"category.supplier" = "Supplier";
+"category.vendor" = "Vendor";
+"category.partner" = "Partner";
+"category.colleague" = "Colleague";
+"category.friend" = "Friend";
+"category.other" = "Other";
+"category.none" = "No category";
+
+/* Fields */
+"field.name" = "Full name";
+"field.job_title" = "Job title";
+"field.company" = "Company";
+"field.phone" = "Phone";
+"field.phone_alt" = "Other phone";
+"field.email" = "Email";
+"field.email_alt" = "Other email";
+"field.website" = "Website";
+"field.address" = "Address";
+"field.notes" = "Notes";
+"field.category" = "Category";
+"field.tags" = "Tags";
+
+/* Contact details */
+"detail.tab.details" = "Details";
+"detail.tab.card_images" = "Card images";
+"detail.tab.followups_count" = "Follow-ups (%ld)";
+"detail.activity" = "Activity";
+"detail.no_info" = "No contact details yet. Tap Edit to add some.";
+"detail.no_cards.title" = "No card photos";
+"detail.no_cards.message" = "Add the front and back of the visiting card to keep them with this contact.";
+"detail.add_card_images" = "Add card photos";
+"detail.manage_images" = "Change card photos";
+"detail.edit_notes" = "Edit notes";
+"detail.no_notes" = "No notes yet.";
+"detail.followups_empty" = "Plan a call, meeting or quotation so nothing slips.";
+"card.front" = "Front of card";
+"card.back" = "Back of card";
+"action.call" = "Call";
+"action.call_name" = "Call %@";
+"action.whatsapp_name" = "WhatsApp %@";
+"action.email_name" = "Email %@";
+"activity.created" = "Contact added";
+"activity.created_scan" = "Added from a scanned card";
+"activity.created_import" = "Imported";
+"activity.updated" = "Details updated";
+"activity.followup_created" = "Follow-up planned: %@";
+"activity.followup_completed" = "Follow-up done: %@";
+"activity.followup_cancelled" = "Follow-up cancelled: %@";
+
+/* Contact form */
+"form.step.basic" = "Basic";
+"form.step.contact" = "Contact";
+"form.step.business" = "Business";
+"form.step.details" = "Details";
+"form.required_label" = "%@, required";
+"form.new_tag" = "New tag";
+"form.add_tag" = "Add tag";
+"form.remove_image" = "Remove photo";
+"form.notes_private" = "Notes stay on this device and are never shared.";
+"form.discard.title" = "Discard changes?";
+"form.discard.message" = "Your changes have not been saved.";
+"form.discard.confirm" = "Discard";
+"form.save_failed" = "Could not save. Please try again.";
+"validation.required" = "This field is required.";
+"validation.too_long" = "This is too long.";
+"validation.invalid" = "Check this value.";
+"validation.invalid_phone" = "Enter a valid phone number.";
+"validation.invalid_email" = "Enter a valid email address.";
+"validation.invalid_website" = "Enter a valid website.";
+
+/* Scan */
+"scan.instruction" = "Place the visiting card inside the frame";
+"scan.reading" = "Reading your card…";
+"scan.take_photo" = "Take photo";
+"scan.pick_gallery" = "Choose from photos";
+"scan.enter_manually" = "Enter Manually";
+"scan.camera_unavailable" = "The camera is not available on this device. Choose a photo of the card instead.";
+"scan.error_import" = "That photo could not be opened.";
+"scan.review_title" = "Review scan";
+"scan.success_title" = "Scanned successfully";
+"scan.success_found.one" = "%ld detail found. Check it below.";
+"scan.success_found.other" = "%ld details found. Check them below.";
+"scan.failed_message" = "The text could not be recognised. Type the details yourself; the card photo is kept either way.";
+"scan.review_banner" = "Review before saving. Text recognition can make mistakes, so check every field.";
+"scan.unmatched_title" = "Other text found on the card";
+"scan.unmatched_hint" = "This text was not matched to a field. Add anything useful to the notes.";
+"scan.add_to_notes" = "Add to notes";
+"scan.rescan" = "Rescan";
+
+/* Follow-ups */
+"followup.add" = "Add Follow-up";
+"followup.edit" = "Edit Follow-up";
+"followup.subtitle" = "%ld to do";
+"followup.none.title" = "No follow-ups planned";
+"followup.none.message" = "Tap to plan your next call or meeting.";
+"followup.bucket.today" = "Today";
+"followup.bucket.upcoming" = "Upcoming";
+"followup.bucket.overdue" = "Overdue";
+"followup.bucket.completed" = "Completed";
+"followup.bucket_count" = "%1$@ · %2$ld";
+"followup.overdue_notice" = "These are past their time. Complete them or move them to a new time.";
+"followup.empty.today.title" = "Nothing due today";
+"followup.empty.today.message" = "Enjoy the calm, or plan your next follow-up.";
+"followup.empty.upcoming.title" = "Nothing planned yet";
+"followup.empty.upcoming.message" = "Plan calls, meetings and quotations so every connection gets attention.";
+"followup.empty.overdue.title" = "All caught up";
+"followup.empty.overdue.message" = "No overdue follow-ups. Nice work.";
+"followup.empty.completed.title" = "Nothing completed yet";
+"followup.empty.completed.message" = "Finished and cancelled follow-ups appear here.";
+"followup.type" = "Type";
+"followup.type.call" = "Call";
+"followup.type.whatsapp" = "WhatsApp";
+"followup.type.email" = "Email";
+"followup.type.meeting" = "Meeting";
+"followup.type.quotation" = "Quotation";
+"followup.type.payment" = "Payment";
+"followup.type.message" = "Message";
+"followup.type.other" = "Other";
+"followup.status.pending" = "Pending";
+"followup.status.rescheduled" = "Rescheduled";
+"followup.status.completed" = "Completed";
+"followup.status.cancelled" = "Cancelled";
+"followup.complete_item" = "Mark %@ as done";
+"followup.reopen_item" = "Reopen %@";
+"followup.mark_done" = "Mark as done";
+"followup.cancel_item" = "Cancel follow-up";
+"followup.reopen" = "Reopen";
+"followup.delete.title" = "Delete follow-up";
+"followup.delete.message" = "This follow-up and its reminder will be removed.";
+"followup.contact" = "Contact";
+"followup.choose_contact" = "Choose a contact";
+"followup.contact_value" = "Contact: %@";
+"followup.contact_required" = "Choose who this follow-up is with.";
+"followup.title_field" = "Title";
+"followup.title_hint" = "e.g. Send the quotation";
+"followup.when" = "Date and time";
+"followup.past_warning" = "This time has already passed. It will show as overdue.";
+"followup.reminder" = "Reminder";
+"followup.reminder_hint" = "Get a notification on this iPhone";
+"followup.notes_hint" = "Anything to remember";
+"followup.no_contacts.title" = "No contacts yet";
+"followup.no_contacts.message" = "Add or scan a contact first.";
+"reminder.at_time" = "At the time";
+"reminder.day_before" = "1 day before";
+"reminder.hours_before.one" = "%ld hour before";
+"reminder.hours_before.other" = "%ld hours before";
+"reminder.minutes_before.one" = "%ld minute before";
+"reminder.minutes_before.other" = "%ld minutes before";
+
+"due.today" = "Today · %@";
+"due.tomorrow" = "Tomorrow · %@";
+"due.yesterday" = "Yesterday · %@";
+"due.date" = "%1$@ · %2$@";
+"due.overdue" = "Overdue · %@";
+
+/* Notifications: the lock screen shows the type and contact only, never notes. */
+"notif.title" = "Follow-up reminder";
+"notif.body.call" = "Call %@";
+"notif.body.whatsapp" = "WhatsApp %@";
+"notif.body.email" = "Email %@";
+"notif.body.meeting" = "Meeting with %@";
+"notif.body.quotation" = "Quotation for %@";
+"notif.body.payment" = "Payment follow-up with %@";
+"notif.body.message" = "Message %@";
+"notif.body.other" = "Follow up with %@";
+
+/* My card and sharing */
+"mycard.title" = "My Card";
+"mycard.create" = "Create my card";
+"mycard.edit" = "Edit My Card";
+"mycard.edit_hint" = "This is the card you share. It stays on this device.";
+"mycard.empty.title" = "Create your digital card";
+"mycard.empty.message" = "Add your details once, then share them as a QR code or contact file.";
+"share.title" = "Share";
+"share.fields" = "Details to share";
+"share.notes_never" = "Private notes are never shared.";
+"share.scan_hint" = "Scan with any phone camera to save the contact.";
+"share.contact_file" = "Share contact";
+"share.qr_image" = "Share QR";
+"share.qr_label" = "QR code for %@";
+"share.qr_too_long" = "Too many details for one QR code. Turn some off.";
+
+/* Settings */
+"settings.section.general" = "General";
+"settings.section.security" = "Security & privacy";
+"settings.section.data" = "Your data";
+"settings.mycard_hint" = "Your own card for sharing";
+"settings.reports_hint" = "Your network at a glance";
+"settings.theme" = "Appearance";
+"theme.system" = "System";
+"theme.light" = "Light";
+"theme.dark" = "Dark";
+"settings.notifications" = "Notifications";
+"settings.notifications_on" = "Reminders are on";
+"settings.notifications_off" = "Turned off. Tap to open Settings.";
+"settings.notifications_ask" = "Tap to allow follow-up reminders";
+"settings.app_lock" = "App lock";
+"settings.app_lock_hint" = "Ask for Face ID or your passcode when you open VCardly.";
+"settings.auto_lock" = "Lock after";
+"settings.auto_lock.immediately" = "Immediately";
+"settings.auto_lock.seconds.one" = "%ld second";
+"settings.auto_lock.seconds.other" = "%ld seconds";
+"settings.auto_lock.minutes.one" = "%ld minute";
+"settings.auto_lock.minutes.other" = "%ld minutes";
+"settings.lock_confirm" = "Confirm it is you";
+"settings.lock_unavailable.title" = "Cannot turn on app lock";
+"settings.lock_unavailable.message" = "Set up a passcode or Face ID in the Settings app first, then try again.";
+"settings.privacy_hint" = "What VCardly does with your data";
+"settings.backup" = "Backup & restore";
+"settings.backup_ios_pending" = "Not available on iPhone yet";
+"settings.pro_banner_title" = "Upgrade to VCardly Pro";
+"settings.pro_banner_message" = "Unlimited scans, PDF and Excel reports.";
+"settings.version" = "Version %@";
+
+/* Reports */
+"reports.title" = "Reports";
+"reports.empty.title" = "No data yet";
+"reports.empty.message" = "Reports appear once you have saved some contacts.";
+"reports.scanned" = "Scanned cards";
+"reports.followups_done" = "Follow-ups done";
+"reports.by_category" = "Contacts by category";
+"reports.contacts" = "Contacts";
+"reports.growth" = "New contacts, last 6 months";
+"reports.month" = "Month";
+"reports.followups" = "Follow-ups by status";
+
+/* Search */
+"search.title" = "Search";
+"search.start.title" = "Search everything";
+"search.start.message" = "Find contacts by name, company, phone, email, notes or tag, and follow-ups by title.";
+"search.no_results.message" = "Nothing matches. Try fewer or different words.";
+
+/* Privacy */
+"privacy.title" = "Privacy";
+"privacy.intro" = "VCardly is built to keep your contacts yours. Here is exactly what it does with your data.";
+"privacy.stays.title" = "Your data stays on this device";
+"privacy.stays.body" = "Contacts, card photos, notes, tags, follow-ups and settings are stored in the app's private storage on this iPhone. Card photos are excluded from iCloud backup.";
+"privacy.no_account.title" = "No account";
+"privacy.no_account.body" = "There is no sign-in and no VCardly server. Your contacts are never uploaded. The iPhone app shows no ads.";
+"privacy.permissions.title" = "Permissions and why";
+"privacy.permissions.body" = "Camera: only while you scan a card; photos stay on the device. Notifications: to show your follow-up reminders; they show the task type and contact name, never your notes. Face ID: only to unlock the app; VCardly never sees your biometric data.";
+"privacy.ocr.title" = "Reading business cards";
+"privacy.ocr.body" = "Text on a card is recognised on the device by Apple's Vision framework. The recognised text is never stored or logged: you review it, and only what you save is kept.";
+"privacy.sharing.title" = "Sharing";
+"privacy.sharing.body" = "Nothing is shared unless you choose to. When you share a QR code or contact file you pick which details go in, and your private notes are never included. Copied text stays on this iPhone and expires after two minutes.";
+"privacy.lock.title" = "App lock";
+"privacy.lock.body" = "App lock asks for Face ID, Touch ID or your passcode, and locks again after the time you choose. It controls access to the app; iOS data protection encrypts the stored data.";
+"privacy.control.title" = "You are in control";
+"privacy.control.body" = "You can edit or delete any contact at any time. Deleting the app removes all of its data from the iPhone.";
+
+/* Pro */
+"pro.title" = "VCardly Pro";
+"pro.hero_title" = "Unlock VCardly Pro";
+"pro.intro" = "Unlock the full toolkit. Your own data is never locked away: reminders, app lock and sharing are free for everyone.";
+"pro.feature_pdf" = "PDF reports";
+"pro.feature_excel" = "Excel export of contacts and follow-ups";
+"pro.feature_scans" = "Unlimited card scans";
+"pro.feature_no_ads" = "No ads, ever";
+"pro.not_configured_ios" = "Purchases are not set up in this version yet. Nothing can be bought, and nothing is charged.";
+"pro.not_available" = "Not available yet";
+
+/* Onboarding */
+"onboarding.skip" = "Skip";
+"onboarding.next" = "Next";
+"onboarding.get_started" = "Get Started";
+"onboarding.page_indicator" = "Page %1$ld of %2$ld";
+"onboarding.1.title" = "Your smart digital visiting card book.";
+"onboarding.1.body" = "Scan, save and manage your business contacts with ease.";
+"onboarding.2.title" = "Private by design";
+"onboarding.2.body" = "Your contacts and card images stay on this iPhone. VCardly works fully offline, and you choose when to share.";
+"onboarding.3.title" = "Never miss a follow-up";
+"onboarding.3.body" = "Set reminders for calls, emails and meetings so every connection gets the attention it deserves.";
+"onboarding.sample_name" = "Alex Morgan";
+"onboarding.sample_title" = "Sales Director";
+"onboarding.sample_company" = "Northwind";
+
+/* Lock */
+"lock.title" = "VCardly is locked";
+"lock.message" = "Unlock with Face ID or your passcode to see your contacts.";
+"lock.unlock" = "Unlock";
+"lock.prompt_title" = "Unlock VCardly";
+"lock.error" = "Authentication did not succeed. Please try again.";

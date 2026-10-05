@@ -168,3 +168,71 @@ jobs:
           git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
           git add . && git commit -q -m "arm64 debug APK from $GITHUB_SHA"
           git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" debug-apk-arm64
+
+  # Native iOS app (SwiftUI): generate the project, build, run unit + screenshot tests on a simulator.
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Pick a simulator
+        id: sim
+        run: |
+          xcodebuild -version
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json,sys
+          d=json.load(sys.stdin)["devices"]
+          ios=[(k,v) for k,v in d.items() if "iOS" in k]
+          ios.sort(key=lambda kv: [int(x) for x in kv[0].split("iOS-")[-1].split("-")])
+          for k,v in reversed(ios):
+              for pref in ("iPhone 16 Pro","iPhone 16","iPhone 15 Pro"):
+                  for dev in v:
+                      if dev["name"]==pref: print(dev["udid"]); sys.exit()
+          ')
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Simulator: $UDID"
+
+      - name: Build and test
+        run: |
+          set -o pipefail
+          xcodebuild test -project VCardly.xcodeproj -scheme VCardly \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -resultBundlePath build/TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO | tee build-log.txt | grep -E "error:|warning: .*VCardly/|Test Case|Executed|BUILD|\*\*" || true
+          grep -q "\*\* TEST SUCCEEDED \*\*" build-log.txt
+
+      - name: Show compiler errors
+        if: failure()
+        run: grep -E "error:" build-log.txt | sort -u | head -80 || true
+
+      - name: Publish iOS screenshots to the ios-screenshots branch
+        if: always() && github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'
+        run: |
+          set -e
+          [ -d build/screenshots ] && [ -n "$(ls -A build/screenshots)" ] || { echo "no screenshots"; exit 0; }
+          cd build/screenshots
+          printf 'iOS screenshots from commit %s (simulator, fictional sample data).\n' "$GITHUB_SHA" > README.txt
+          git init -q -b ios-screenshots
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -q -m "iOS screenshots from $GITHUB_SHA"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ios-screenshots
+
+      - name: Upload iOS test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-results
+          path: |
+            ios/build-log.txt
+            ios/build/TestResults.xcresult
+          if-no-files-found: ignore
