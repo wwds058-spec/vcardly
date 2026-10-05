@@ -15,6 +15,7 @@ datastore = "1.1.1"
 coroutines = "1.9.0"
 camerax = "1.4.1"
 concurrentFutures = "1.2.0"
+guava = "33.3.1-android"
 work = "2.10.0"
 zxing = "3.5.3"
 serialization = "1.7.3"
@@ -68,6 +69,7 @@ play-services-ads = { module = "com.google.android.gms:play-services-ads", versi
 ump = { module = "com.google.android.ump:user-messaging-platform", version.ref = "ump" }
 zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 androidx-concurrent-futures-ktx = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrentFutures" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
 mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }
 
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }

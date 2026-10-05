@@ -137,6 +137,8 @@ dependencies {
     implementation(libs.androidx.camera.view)
     // ListenableFuture.await() for CameraX (also puts Guava's ListenableFuture on the compile classpath).
     implementation(libs.androidx.concurrent.futures.ktx)
+    // Other Google libraries pull in an EMPTY placeholder for ListenableFuture; real Guava makes CameraX's types resolvable.
+    implementation(libs.guava)
     // Bundled Latin-script model: works offline, no Play Services download at runtime.
     implementation(libs.mlkit.text.recognition)
 
