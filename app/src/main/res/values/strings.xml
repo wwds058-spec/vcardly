@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">VCardly</string>
+
+    <!-- Common -->
+    <string name="common_navigate_up">Navigate up</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_retry">Try again</string>
+    <string name="common_loading">Loading</string>
+    <string name="common_error_title">Something went wrong</string>
+
+    <!-- Phase 1 placeholder screen -->
+    <string name="foundation_title">Your contacts, on your device</string>
+    <string name="foundation_message">VCardly keeps your business cards private and offline. The app is being built phase by phase.</string>
+
+    <!-- System categories -->
+    <string name="category_client">Client</string>
+    <string name="category_partner">Partner</string>
+    <string name="category_vendor">Vendor</string>
+    <string name="category_colleague">Colleague</string>
+    <string name="category_friend">Friend</string>
+    <string name="category_other">Other</string>
+</resources>
