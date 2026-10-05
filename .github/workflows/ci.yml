@@ -5,6 +5,9 @@ on:
     branches: [ "**" ]
   pull_request:
 
+permissions:
+  contents: write   # only used to publish the debug APK to the debug-apk branch
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -60,6 +63,20 @@ jobs:
             app/build/test-results/**
             app/schemas/**
           if-no-files-found: ignore
+
+      - name: Publish debug APK to the debug-apk branch
+        if: github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'
+        run: |
+          set -e
+          apk=$(ls app/build/outputs/apk/debug/*.apk | head -1)
+          mkdir /tmp/pub && cp "$apk" /tmp/pub/vcardly-debug.apk
+          cd /tmp/pub
+          sha256sum vcardly-debug.apk > vcardly-debug.apk.sha256
+          printf 'Debug build of commit %s. Signed with a throw-away debug key created on the CI runner, so each build has a different signature: uninstall the old one before installing a new one. Test ad IDs only.\n' "$GITHUB_SHA" > README.txt
+          git init -q -b debug-apk
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -q -m "Debug APK from $GITHUB_SHA"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" debug-apk
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
