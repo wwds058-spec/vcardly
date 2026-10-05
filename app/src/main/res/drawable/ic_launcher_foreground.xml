@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Business card with a "V" mark, inside the 66dp adaptive-icon safe zone. -->
+<!-- The VCardly "V" mark (two folded ribbons), inside the 66dp adaptive-icon safe zone. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -7,8 +7,8 @@
     android:viewportHeight="108">
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M30,38 h48 a4,4 0 0 1 4,4 v24 a4,4 0 0 1 -4,4 h-48 a4,4 0 0 1 -4,-4 v-24 a4,4 0 0 1 4,-4 z" />
+        android:pathData="M32,38.9 L45.2,38.9 L56.6,61.2 L50.5,70.6 Z" />
     <path
-        android:fillColor="#FF3949AB"
-        android:pathData="M37,45 h6 l5,12 l5,-12 h6 l-8,19 h-6 z" />
+        android:fillColor="#FFB9CBFF"
+        android:pathData="M50.5,70.6 L62.8,38.9 L76,38.9 L57.5,70.6 Z" />
 </vector>
