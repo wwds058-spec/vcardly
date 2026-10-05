@@ -12,13 +12,13 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| `ContactQueryBuilderTest` (6) + `CategoryBreakdownTest` (3) on the JVM | 9/9 pass (the first caught a real bug, fixed) |
+| Pure-Kotlin JVM tests: `ContactQueryBuilderTest` (6), `CategoryBreakdownTest` (3), `ContactValidatorTest` (7), `InitialsTest` (6) | 22/22 pass (the first caught a real bug, fixed) |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
 
 First action on a machine with Google Maven access: `./gradlew :app:assembleDebug :app:testDebugUnitTest`,
 fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exports it on first build).
-`androidTest/DatabaseTest` needs an emulator/device: `./gradlew :app:connectedDebugAndroidTest`.
+`androidTest/DatabaseTest` and `ContactRepositoryTest` need an emulator/device: `./gradlew :app:connectedDebugAndroidTest`.
 
 ## Phases
 
@@ -26,7 +26,7 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 |---|---|---|
 | 1 | Gradle, design system, architecture, Room foundation | Written, **not build-verified** |
 | 2 | Onboarding, navigation shell, dashboard (real DB stats), settings/theme | Written, **not build-verified** |
-| 3 | Contacts list (search/filter/sort), categories, tags, favorites, details, add/edit + validation | Planned |
+| 3 | Contacts list (search/filter/sort), categories, tags, favorites, details, add/edit + validation | Written, **not build-verified** |
 | 4 | Image storage, CameraX scanner, crop/rotate, ML Kit OCR + heuristic parsing + review screen | Planned |
 | 5 | Follow-ups + notifications (boot / time-change safe) | Planned |
 | 6 | Digital card, QR, vCard export/import | Planned |
@@ -35,6 +35,21 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 9 | Biometric lock + auto-lock, privacy screen | Planned |
 | 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 3 contents
+
+- **Contacts list**: debounced multi-token search (name, company, title, email, phone, notes, tag names), chips for
+  Favorites / category / tags (tags AND together), 5 sorts, count, favorite toggle per row, FAB, distinct empty vs
+  no-results states with "clear filters".
+- **Details**: avatar/initials, category + tags, tap-to-call / email / website via system intents (no permissions;
+  silently ignored when no handler), favorite, edit, delete with confirmation.
+- **Add/Edit form**: single form for both; `ContactValidator` (pure, tested): name required, lengths, email, phone
+  (5–15 digits, `+()-. ` allowed), website (scheme optional, IDN allowed). Errors are per-field, localized, exposed to
+  TalkBack, cleared as the user edits. Unsaved-changes guard on Back/Up. Fields not shown on the form (images, source,
+  created time, favorite) are preserved on edit. New tags are created inline (case-insensitive de-dup).
+- **Categories & tags management** (Settings → Categories and tags): add/rename/delete custom categories (deleting
+  uncategorises contacts), rename/delete tags with usage counts; seeded categories are read-only.
+- Navigation: `contact/{id}`, `contact/edit/{id}` (0 = new), `organize`; saving a new contact replaces the form with its details.
 
 ## Phase 2 contents
 
@@ -73,6 +88,10 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 - Manifest: `allowBackup=false` and data-extraction rules exclude all data (PII); user backups are explicit (Phase 8).
 
 ## Assumptions & decisions
+
+- Phone validation is lenient on formatting but requires 5–15 digits; extensions ("ext 9") are rejected for now.
+- Custom categories get a colour from a fixed palette (no colour picker yet); tag colours unused so far.
+- Card images are not part of the form until Phase 4 (scanner); deleting a contact will also delete its image files then.
 
 - Single Gradle module for now; package-level layering. Split later only if build times demand it.
 - Dynamic (wallpaper) color disabled so brand contrast is guaranteed.

@@ -66,4 +66,89 @@
     <string name="category_friend">Friend</string>
     <string name="category_other">Other</string>
     <string name="category_uncategorised">Uncategorised</string>
+
+    <!-- Common additions -->
+    <string name="common_save">Save</string>
+    <string name="common_selected">Selected</string>
+
+    <!-- Validation -->
+    <string name="error_required">This field is required</string>
+    <string name="error_too_long">This is too long</string>
+    <string name="error_duplicate">This name is already in use</string>
+    <string name="error_invalid">This value is not valid</string>
+    <string name="error_invalid_email">Enter a valid email address</string>
+    <string name="error_invalid_phone">Enter a valid phone number (5 to 15 digits)</string>
+    <string name="error_invalid_website">Enter a valid website, like example.com</string>
+
+    <!-- Contacts list -->
+    <string name="contacts_search_hint">Search name, company, phone, tag</string>
+    <string name="contacts_clear_search">Clear search</string>
+    <string name="contacts_count">%1$d shown</string>
+    <string name="contacts_sort_prefix">Sort: %1$s</string>
+    <string name="contacts_filter_favorites">Favorites</string>
+    <string name="contacts_add">Add contact</string>
+    <string name="contacts_empty_title">No contacts yet</string>
+    <string name="contacts_empty_message">Add a contact to start building your network.</string>
+    <string name="contacts_no_results_title">No matching contacts</string>
+    <string name="contacts_no_results_message">Try a different search or remove some filters.</string>
+    <string name="contacts_clear_filters">Clear filters</string>
+    <string name="sort_name_asc">Name A–Z</string>
+    <string name="sort_name_desc">Name Z–A</string>
+    <string name="sort_company">Company</string>
+    <string name="sort_recently_added">Recently added</string>
+    <string name="sort_recently_updated">Recently updated</string>
+
+    <!-- Contact details / form -->
+    <string name="contact_details_title">Contact</string>
+    <string name="contact_add_title">New contact</string>
+    <string name="contact_edit_title">Edit contact</string>
+    <string name="contact_edit">Edit</string>
+    <string name="contact_delete">Delete</string>
+    <string name="contact_delete_title">Delete contact?</string>
+    <string name="contact_delete_message">%1$s will be permanently removed from this device.</string>
+    <string name="contact_add_favorite">Add %1$s to favorites</string>
+    <string name="contact_remove_favorite">Remove %1$s from favorites</string>
+    <string name="contact_not_found_title">Contact not found</string>
+    <string name="contact_not_found_message">This contact may have been deleted.</string>
+    <string name="contact_added_on">Added %1$s</string>
+    <string name="action_call">Call</string>
+    <string name="action_email">Send email</string>
+    <string name="field_full_name">Full name</string>
+    <string name="field_job_title">Job title</string>
+    <string name="field_company">Company</string>
+    <string name="field_phone">Phone</string>
+    <string name="field_phone_alt">Alternate phone</string>
+    <string name="field_email">Email</string>
+    <string name="field_email_alt">Alternate email</string>
+    <string name="field_website">Website</string>
+    <string name="field_address">Address</string>
+    <string name="field_notes">Notes</string>
+    <string name="field_category">Category</string>
+    <string name="field_tags">Tags</string>
+    <string name="tag_new_hint">New tag</string>
+    <string name="tag_add">Add tag</string>
+    <string name="discard_title">Discard changes?</string>
+    <string name="discard_message">Your unsaved changes will be lost.</string>
+    <string name="discard_confirm">Discard</string>
+
+    <!-- Organize categories and tags -->
+    <string name="settings_data">Data</string>
+    <string name="settings_organize">Categories and tags</string>
+    <string name="organize_title">Categories and tags</string>
+    <string name="organize_categories">Categories</string>
+    <string name="organize_tags">Tags</string>
+    <string name="organize_add_category">Add category</string>
+    <string name="organize_rename">Rename</string>
+    <string name="organize_rename_item">Rename %1$s</string>
+    <string name="organize_delete">Delete</string>
+    <string name="organize_delete_item">Delete %1$s</string>
+    <string name="organize_delete_title">Delete %1$s?</string>
+    <string name="organize_delete_category_message">Contacts in this category will become uncategorised. No contacts are deleted.</string>
+    <string name="organize_delete_tag_message">The tag will be removed from all contacts. No contacts are deleted.</string>
+    <string name="organize_name_label">Name</string>
+    <string name="organize_no_tags">No tags yet. Add them when editing a contact.</string>
+    <plurals name="organize_contact_count">
+        <item quantity="one">%1$d contact</item>
+        <item quantity="other">%1$d contacts</item>
+    </plurals>
 </resources>

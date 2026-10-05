@@ -16,6 +16,13 @@ object Routes {
     const val CONTACTS = "contacts"
     const val FOLLOW_UPS = "followups"
     const val SETTINGS = "settings"
+    const val ORGANIZE = "organize"
+
+    const val CONTACT_DETAIL = "contact/{contactId}"
+    const val CONTACT_EDIT = "contact/edit/{contactId}"
+    fun contactDetail(id: Long) = "contact/$id"
+    /** id = 0 opens the form for a new contact. */
+    fun contactEdit(id: Long) = "contact/edit/$id"
 }
 
 enum class TopLevelDestination(

@@ -1,5 +1,6 @@
 package com.yasin.vcardly.presentation.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +30,7 @@ import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.domain.model.ThemeMode
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(onOpenOrganize: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize()) {
@@ -50,6 +51,17 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     )
                 }
             }
+
+            SectionHeader(stringResource(R.string.settings_data))
+            Text(
+                stringResource(R.string.settings_organize),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = MaterialTheme.spacing.minTouchTarget)
+                    .clickable(role = Role.Button, onClick = onOpenOrganize)
+                    .padding(vertical = MaterialTheme.spacing.sm),
+            )
 
             SectionHeader(stringResource(R.string.settings_about))
             Text(

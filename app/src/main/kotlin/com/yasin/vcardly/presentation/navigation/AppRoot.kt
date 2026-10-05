@@ -17,7 +17,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.yasin.vcardly.presentation.contacts.ContactDetailScreen
+import com.yasin.vcardly.presentation.contacts.ContactEditScreen
+import com.yasin.vcardly.presentation.contacts.ContactsScreen
 import com.yasin.vcardly.presentation.dashboard.DashboardScreen
+import com.yasin.vcardly.presentation.organize.OrganizeScreen
 import com.yasin.vcardly.presentation.onboarding.OnboardingScreen
 import com.yasin.vcardly.presentation.placeholder.ComingSoonScreen
 import com.yasin.vcardly.presentation.settings.SettingsScreen
@@ -75,15 +81,44 @@ fun AppRoot(onboardingCompleted: Boolean) {
                 )
             }
             composable(Routes.CONTACTS) {
-                ComingSoonScreen(title = stringResource(R.string.nav_contacts))
+                ContactsScreen(
+                    onOpenContact = { navController.navigate(Routes.contactDetail(it)) },
+                    onAddContact = { navController.navigate(Routes.contactEdit(0)) },
+                )
             }
+            composable(Routes.CONTACT_DETAIL, arguments = contactIdArgs) {
+                ContactDetailScreen(
+                    onNavigateUp = { navController.popBackStack() },
+                    onEdit = { navController.navigate(Routes.contactEdit(it)) },
+                )
+            }
+            composable(Routes.CONTACT_EDIT, arguments = contactIdArgs) {
+                ContactEditScreen(
+                    onNavigateUp = { navController.popBackStack() },
+                    onSaved = { id, wasNew ->
+                        if (wasNew) {
+                            // Replace the form with the new contact's details so Back returns to the list.
+                            navController.navigate(Routes.contactDetail(id)) {
+                                popUpTo(Routes.CONTACT_EDIT) { inclusive = true }
+                            }
+                        } else {
+                            navController.popBackStack()
+                        }
+                    },
+                )
+            }
+            composable(Routes.ORGANIZE) { OrganizeScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.FOLLOW_UPS) {
                 ComingSoonScreen(title = stringResource(R.string.nav_follow_ups))
             }
-            composable(Routes.SETTINGS) { SettingsScreen() }
+            composable(Routes.SETTINGS) {
+                SettingsScreen(onOpenOrganize = { navController.navigate(Routes.ORGANIZE) })
+            }
         }
     }
 }
+
+private val contactIdArgs = listOf(navArgument("contactId") { type = NavType.LongType })
 
 /** Standard bottom-nav behaviour: one instance per tab, state restored, no back-stack growth. */
 private fun NavHostController.navigateTopLevel(route: String) {
