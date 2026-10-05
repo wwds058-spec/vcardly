@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,6 +62,7 @@ import com.yasin.vcardly.presentation.common.displayName
 fun ContactsScreen(
     onOpenContact: (Long) -> Unit,
     onAddContact: () -> Unit,
+    onScanCard: () -> Unit,
     viewModel: ContactsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -99,12 +102,17 @@ fun ContactsScreen(
                     icon = Icons.Filled.Person,
                     title = stringResource(R.string.contacts_empty_title),
                     message = stringResource(R.string.contacts_empty_message),
-                    action = { PrimaryButton(stringResource(R.string.contacts_add), onClick = onAddContact) },
+                    action = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
+                            PrimaryButton(stringResource(R.string.contacts_scan), onClick = onScanCard)
+                            SecondaryButton(stringResource(R.string.contacts_add), onClick = onAddContact)
+                        }
+                    },
                 )
                 else -> LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     // Extra bottom space so the last row is not hidden behind the FAB.
-                    contentPadding = PaddingValues(bottom = 88.dp),
+                    contentPadding = PaddingValues(bottom = 152.dp),
                 ) {
                     items(state.contacts, key = { it.contact.id }) { details ->
                         ContactRow(
@@ -117,11 +125,19 @@ fun ContactsScreen(
             }
         }
 
-        FloatingActionButton(
-            onClick = onAddContact,
-            modifier = Modifier.align(Alignment.BottomEnd).padding(MaterialTheme.spacing.md),
+        Column(
+            Modifier.align(Alignment.BottomEnd).padding(MaterialTheme.spacing.md),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {
-            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.contacts_add))
+            ExtendedFloatingActionButton(
+                onClick = onScanCard,
+                icon = { Icon(Icons.Filled.AccountBox, contentDescription = null) },
+                text = { Text(stringResource(R.string.contacts_scan)) },
+            )
+            FloatingActionButton(onClick = onAddContact) {
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.contacts_add))
+            }
         }
     }
 }

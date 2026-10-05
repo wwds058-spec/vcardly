@@ -4,15 +4,21 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yasin.vcardly.core.common.AppError.Validation.Reason
+import com.yasin.vcardly.core.image.CardImageRef
+import com.yasin.vcardly.core.image.CardImageStore
 import com.yasin.vcardly.domain.model.Category
 import com.yasin.vcardly.domain.model.Contact
+import com.yasin.vcardly.domain.model.ContactDetails
+import com.yasin.vcardly.domain.model.ContactSource
 import com.yasin.vcardly.domain.model.Tag
 import com.yasin.vcardly.domain.repository.CategoryRepository
 import com.yasin.vcardly.domain.repository.ContactRepository
 import com.yasin.vcardly.domain.repository.TagRepository
 import com.yasin.vcardly.domain.usecase.ContactField
 import com.yasin.vcardly.domain.usecase.ContactValidator
+import com.yasin.vcardly.presentation.scan.ScanDraftStore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
 import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +45,8 @@ data class ContactForm(
     val notes: String = "",
     val categoryId: Long? = null,
     val tagIds: Set<Long> = emptySet(),
+    val frontImage: CardImageRef? = null,
+    val backImage: CardImageRef? = null,
 )
 
 /** One-shot result of a successful save. */
@@ -51,9 +59,14 @@ data class ContactEditUiState(
     val form: ContactForm = ContactForm(),
     val errors: Map<ContactField, Reason> = emptyMap(),
     val isSaving: Boolean = false,
+    val saveFailed: Boolean = false,
     val isDirty: Boolean = false,
     val categories: List<Category> = emptyList(),
     val tags: List<Tag> = emptyList(),
+    /** True when the form was pre-filled from OCR: the UI must ask the user to review every field. */
+    val isFromScan: Boolean = false,
+    val ocrFailed: Boolean = false,
+    val unmatchedLines: List<String> = emptyList(),
 )
 
 @HiltViewModel
@@ -61,10 +74,13 @@ class ContactEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val contacts: ContactRepository,
     private val tagRepository: TagRepository,
+    private val imageStore: CardImageStore,
+    private val draftStore: ScanDraftStore,
     categories: CategoryRepository,
 ) : ViewModel() {
     /** 0 means "new contact". */
     private val contactId: Long = savedStateHandle[ContactDetailViewModel.ARG_CONTACT_ID] ?: 0L
+    private val fromScan: Boolean = contactId == 0L && (savedStateHandle[ARG_FROM_SCAN] ?: false)
 
     private data class Local(
         val loaded: Boolean,
@@ -73,13 +89,19 @@ class ContactEditViewModel @Inject constructor(
         val form: ContactForm,
         val errors: Map<ContactField, Reason>,
         val saving: Boolean,
+        val saveFailed: Boolean,
+        val unmatched: List<String>,
+        val ocrFailed: Boolean,
     )
 
     private val local = MutableStateFlow(
-        Local(loaded = contactId == 0L, notFound = false, initial = ContactForm(), form = ContactForm(), errors = emptyMap(), saving = false),
+        Local(
+            loaded = contactId == 0L, notFound = false, initial = ContactForm(), form = ContactForm(),
+            errors = emptyMap(), saving = false, saveFailed = false, unmatched = emptyList(), ocrFailed = false,
+        ),
     )
 
-    /** The contact being edited, kept so fields the form does not show (images, source, dates, favorite) survive a save. */
+    /** The contact being edited, kept so fields the form does not show (source, dates, favorite) survive a save. */
     private var original: Contact? = null
 
     private val _saved = Channel<Saved>(Channel.BUFFERED)
@@ -98,9 +120,13 @@ class ContactEditViewModel @Inject constructor(
             form = l.form,
             errors = l.errors,
             isSaving = l.saving,
+            saveFailed = l.saveFailed,
             isDirty = l.form != l.initial,
             categories = cats,
             tags = tags,
+            isFromScan = fromScan,
+            ocrFailed = l.ocrFailed,
+            unmatchedLines = l.unmatched,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ContactEditUiState())
 
@@ -116,6 +142,11 @@ class ContactEditViewModel @Inject constructor(
                     local.update { it.copy(loaded = true, initial = form, form = form) }
                 }
             }
+        } else if (fromScan) {
+            draftStore.peek()?.let { draft ->
+                // initial stays empty so a scanned draft always counts as unsaved work.
+                local.update { it.copy(form = draft.form, unmatched = draft.unmatched, ocrFailed = draft.ocrFailed) }
+            }
         }
     }
 
@@ -126,6 +157,16 @@ class ContactEditViewModel @Inject constructor(
     }
 
     fun toggleTag(id: Long) = update { it.copy(tagIds = if (id in it.tagIds) it.tagIds - id else it.tagIds + id) }
+
+    fun removeImage(front: Boolean) = update { if (front) it.copy(frontImage = null) else it.copy(backImage = null) }
+
+    /** Moves a recognised-but-unclaimed line into the notes field. */
+    fun addLineToNotes(line: String) {
+        local.update { l ->
+            val notes = if (l.form.notes.isBlank()) line else l.form.notes.trimEnd() + "\n" + line
+            l.copy(form = l.form.copy(notes = notes), unmatched = l.unmatched - line)
+        }
+    }
 
     /** Creates the tag if needed and selects it. Returns false for blank input. */
     fun addTag(name: String, onResult: (Boolean) -> Unit = {}) {
@@ -139,31 +180,67 @@ class ContactEditViewModel @Inject constructor(
     fun save() {
         val state = local.value
         if (state.saving || !state.loaded || state.notFound) return
-        val contact = state.form.toContact(original)
-        val errors = ContactValidator.validate(contact)
+        val form = state.form
+        val validated = form.toContact(original, frontPath = null, backPath = null)
+        val errors = ContactValidator.validate(validated)
         if (errors.isNotEmpty()) {
-            local.update { it.copy(errors = errors) }
+            local.update { it.copy(errors = errors, saveFailed = false) }
             return
         }
-        local.update { it.copy(saving = true) }
+        local.update { it.copy(saving = true, saveFailed = false) }
         viewModelScope.launch {
-            val id = contacts.save(contact, state.form.tagIds)
+            val persistedNow = mutableListOf<String>()
+            suspend fun resolve(ref: CardImageRef?): Result<String?> = when (ref) {
+                null -> Result.success(null)
+                is CardImageRef.Stored -> Result.success(ref.path)
+                is CardImageRef.Pending -> imageStore.persist(File(ref.path))
+                    ?.also { persistedNow += it }
+                    ?.let { Result.success(it) }
+                    ?: Result.failure(java.io.IOException())
+            }
+            val front = resolve(form.frontImage)
+            val back = resolve(form.backImage)
+            if (front.isFailure || back.isFailure) {
+                persistedNow.forEach { imageStore.delete(it) }
+                local.update { it.copy(saving = false, saveFailed = true) }
+                return@launch
+            }
+            val contact = form.toContact(original, front.getOrNull(), back.getOrNull())
+                .let { if (fromScan) it.copy(source = ContactSource.SCAN) else it }
+            val id = contacts.save(contact, form.tagIds)
+
+            // Images the user removed or replaced are no longer referenced.
+            original?.let { o ->
+                if (o.frontImagePath != contact.frontImagePath) imageStore.delete(o.frontImagePath)
+                if (o.backImagePath != contact.backImagePath) imageStore.delete(o.backImagePath)
+            }
+            if (fromScan) {
+                imageStore.clearScanCache()
+                draftStore.clear()
+            }
             local.update { it.copy(saving = false, initial = it.form) }
             _saved.send(Saved(id = id, wasNew = contactId == 0L))
         }
     }
+
+    companion object {
+        const val ARG_FROM_SCAN = "fromScan"
+    }
 }
 
-private fun com.yasin.vcardly.domain.model.ContactDetails.toForm() = ContactForm(
+private fun ContactDetails.toForm() = ContactForm(
     fullName = contact.fullName, jobTitle = contact.jobTitle, company = contact.company,
     phone = contact.phone, phoneAlt = contact.phoneAlt, email = contact.email, emailAlt = contact.emailAlt,
     website = contact.website, address = contact.address, notes = contact.notes,
     categoryId = contact.categoryId, tagIds = tags.map { it.id }.toSet(),
+    frontImage = contact.frontImagePath?.let { CardImageRef.Stored(it) },
+    backImage = contact.backImagePath?.let { CardImageRef.Stored(it) },
 )
 
-private fun ContactForm.toContact(original: Contact?): Contact =
+private fun ContactForm.toContact(original: Contact?, frontPath: String?, backPath: String?): Contact =
     (original ?: Contact(fullName = "")).copy(
         fullName = fullName, jobTitle = jobTitle, company = company,
         phone = phone, phoneAlt = phoneAlt, email = email, emailAlt = emailAlt,
         website = website, address = address, notes = notes, categoryId = categoryId,
+        frontImagePath = frontPath, backImagePath = backPath,
     )

@@ -19,10 +19,14 @@ object Routes {
     const val ORGANIZE = "organize"
 
     const val CONTACT_DETAIL = "contact/{contactId}"
-    const val CONTACT_EDIT = "contact/edit/{contactId}"
+    const val CONTACT_EDIT = "contact/edit/{contactId}?fromScan={fromScan}"
+
+    const val SCAN_GRAPH = "scan"
+    const val SCAN_CAPTURE = "scan/capture"
+    const val SCAN_CROP = "scan/crop"
     fun contactDetail(id: Long) = "contact/$id"
     /** id = 0 opens the form for a new contact. */
-    fun contactEdit(id: Long) = "contact/edit/$id"
+    fun contactEdit(id: Long, fromScan: Boolean = false) = "contact/edit/$id?fromScan=$fromScan"
 }
 
 enum class TopLevelDestination(

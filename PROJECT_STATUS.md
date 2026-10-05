@@ -12,7 +12,7 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| Pure-Kotlin JVM tests: `ContactQueryBuilderTest` (6), `CategoryBreakdownTest` (3), `ContactValidatorTest` (7), `InitialsTest` (6) | 22/22 pass (the first caught a real bug, fixed) |
+| Pure-Kotlin JVM tests: query builder (6), category breakdown (3), contact validator (7), initials (6), business-card parser (7), crop math (4) | 33/33 pass (the query-builder test caught a real bug, fixed) |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
 
@@ -27,7 +27,7 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 1 | Gradle, design system, architecture, Room foundation | Written, **not build-verified** |
 | 2 | Onboarding, navigation shell, dashboard (real DB stats), settings/theme | Written, **not build-verified** |
 | 3 | Contacts list (search/filter/sort), categories, tags, favorites, details, add/edit + validation | Written, **not build-verified** |
-| 4 | Image storage, CameraX scanner, crop/rotate, ML Kit OCR + heuristic parsing + review screen | Planned |
+| 4 | Image storage, CameraX scanner, crop/rotate, ML Kit OCR + heuristic parsing + review screen | Written, **not build-verified** |
 | 5 | Follow-ups + notifications (boot / time-change safe) | Planned |
 | 6 | Digital card, QR, vCard export/import | Planned |
 | 7 | Reports + PDF/CSV/Excel export | Planned |
@@ -35,6 +35,30 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 9 | Biometric lock + auto-lock, privacy screen | Planned |
 | 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 4 contents
+
+- **Flow**: Contacts → *Scan card* → capture (CameraX, or gallery picker) → crop/rotate → optional back side → OCR →
+  **review form** (the normal add form, pre-filled) → save. Scan state lives in a `ScanSessionViewModel` scoped to the
+  `scan` nav graph; Back steps through the flow.
+- **OCR is never trusted**: a banner on the review form says to check every field; nothing is saved until the user taps Save;
+  if OCR fails or finds nothing the form is empty and says so; lines no rule claimed are listed with "Add to notes".
+  Raw OCR text is never persisted or logged.
+- **`BusinessCardParser`** (pure Kotlin, tested): emails → websites (needs www/scheme or a known TLD, so `Pvt.Ltd` and `Dr.Rao`
+  are not URLs) → phones (7–15 digits, mobile-labelled first, fax skipped but surfaced) → job-title keywords → company
+  (suffix keywords, else the email/website domain, else most prominent line) → address (postal code / street keywords) →
+  name (2–3 letters-only words, scored by text height, position and match with the email's local part).
+- **Crop/rotate**: drag corners/move (pure `CropMath`, tested), rotate ±90°, "Whole image", retake. Rotation and crop are applied
+  to the full-resolution capture, preview is downsampled.
+- **Storage** (`CardImageStore`): permanent images in `filesDir/cards/<uuid>.jpg` (private, excluded from backup); work in progress in
+  `cacheDir/scan`, wiped when the scan ends. Paths are UUIDs, traversal-checked. Images the user removes/replaces and images of
+  deleted contacts are deleted. A failed image save blocks the contact save and tells the user.
+- **Permissions**: `CAMERA` requested only when the scanner opens; denial offers settings or gallery import (no permission needed).
+- ML Kit: bundled **Latin** model (works offline). **Telugu and Urdu scripts are not supported by ML Kit**; Hindi (Devanagari) would
+  need the separate `text-recognition-devanagari` artifact. Cards in those scripts fall back to manual entry; the parser itself is
+  script-agnostic apart from the keyword lists.
+- Known gaps: crop handles are touch-only (alternatives: "Whole image"/rotate buttons); no torch/flash toggle; a scan in
+  progress is lost if the process is killed (images are only in cache); cannot add images to an existing contact yet.
 
 ## Phase 3 contents
 
@@ -88,6 +112,8 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 - Manifest: `allowBackup=false` and data-extraction rules exclude all data (PII); user backups are explicit (Phase 8).
 
 ## Assumptions & decisions
+
+- Parser keyword lists are English/Latin; card layouts vary, so accuracy will be measured on real cards once the app runs.
 
 - Phone validation is lenient on formatting but requires 5–15 digits; extensions ("ext 9") are rejected for now.
 - Custom categories get a colour from a fixed palette (no colour picker yet); tag colours unused so far.

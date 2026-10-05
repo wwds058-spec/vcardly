@@ -49,7 +49,9 @@ import com.yasin.vcardly.core.designsystem.component.EmptyState
 import com.yasin.vcardly.core.designsystem.component.LoadingState
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
+import com.yasin.vcardly.core.image.CardImageRef
 import com.yasin.vcardly.domain.model.ContactDetails
+import com.yasin.vcardly.presentation.common.CardImageView
 import com.yasin.vcardly.presentation.common.ContactAvatar
 import com.yasin.vcardly.presentation.common.displayName
 import java.text.DateFormat
@@ -151,6 +153,13 @@ private fun DetailContent(details: ContactDetails) {
             ) {
                 details.category?.let { AssistChip(onClick = {}, enabled = false, label = { Text(it.displayName().asString()) }) }
                 details.tags.forEach { AssistChip(onClick = {}, enabled = false, label = { Text("#${it.name}") }) }
+            }
+        }
+
+        if (contact.frontImagePath != null || contact.backImagePath != null) {
+            Row(Modifier.fillMaxWidth().padding(vertical = spacing.sm), horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
+                contact.frontImagePath?.let { CardImageView(CardImageRef.Stored(it), stringResource(R.string.card_front), Modifier.weight(1f)) }
+                contact.backImagePath?.let { CardImageView(CardImageRef.Stored(it), stringResource(R.string.card_back), Modifier.weight(1f)) }
             }
         }
 

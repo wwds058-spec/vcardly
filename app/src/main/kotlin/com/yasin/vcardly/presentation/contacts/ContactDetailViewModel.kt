@@ -3,6 +3,7 @@ package com.yasin.vcardly.presentation.contacts
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yasin.vcardly.core.image.CardImageStore
 import com.yasin.vcardly.domain.model.ContactDetails
 import com.yasin.vcardly.domain.repository.ContactRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ sealed interface ContactDetailUiState {
 class ContactDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val contacts: ContactRepository,
+    private val imageStore: CardImageStore,
 ) : ViewModel() {
     private val contactId: Long = checkNotNull(savedStateHandle[ARG_CONTACT_ID])
 
@@ -35,10 +37,13 @@ class ContactDetailViewModel @Inject constructor(
         viewModelScope.launch { contacts.setFavorite(current.id, !current.isFavorite) }
     }
 
-    /** Card images are app-private files; their cleanup is added with image storage in Phase 4. */
+    /** Deletes the contact and then its card image files (so a failed DB delete never orphans a record). */
     fun delete(onDone: () -> Unit) {
+        val contact = (uiState.value as? ContactDetailUiState.Content)?.details?.contact
         viewModelScope.launch {
             contacts.delete(contactId)
+            imageStore.delete(contact?.frontImagePath)
+            imageStore.delete(contact?.backImagePath)
             onDone()
         }
     }

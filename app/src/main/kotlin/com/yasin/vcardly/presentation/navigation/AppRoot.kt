@@ -17,7 +17,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
+import androidx.navigation.navigation
+import com.yasin.vcardly.presentation.scan.ScanCaptureScreen
+import com.yasin.vcardly.presentation.scan.ScanCropScreen
+import com.yasin.vcardly.presentation.scan.ScanSessionViewModel
 import androidx.navigation.navArgument
 import com.yasin.vcardly.presentation.contacts.ContactDetailScreen
 import com.yasin.vcardly.presentation.contacts.ContactEditScreen
@@ -84,6 +91,7 @@ fun AppRoot(onboardingCompleted: Boolean) {
                 ContactsScreen(
                     onOpenContact = { navController.navigate(Routes.contactDetail(it)) },
                     onAddContact = { navController.navigate(Routes.contactEdit(0)) },
+                    onScanCard = { navController.navigate(Routes.SCAN_GRAPH) },
                 )
             }
             composable(Routes.CONTACT_DETAIL, arguments = contactIdArgs) {
@@ -92,20 +100,41 @@ fun AppRoot(onboardingCompleted: Boolean) {
                     onEdit = { navController.navigate(Routes.contactEdit(it)) },
                 )
             }
-            composable(Routes.CONTACT_EDIT, arguments = contactIdArgs) {
+            composable(Routes.CONTACT_EDIT, arguments = contactIdArgs + fromScanArg) { entry ->
+                val fromScan = entry.arguments?.getBoolean("fromScan") ?: false
                 ContactEditScreen(
                     onNavigateUp = { navController.popBackStack() },
                     onSaved = { id, wasNew ->
                         if (wasNew) {
-                            // Replace the form with the new contact's details so Back returns to the list.
+                            // Replace the form (and, after a scan, the whole scan flow) with the new
+                            // contact's details so Back returns to the list.
                             navController.navigate(Routes.contactDetail(id)) {
-                                popUpTo(Routes.CONTACT_EDIT) { inclusive = true }
+                                popUpTo(if (fromScan) Routes.SCAN_GRAPH else Routes.CONTACT_EDIT) { inclusive = true }
                             }
                         } else {
                             navController.popBackStack()
                         }
                     },
                 )
+            }
+            navigation(route = Routes.SCAN_GRAPH, startDestination = Routes.SCAN_CAPTURE) {
+                composable(Routes.SCAN_CAPTURE) { entry ->
+                    val session = scanSession(navController, entry)
+                    ScanCaptureScreen(
+                        session = session,
+                        onCancel = { navController.popBackStack(Routes.SCAN_GRAPH, inclusive = true) },
+                        onCaptured = { navController.navigate(Routes.SCAN_CROP) },
+                    )
+                }
+                composable(Routes.SCAN_CROP) { entry ->
+                    val session = scanSession(navController, entry)
+                    ScanCropScreen(
+                        session = session,
+                        onRetake = { navController.popBackStack() },
+                        onBackToCapture = { navController.popBackStack(Routes.SCAN_CAPTURE, inclusive = false) },
+                        onReview = { navController.navigate(Routes.contactEdit(0, fromScan = true)) },
+                    )
+                }
             }
             composable(Routes.ORGANIZE) { OrganizeScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.FOLLOW_UPS) {
@@ -119,6 +148,17 @@ fun AppRoot(onboardingCompleted: Boolean) {
 }
 
 private val contactIdArgs = listOf(navArgument("contactId") { type = NavType.LongType })
+private val fromScanArg = navArgument("fromScan") {
+    type = NavType.BoolType
+    defaultValue = false
+}
+
+/** The scan session lives as long as the scan graph is on the back stack. */
+@Composable
+private fun scanSession(navController: NavHostController, entry: NavBackStackEntry): ScanSessionViewModel {
+    val parent = remember(entry) { navController.getBackStackEntry(Routes.SCAN_GRAPH) }
+    return hiltViewModel(parent)
+}
 
 /** Standard bottom-nav behaviour: one instance per tab, state restored, no back-stack growth. */
 private fun NavHostController.navigateTopLevel(route: String) {

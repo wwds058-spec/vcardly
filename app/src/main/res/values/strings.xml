@@ -151,4 +151,40 @@
         <item quantity="one">%1$d contact</item>
         <item quantity="other">%1$d contacts</item>
     </plurals>
+
+    <!-- Scanner -->
+    <string name="contacts_scan">Scan card</string>
+    <string name="scan_title_front">Scan front</string>
+    <string name="scan_title_back">Scan back</string>
+    <string name="scan_take_photo">Take photo</string>
+    <string name="scan_pick_gallery">Choose from gallery</string>
+    <string name="scan_camera_failed">The camera could not be started. You can choose a photo from your gallery instead.</string>
+    <string name="scan_permission_title">Camera access needed</string>
+    <string name="scan_permission_message">VCardly uses the camera only to photograph business cards. Photos stay on this device. You can also choose an existing photo instead.</string>
+    <string name="scan_permission_allow">Allow camera</string>
+    <string name="scan_permission_settings">Open app settings</string>
+    <string name="scan_error_import">That photo could not be opened.</string>
+    <string name="scan_error_unreadable">That image could not be read. Try another photo.</string>
+    <string name="scan_error_crop">The card could not be cropped. Please try again.</string>
+    <string name="scan_crop_title">Crop card</string>
+    <string name="scan_crop_hint">Drag the corners to fit the card, or drag inside to move the selection.</string>
+    <string name="scan_rotate_left">Rotate left</string>
+    <string name="scan_rotate_right">Rotate right</string>
+    <string name="scan_use_full_image">Whole image</string>
+    <string name="scan_retake">Retake</string>
+    <string name="scan_use_crop">Use this</string>
+    <string name="scan_back_title">Scan the back too?</string>
+    <string name="scan_back_message">If the back of the card has details, scan it as well.</string>
+    <string name="scan_back_add">Scan back</string>
+    <string name="scan_back_done">No, continue</string>
+    <string name="scan_review_banner">Review before saving. Text recognition can make mistakes, so check every field.</string>
+    <string name="scan_review_ocr_failed">No text could be read from the card. Fill in the details yourself; the card images are kept.</string>
+    <string name="scan_unmatched_title">Other text found on the card</string>
+    <string name="scan_unmatched_hint">This text was not matched to a field. Add anything useful to the notes.</string>
+    <string name="scan_add_to_notes">Add to notes</string>
+    <string name="field_card_images">Card images</string>
+    <string name="card_front">Front of card</string>
+    <string name="card_back">Back of card</string>
+    <string name="card_remove_image">Remove image: %1$s</string>
+    <string name="contact_save_failed">The card images could not be saved. Please try again.</string>
 </resources>
