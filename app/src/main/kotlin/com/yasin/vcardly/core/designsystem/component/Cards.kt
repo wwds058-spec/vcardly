@@ -244,17 +244,3 @@ fun DefaultChevron() {
 fun VCardlyGroup(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     VCardlyCard(modifier.fillMaxWidth(), contentPadding = 4.dp, content = content)
 }
-
-/** Legacy names kept so older call sites keep compiling while screens are migrated. */
-@Composable
-fun SectionHeader(text: String, modifier: Modifier = Modifier) = VCardlySectionHeader(text, modifier.padding(top = MaterialTheme.spacing.sm))
-
-/** Legacy stat card kept for screens not yet migrated to [VCardlyStatCard]. */
-@Composable
-fun StatCard(label: String, value: String, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
-    val tone = MaterialTheme.vcColors.blue
-    VCardlyCard(modifier, onClick = onClick, color = tone.container) {
-        Text(value, style = StatValueStyle, color = tone.content)
-        Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    }
-}

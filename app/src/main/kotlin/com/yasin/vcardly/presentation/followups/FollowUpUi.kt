@@ -3,7 +3,7 @@ package com.yasin.vcardly.presentation.followups
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.Chat
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.Payments
@@ -36,7 +36,7 @@ fun FollowUpType.labelRes(): Int = when (this) {
 val FollowUpType.icon: ImageVector
     get() = when (this) {
         FollowUpType.CALL -> Icons.Rounded.Call
-        FollowUpType.WHATSAPP -> Icons.Rounded.Chat
+        FollowUpType.WHATSAPP -> Icons.AutoMirrored.Rounded.Chat
         FollowUpType.EMAIL -> Icons.Rounded.Email
         FollowUpType.MEETING -> Icons.Rounded.Groups
         FollowUpType.QUOTATION -> Icons.Rounded.RequestQuote

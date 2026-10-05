@@ -39,7 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
-import com.yasin.vcardly.core.designsystem.component.SectionHeader
+import com.yasin.vcardly.core.designsystem.component.VCardlySectionHeader
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
@@ -68,7 +68,7 @@ fun OrganizeScreen(onNavigateUp: () -> Unit, viewModel: OrganizeViewModel = hilt
     Column(Modifier.fillMaxSize()) {
         VCardlyTopBar(title = stringResource(R.string.organize_title), onNavigateUp = onNavigateUp)
         LazyColumn(Modifier.fillMaxSize().navigationBarsPadding(), contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = MaterialTheme.spacing.md)) {
-            item(key = "h-categories") { SectionHeader(stringResource(R.string.organize_categories)) }
+            item(key = "h-categories") { VCardlySectionHeader(stringResource(R.string.organize_categories)) }
             items(state.categories, key = { "c${it.id}" }) { category ->
                 ItemRow(
                     title = category.displayName().asString(),
@@ -86,7 +86,7 @@ fun OrganizeScreen(onNavigateUp: () -> Unit, viewModel: OrganizeViewModel = hilt
                 )
             }
 
-            item(key = "h-tags") { SectionHeader(stringResource(R.string.organize_tags)) }
+            item(key = "h-tags") { VCardlySectionHeader(stringResource(R.string.organize_tags)) }
             if (state.tags.isEmpty()) {
                 item(key = "no-tags") {
                     Text(

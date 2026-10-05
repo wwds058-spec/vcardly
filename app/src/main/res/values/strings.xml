@@ -28,15 +28,10 @@
     <string name="onboarding_3_body">Set reminders for calls, emails and meetings so every connection gets the attention it deserves.</string>
 
     <!-- Dashboard -->
-    <string name="dashboard_empty_title">No contacts yet</string>
-    <string name="dashboard_empty_message">Add your first contact to see your stats here.</string>
-    <string name="dashboard_empty_action">Go to contacts</string>
-    <string name="dashboard_section_contacts">Contacts</string>
     <string name="dashboard_section_follow_ups">Follow-ups</string>
     <string name="dashboard_section_categories">By category</string>
     <string name="dashboard_total">Total</string>
     <string name="dashboard_favorites">Favorites</string>
-    <string name="dashboard_added_30_days">Added in 30 days</string>
     <plurals name="dashboard_category_summary">
         <item quantity="one">%1$s: %2$s contact</item>
         <item quantity="other">%1$s: %2$s contacts</item>
@@ -48,7 +43,6 @@
     <string name="followup_upcoming">Upcoming</string>
 
     <!-- Settings -->
-    <string name="settings_theme">Theme</string>
     <string name="theme_system">System default</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
@@ -82,13 +76,11 @@
     <string name="error_invalid_website">Enter a valid website, like example.com</string>
 
     <!-- Contacts list -->
-    <string name="contacts_search_hint">Search name, company, phone, tag</string>
     <string name="contacts_clear_search">Clear search</string>
     <string name="contacts_count">%1$d shown</string>
     <string name="contacts_sort_prefix">Sort: %1$s</string>
     <string name="contacts_filter_favorites">Favorites</string>
     <string name="contacts_add">Add contact</string>
-    <string name="contacts_empty_title">No contacts yet</string>
     <string name="contacts_empty_message">Scan your first visiting card, or add a contact by hand.</string>
     <string name="contacts_no_results_title">No matching contacts</string>
     <string name="contacts_no_results_message">Try a different search or remove some filters.</string>
@@ -100,7 +92,6 @@
     <string name="sort_recently_updated">Recently updated</string>
 
     <!-- Contact details / form -->
-    <string name="contact_details_title">Contact</string>
     <string name="contact_add_title">New contact</string>
     <string name="contact_edit_title">Edit contact</string>
     <string name="contact_edit">Edit</string>
@@ -111,7 +102,6 @@
     <string name="contact_remove_favorite">Remove %1$s from favorites</string>
     <string name="contact_not_found_title">Contact not found</string>
     <string name="contact_not_found_message">This contact may have been deleted.</string>
-    <string name="contact_added_on">Added %1$s</string>
     <string name="action_call">Call</string>
     <string name="action_email">Send email</string>
     <string name="field_full_name">Full name</string>
@@ -133,7 +123,6 @@
     <string name="discard_confirm">Discard</string>
 
     <!-- Organize categories and tags -->
-    <string name="settings_data">Data</string>
     <string name="settings_organize">Categories and tags</string>
     <string name="organize_title">Categories and tags</string>
     <string name="organize_categories">Categories</string>
@@ -179,14 +168,12 @@
     <string name="scan_back_add">Scan back</string>
     <string name="scan_back_done">No, continue</string>
     <string name="scan_review_banner">Review before saving. Text recognition can make mistakes, so check every field.</string>
-    <string name="scan_review_ocr_failed">No text could be read from the card. Fill in the details yourself; the card images are kept.</string>
     <string name="scan_unmatched_title">Other text found on the card</string>
     <string name="scan_unmatched_hint">This text was not matched to a field. Add anything useful to the notes.</string>
     <string name="scan_add_to_notes">Add to notes</string>
     <string name="field_card_images">Card images</string>
     <string name="card_front">Front of card</string>
     <string name="card_back">Back of card</string>
-    <string name="card_remove_image">Remove image: %1$s</string>
     <string name="contact_save_failed">The card images could not be saved. Please try again.</string>
 
     <!-- Follow-ups -->
@@ -195,15 +182,12 @@
     <string name="followup_tab">%1$s (%2$s)</string>
     <string name="followup_add">Add follow-up</string>
     <string name="followup_edit">Edit follow-up</string>
-    <string name="followup_empty_title">Nothing here</string>
     <string name="followup_empty_overdue">Nothing is overdue. Nice work.</string>
     <string name="followup_empty_today">Nothing is due today. Plan a follow-up to keep your network warm.</string>
     <string name="followup_empty_upcoming">Plan your next call, meeting or quotation so nothing slips.</string>
     <string name="followup_empty_completed">Completed follow-ups will appear here.</string>
-    <string name="followup_row_subtitle">%1$s · %2$s</string>
     <string name="followup_complete_item">Mark %1$s as done</string>
     <string name="followup_reopen_item">Mark %1$s as not done</string>
-    <string name="followup_delete_item">Delete %1$s</string>
     <string name="followup_delete_title">Delete follow-up?</string>
     <string name="followup_delete_message">%1$s will be removed.</string>
     <string name="followup_not_found_title">Follow-up not found</string>
@@ -237,7 +221,6 @@
     <string name="notif_text_other">Follow up with %1$s</string>
 
     <!-- Settings: reminders -->
-    <string name="settings_reminders">Reminders</string>
     <string name="settings_notifications_on">Notifications are on.</string>
     <string name="settings_notifications_off">Notifications are off, so reminders cannot be shown.</string>
     <string name="settings_open_notification_settings">Open notification settings</string>
@@ -259,7 +242,6 @@
     <string name="share_choose_hint">Only the selected details go into the QR code and the file. Private notes are never shared.</string>
     <string name="share_qr_description">QR code containing the contact details of %1$s</string>
     <string name="share_qr_too_large">Too much information for one QR code. Untick some details.</string>
-    <string name="share_as_file">Share as contact file</string>
     <string name="share_chooser_title">Share contact</string>
     <string name="share_failed">The contact file could not be created. Please try again.</string>
 
@@ -304,15 +286,11 @@
     <string name="report_range_3_months">Last 3 months</string>
     <string name="report_range_12_months">Last 12 months</string>
     <string name="report_range_all">All time</string>
-    <string name="report_section_activity">Activity</string>
-    <string name="report_section_library">Your contacts today</string>
-    <string name="report_library_note">These figures cover everything you have saved, whatever period is selected.</string>
     <string name="report_section_summary">Summary</string>
     <string name="report_added_in_range">Contacts added</string>
     <string name="report_added_per_month">Contacts added per month</string>
     <string name="report_followups_due">Follow-ups due</string>
     <string name="report_completion_rate">Completion rate</string>
-    <string name="report_completion_summary">%1$s%% completed (%2$s of %3$s follow-ups that were due)</string>
     <string name="report_followups_by_type">Follow-ups by type</string>
     <string name="report_by_source">How contacts were added</string>
     <string name="report_top_tags">Most used tags</string>
@@ -325,14 +303,10 @@
     <string name="source_import">Imported</string>
     <string name="reports_export">Export</string>
     <string name="reports_export_hint">Choose where to save the file. Nothing is uploaded anywhere.</string>
-    <string name="export_pdf">PDF report</string>
-    <string name="export_csv">Contacts as CSV</string>
-    <string name="export_xlsx">Contacts and follow-ups as Excel</string>
     <string name="export_file_pdf">vcardly-report.pdf</string>
     <string name="export_file_csv">vcardly-contacts.csv</string>
     <string name="export_file_xlsx">vcardly-workbook.xlsx</string>
     <string name="export_done">File saved.</string>
-    <string name="export_failed">The file could not be saved.</string>
     <string name="export_privacy_note">Exports contain your contacts\' personal details and private notes. Store and share them carefully.</string>
     <string name="export_sheet_contacts">Contacts</string>
     <string name="export_sheet_follow_ups">Follow-ups</string>
@@ -471,7 +445,6 @@
     <string name="pro_settings_upgrade">Upgrade to Pro</string>
     <string name="pro_settings_active">VCardly Pro is active</string>
     <string name="pro_intro">Unlock the full toolkit and remove ads. Your own data is never locked away: backup, restore, vCard and CSV export, app lock and reminders are free for everyone.</string>
-    <string name="pro_includes">Pro includes</string>
     <string name="pro_feature_pdf">PDF reports</string>
     <string name="pro_feature_excel">Excel export of contacts and follow-ups</string>
     <string name="pro_feature_scans">Unlimited card scans</string>
@@ -544,7 +517,6 @@
     <string name="common_no_app">No app on this device can do that.</string>
     <string name="common_more">More</string>
     <string name="common_more_options">More options</string>
-    <string name="common_copy">Copy</string>
     <string name="common_copy_item">Copy %1$s</string>
     <string name="common_close">Close</string>
     <string name="common_back">Back</string>

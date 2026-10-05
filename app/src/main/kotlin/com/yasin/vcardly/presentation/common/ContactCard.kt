@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.Chat
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
@@ -93,7 +93,7 @@ fun VCardlyContactCard(
                     VCardlyIconButton(Icons.Rounded.Call, stringResource(R.string.action_call_name, contact.fullName), { ExternalActions.dial(context, phone) },
                         containerColor = colors.blue.container, contentColor = colors.blue.accent, size = 36.dp)
                     if (whatsAppDigits(phone) != null) {
-                        VCardlyIconButton(Icons.Rounded.Chat, stringResource(R.string.action_whatsapp_name, contact.fullName), { ExternalActions.whatsApp(context, phone) },
+                        VCardlyIconButton(Icons.AutoMirrored.Rounded.Chat, stringResource(R.string.action_whatsapp_name, contact.fullName), { ExternalActions.whatsApp(context, phone) },
                             containerColor = colors.mint.container, contentColor = colors.whatsapp, size = 36.dp)
                     }
                 }

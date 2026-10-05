@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ManageSearch
+import androidx.compose.material.icons.automirrored.rounded.ManageSearch
 import androidx.compose.material.icons.rounded.SearchOff
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -57,7 +57,7 @@ fun SearchScreen(
             modifier = Modifier.padding(horizontal = MaterialTheme.spacing.screen),
         )
         when {
-            state.isBlank -> VCardlyEmptyState(Icons.Rounded.ManageSearch, stringResource(R.string.search_prompt_title), stringResource(R.string.search_prompt_message))
+            state.isBlank -> VCardlyEmptyState(Icons.AutoMirrored.Rounded.ManageSearch, stringResource(R.string.search_prompt_title), stringResource(R.string.search_prompt_message))
             state.isEmpty -> VCardlyEmptyState(Icons.Rounded.SearchOff, stringResource(R.string.contacts_no_results_title), stringResource(R.string.search_no_results_message), tone = MaterialTheme.vcColors.orange)
             else -> LazyColumn(
                 Modifier.fillMaxSize(),

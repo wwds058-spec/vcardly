@@ -14,7 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.Chat
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.LocationOn
@@ -73,7 +73,7 @@ fun VCardlyDigitalCard(card: MyCard, modifier: Modifier = Modifier) {
             val phone = card.phone.ifBlank { card.phoneAlt }
             val badges = buildList {
                 if (phone.isNotBlank()) add(Icons.Rounded.Call to colors.blue.accent)
-                if (whatsAppDigits(phone) != null) add(Icons.Rounded.Chat to colors.whatsapp)
+                if (whatsAppDigits(phone) != null) add(Icons.AutoMirrored.Rounded.Chat to colors.whatsapp)
                 if (card.email.isNotBlank() || card.emailAlt.isNotBlank()) add(Icons.Rounded.Email to colors.lavender.accent)
                 if (card.website.isNotBlank()) add(Icons.Rounded.Language to colors.blue.accent)
                 if (card.address.isNotBlank()) add(Icons.Rounded.LocationOn to colors.rose.accent)

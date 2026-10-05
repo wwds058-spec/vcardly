@@ -22,7 +22,7 @@ import androidx.compose.material.icons.automirrored.rounded.Sort
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.DocumentScanner
-import androidx.compose.material.icons.rounded.Label
+import androidx.compose.material.icons.automirrored.rounded.Label
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.SearchOff
@@ -168,7 +168,7 @@ fun ContactsContent(state: ContactsUiState, actions: ContactsActions) {
                             if (selected == 0) stringResource(R.string.field_tags) else stringResource(R.string.contacts_tags_selected, selected),
                             selected = selected > 0,
                             onClick = { tagSheet = true },
-                            leadingIcon = Icons.Rounded.Label,
+                            leadingIcon = Icons.AutoMirrored.Rounded.Label,
                         )
                     }
                 }
@@ -273,7 +273,7 @@ private fun OverflowMenu(onOpenOrganize: () -> Unit) {
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.settings_organize)) },
-                leadingIcon = { Icon(Icons.Rounded.Label, contentDescription = null) },
+                leadingIcon = { Icon(Icons.AutoMirrored.Rounded.Label, contentDescription = null) },
                 onClick = { open = false; onOpenOrganize() },
             )
         }

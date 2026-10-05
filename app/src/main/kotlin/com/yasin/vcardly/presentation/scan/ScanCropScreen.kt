@@ -26,8 +26,8 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CropFree
 import androidx.compose.material.icons.rounded.DocumentScanner
 import androidx.compose.material.icons.rounded.Flip
-import androidx.compose.material.icons.rounded.RotateLeft
-import androidx.compose.material.icons.rounded.RotateRight
+import androidx.compose.material.icons.automirrored.rounded.RotateLeft
+import androidx.compose.material.icons.automirrored.rounded.RotateRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -114,8 +114,8 @@ fun ScanCropScreen(
             }
 
             Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
-                ScanControl(Icons.Rounded.RotateLeft, stringResource(R.string.scan_rotate_left), { session.rotate(clockwise = false) }, enabled = !state.isWorking)
-                ScanControl(Icons.Rounded.RotateRight, stringResource(R.string.scan_rotate_right), { session.rotate(clockwise = true) }, enabled = !state.isWorking)
+                ScanControl(Icons.AutoMirrored.Rounded.RotateLeft, stringResource(R.string.scan_rotate_left), { session.rotate(clockwise = false) }, enabled = !state.isWorking)
+                ScanControl(Icons.AutoMirrored.Rounded.RotateRight, stringResource(R.string.scan_rotate_right), { session.rotate(clockwise = true) }, enabled = !state.isWorking)
                 // Keyboard / TalkBack users cannot drag handles, so offer a whole-image action.
                 ScanControl(Icons.Rounded.CropFree, stringResource(R.string.scan_use_full_image), { rect = NormalizedRect.Full }, enabled = !state.isWorking)
             }

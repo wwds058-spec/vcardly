@@ -27,7 +27,7 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Fingerprint
 import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Label
+import androidx.compose.material.icons.automirrored.rounded.Label
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Policy
@@ -233,7 +233,7 @@ fun SettingsContent(state: SettingsUiState, actions: SettingsActions) {
                 VCardlyNavigationRow(Icons.Rounded.Backup, colors.mint, stringResource(R.string.backup_title), description = stringResource(R.string.settings_backup_hint), onClick = actions.onOpenBackup)
                 VCardlyNavigationRow(Icons.Rounded.SwapVert, colors.blue, stringResource(R.string.settings_transfer), description = stringResource(R.string.settings_transfer_hint), onClick = actions.onOpenTransfer)
                 VCardlyNavigationRow(Icons.Rounded.BarChart, colors.lavender, stringResource(R.string.reports_title), description = stringResource(R.string.settings_reports_hint), onClick = actions.onOpenReports)
-                VCardlyNavigationRow(Icons.Rounded.Label, colors.orange, stringResource(R.string.settings_organize), description = stringResource(R.string.settings_organize_hint), onClick = actions.onOpenOrganize)
+                VCardlyNavigationRow(Icons.AutoMirrored.Rounded.Label, colors.orange, stringResource(R.string.settings_organize), description = stringResource(R.string.settings_organize_hint), onClick = actions.onOpenOrganize)
                 VCardlyNavigationRow(Icons.Rounded.Badge, colors.navy, stringResource(R.string.settings_my_card), description = stringResource(R.string.settings_my_card_hint), onClick = actions.onOpenMyCard)
             }
 

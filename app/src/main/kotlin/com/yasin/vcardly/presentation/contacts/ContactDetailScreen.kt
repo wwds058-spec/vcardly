@@ -34,7 +34,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddPhotoAlternate
 import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.Chat
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Delete
@@ -254,7 +254,7 @@ private fun Loaded(details: ContactDetails, followUps: List<FollowUp>, actions: 
 
                 Row(Modifier.fillMaxWidth().padding(top = 20.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                     QuickAction(Icons.Rounded.Call, stringResource(R.string.action_call), colors.blue, enabled = phone.isNotBlank()) { launch(ExternalActions.dial(context, phone)) }
-                    QuickAction(Icons.Rounded.Chat, stringResource(R.string.followup_type_whatsapp), colors.mint, enabled = whatsAppDigits(phone) != null) { launch(ExternalActions.whatsApp(context, phone)) }
+                    QuickAction(Icons.AutoMirrored.Rounded.Chat, stringResource(R.string.followup_type_whatsapp), colors.mint, enabled = whatsAppDigits(phone) != null) { launch(ExternalActions.whatsApp(context, phone)) }
                     QuickAction(Icons.Rounded.Email, stringResource(R.string.field_email), colors.lavender, enabled = email.isNotBlank()) { launch(ExternalActions.email(context, email)) }
                     MoreAction(actions)
                 }
@@ -404,7 +404,7 @@ private fun DetailsTab(details: ContactDetails, followUps: List<FollowUp>, copy:
         val wa = contact.phone.ifBlank { contact.phoneAlt }
         if (whatsAppDigits(wa) != null) add {
             val label = stringResource(R.string.followup_type_whatsapp)
-            VCardlyInfoRow(Icons.Rounded.Chat, colors.mint, label, wa, onClick = { launch(ExternalActions.whatsApp(context, wa)) }, onClickLabel = stringResource(R.string.detail_open_whatsapp),
+            VCardlyInfoRow(Icons.AutoMirrored.Rounded.Chat, colors.mint, label, wa, onClick = { launch(ExternalActions.whatsApp(context, wa)) }, onClickLabel = stringResource(R.string.detail_open_whatsapp),
                 trailingIcon = Icons.Rounded.ContentCopy, trailingDescription = stringResource(R.string.common_copy_item, label), onTrailing = { copy(label, wa) })
         }
         fun emailRow(labelRes: Int, value: String) = add {

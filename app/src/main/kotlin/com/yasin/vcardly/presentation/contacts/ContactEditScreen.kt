@@ -63,7 +63,7 @@ import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.RotateRight
+import androidx.compose.material.icons.automirrored.rounded.RotateRight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -436,7 +436,7 @@ private fun ImageSlot(ref: CardImageRef?, label: String, front: Boolean, busy: B
                 DropdownMenuItem(text = { Text(stringResource(R.string.card_take_photo)) }, leadingIcon = { Icon(Icons.Rounded.PhotoCamera, null) }, onClick = { menu = false; actions.onTakePhoto(front) })
                 DropdownMenuItem(text = { Text(stringResource(R.string.scan_pick_gallery)) }, leadingIcon = { Icon(Icons.Rounded.PhotoLibrary, null) }, onClick = { menu = false; actions.onPickImage(front) })
                 if (ref != null) {
-                    DropdownMenuItem(text = { Text(stringResource(R.string.scan_rotate_right)) }, leadingIcon = { Icon(Icons.Rounded.RotateRight, null) }, onClick = { menu = false; actions.onRotateImage(front) })
+                    DropdownMenuItem(text = { Text(stringResource(R.string.scan_rotate_right)) }, leadingIcon = { Icon(Icons.AutoMirrored.Rounded.RotateRight, null) }, onClick = { menu = false; actions.onRotateImage(front) })
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.card_remove), color = MaterialTheme.colorScheme.error) },
                         leadingIcon = { Icon(Icons.Rounded.Delete, null, tint = MaterialTheme.colorScheme.error) },

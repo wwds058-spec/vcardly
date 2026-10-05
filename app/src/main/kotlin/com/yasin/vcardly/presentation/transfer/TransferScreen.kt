@@ -34,7 +34,7 @@ import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
 import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
 import com.yasin.vcardly.core.designsystem.component.VCardlySecondaryButton
-import com.yasin.vcardly.core.designsystem.component.SectionHeader
+import com.yasin.vcardly.core.designsystem.component.VCardlySectionHeader
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
@@ -59,7 +59,7 @@ fun TransferScreen(onNavigateUp: () -> Unit, viewModel: TransferViewModel = hilt
             contentPadding = androidx.compose.foundation.layout.PaddingValues(MaterialTheme.spacing.md),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {
-            item { SectionHeader(stringResource(R.string.transfer_import)) }
+            item { VCardlySectionHeader(stringResource(R.string.transfer_import)) }
             when (import) {
                 ImportState.Idle -> item { ImportIntro { openLauncher.launch(arrayOf("*/*")) } }
                 ImportState.Reading, ImportState.Importing -> item { CircularProgressIndicator() }
@@ -98,7 +98,7 @@ fun TransferScreen(onNavigateUp: () -> Unit, viewModel: TransferViewModel = hilt
                 }
             }
 
-            item { SectionHeader(stringResource(R.string.transfer_export)) }
+            item { VCardlySectionHeader(stringResource(R.string.transfer_export)) }
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
                     Text(stringResource(R.string.transfer_export_description), style = MaterialTheme.typography.bodyMedium)
