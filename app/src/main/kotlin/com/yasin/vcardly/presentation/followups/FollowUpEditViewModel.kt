@@ -7,6 +7,7 @@ import com.yasin.vcardly.core.common.AppError.Validation.Reason
 import com.yasin.vcardly.domain.model.ContactDetails
 import com.yasin.vcardly.domain.model.ContactFilter
 import com.yasin.vcardly.domain.model.FollowUp
+import com.yasin.vcardly.domain.model.FollowUpStatus
 import com.yasin.vcardly.domain.model.FollowUpType
 import com.yasin.vcardly.domain.reminder.DueTime
 import com.yasin.vcardly.domain.repository.ContactRepository
@@ -49,6 +50,8 @@ data class FollowUpEditUiState(
     val isSaving: Boolean = false,
     val isDirty: Boolean = false,
     val zone: java.time.ZoneId = java.time.ZoneId.systemDefault(),
+    /** Stored status of an existing follow-up (null while creating). */
+    val status: FollowUpStatus? = null,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -68,6 +71,7 @@ class FollowUpEditViewModel @Inject constructor(
     private data class Local(
         val loaded: Boolean, val notFound: Boolean, val initial: FollowUpForm, val form: FollowUpForm,
         val errors: Map<FollowUpField, Reason>, val saving: Boolean,
+        val status: FollowUpStatus? = null,
     )
 
     private val defaultForm = FollowUpForm(dueAt = DueTime.defaultDue(clock.instant(), clock.zone))
@@ -83,6 +87,7 @@ class FollowUpEditViewModel @Inject constructor(
         FollowUpEditUiState(
             isLoading = !l.loaded, isNew = followUpId == 0L, notFound = l.notFound, form = l.form,
             errors = l.errors, isSaving = l.saving, isDirty = l.form != l.initial, zone = clock.zone,
+            status = l.status,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FollowUpEditUiState())
 
@@ -105,7 +110,7 @@ class FollowUpEditViewModel @Inject constructor(
                 } else {
                     original = f
                     val form = FollowUpForm(f.contactId, name, f.title, f.notes, f.type, f.dueAt, f.reminderEnabled, f.reminderOffsetMinutes)
-                    local.update { it.copy(loaded = true, initial = form, form = form) }
+                    local.update { it.copy(loaded = true, initial = form, form = form, status = f.status) }
                 }
             } else {
                 val preset = if (presetContactId != 0L) contacts.getContact(presetContactId)?.contact else null
@@ -128,9 +133,12 @@ class FollowUpEditViewModel @Inject constructor(
         if (s.saving || !s.loaded || s.notFound) return
         val f = s.form
         val base = original ?: FollowUp(contactId = f.contactId, title = f.title, dueAt = f.dueAt)
+        // Moving an active follow-up to a new time marks it Rescheduled (it stays active and keeps its reminder).
+        val rescheduled = original?.let { it.status.isActive && it.dueAt != f.dueAt } == true
         val followUp = base.copy(
             contactId = f.contactId, title = f.title, notes = f.notes, type = f.type, dueAt = f.dueAt,
             reminderEnabled = f.reminderEnabled, reminderOffsetMinutes = f.reminderOffsetMinutes,
+            status = if (rescheduled) FollowUpStatus.RESCHEDULED else base.status,
         )
         val errors = FollowUpValidator.validate(followUp)
         if (errors.isNotEmpty()) { local.update { it.copy(errors = errors) }; return }
@@ -139,6 +147,20 @@ class FollowUpEditViewModel @Inject constructor(
             val id = manager.save(followUp)
             local.update { it.copy(saving = false, initial = it.form) }
             _saved.send(id)
+        }
+    }
+
+    /** Status changes from the edit screen; each closes the screen afterwards. */
+    fun complete() = closeAfter { manager.complete(followUpId) }
+    fun reopen() = closeAfter { manager.reopen(followUpId) }
+    fun cancelFollowUp() = closeAfter { manager.cancel(followUpId) }
+    fun delete() = closeAfter { manager.delete(followUpId) }
+
+    private fun closeAfter(block: suspend () -> Unit) {
+        if (followUpId == 0L) return
+        viewModelScope.launch {
+            block()
+            _saved.send(followUpId)
         }
     }
 

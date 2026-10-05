@@ -65,7 +65,7 @@ import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyScreenHeader
 import com.yasin.vcardly.core.designsystem.component.VCardlySearchBar
 import com.yasin.vcardly.core.designsystem.component.VCardlySecondaryButton
-import com.yasin.vcardly.core.designsystem.component.pressScale
+import com.yasin.vcardly.core.designsystem.component.VCardlyFab
 import com.yasin.vcardly.core.designsystem.theme.SheetShape
 import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.core.designsystem.theme.vcColors
@@ -218,7 +218,7 @@ fun ContactsContent(state: ContactsUiState, actions: ContactsActions) {
         }
 
         if (!state.isLoading && state.contacts.isNotEmpty()) {
-            AddFab(actions.onAddContact, Modifier.align(Alignment.BottomEnd).padding(end = MaterialTheme.spacing.screen, bottom = 20.dp))
+            VCardlyFab(Icons.Rounded.Add, stringResource(R.string.contacts_add), actions.onAddContact, Modifier.align(Alignment.BottomEnd).padding(end = MaterialTheme.spacing.screen, bottom = 20.dp))
         }
     }
 
@@ -239,26 +239,6 @@ fun ContactsContent(state: ContactsUiState, actions: ContactsActions) {
                 }
             }
         }
-    }
-}
-
-/** Circular gradient "add" button. */
-@Composable
-fun AddFab(onClick: () -> Unit, modifier: Modifier = Modifier, description: String = stringResource(R.string.contacts_add)) {
-    val interaction = remember { MutableInteractionSource() }
-    val colors = MaterialTheme.vcColors
-    Box(
-        modifier
-            .pressScale(interaction, 0.92f)
-            .size(60.dp)
-            .shadow(12.dp, CircleShape, ambientColor = colors.gradientPurple.last(), spotColor = colors.gradientPurple.last())
-            .clip(CircleShape)
-            .background(Brush.linearGradient(listOf(colors.gradientIndigo.first(), colors.gradientPurple.last())))
-            .clickable(interaction, androidx.compose.material3.ripple(color = Color.White), role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = description; role = Role.Button },
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(Icons.Rounded.Add, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp))
     }
 }
 

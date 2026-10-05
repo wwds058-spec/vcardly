@@ -193,9 +193,9 @@
     <string name="followup_add">Add follow-up</string>
     <string name="followup_edit">Edit follow-up</string>
     <string name="followup_empty_title">Nothing here</string>
-    <string name="followup_empty_overdue">You have no overdue follow-ups.</string>
-    <string name="followup_empty_today">Nothing is due today.</string>
-    <string name="followup_empty_upcoming">No upcoming follow-ups. Tap the plus button to add one.</string>
+    <string name="followup_empty_overdue">Nothing is overdue. Nice work.</string>
+    <string name="followup_empty_today">Nothing is due today. Plan a follow-up to keep your network warm.</string>
+    <string name="followup_empty_upcoming">Plan your next call, meeting or quotation so nothing slips.</string>
     <string name="followup_empty_completed">Completed follow-ups will appear here.</string>
     <string name="followup_row_subtitle">%1$s · %2$s</string>
     <string name="followup_complete_item">Mark %1$s as done</string>
@@ -252,8 +252,8 @@
     <string name="mycard_empty_message">Add your details once, then share them as a QR code or a contact file.</string>
     <string name="mycard_create">Create my card</string>
     <string name="share_title">Share contact</string>
-    <string name="share_choose_fields">What to share</string>
-    <string name="share_choose_hint">Only the ticked details go into the QR code and the file. Your private notes are never shared.</string>
+    <string name="share_choose_fields">Choose what to share</string>
+    <string name="share_choose_hint">Only the selected details go into the QR code and the file. Private notes are never shared.</string>
     <string name="share_qr_description">QR code containing the contact details of %1$s</string>
     <string name="share_qr_too_large">Too much information for one QR code. Untick some details.</string>
     <string name="share_as_file">Share as contact file</string>
@@ -635,4 +635,31 @@
     <string name="scan_enter_manually">Enter Manually</string>
     <string name="scan_more_details">More details</string>
     <string name="scan_rescan">Rescan</string>
+    <!-- Redesign: follow-ups -->
+    <plurals name="followups_pending">
+        <item quantity="one">%1$s pending</item>
+        <item quantity="other">%1$s pending</item>
+    </plurals>
+    <string name="followup_group_tomorrow">Tomorrow</string>
+    <string name="followup_empty_overdue_title">You\'re all caught up</string>
+    <string name="common_change">Change</string>
+    <string name="hint_followup_title">For example: Send the quotation</string>
+    <string name="hint_followup_notes">Anything to prepare or mention</string>
+    <string name="due_quick_hour">In 1 hour</string>
+    <string name="due_quick_tomorrow">Tomorrow morning</string>
+    <string name="due_quick_next_week">Next week</string>
+    <string name="followup_reminder_hint">Get a notification before it\'s due</string>
+    <string name="followup_mark_done">Mark as done</string>
+    <string name="followup_cancel">Cancel follow-up</string>
+    <string name="followup_reopen">Reopen</string>
+    <string name="followup_delete">Delete follow-up</string>
+    <string name="followup_save">Save Follow-up</string>
+    <!-- Redesign: digital card and QR -->
+    <string name="mycard_save">Save Card</string>
+    <string name="share_qr_title">Share your contact</string>
+    <string name="share_qr_subtitle">Let people save these details instantly with a single scan.</string>
+    <string name="share_save_qr">Save QR</string>
+    <string name="share_qr_saved">QR code saved.</string>
+    <string name="share_qr_save_failed">The QR code could not be saved. Nothing was written.</string>
+    <string name="share_qr_file_name">vcardly-qr.png</string>
 </resources>

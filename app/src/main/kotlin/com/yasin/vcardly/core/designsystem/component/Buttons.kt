@@ -3,6 +3,7 @@ package com.yasin.vcardly.core.designsystem.component
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -187,5 +194,25 @@ private fun ButtonContent(text: String, leadingIcon: ImageVector?, trailingIcon:
             Spacer(Modifier.width(8.dp))
             Icon(trailingIcon, contentDescription = null, modifier = Modifier.size(20.dp))
         }
+    }
+}
+
+/** Circular gradient floating action (add contact, add follow-up). Sits above content with room left for it. */
+@Composable
+fun VCardlyFab(icon: ImageVector, contentDescription: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val interaction = remember { MutableInteractionSource() }
+    val colors = MaterialTheme.vcColors
+    Box(
+        modifier
+            .pressScale(interaction, 0.92f)
+            .size(60.dp)
+            .shadow(12.dp, CircleShape, ambientColor = colors.gradientPurple.last(), spotColor = colors.gradientPurple.last())
+            .clip(CircleShape)
+            .background(Brush.linearGradient(listOf(colors.gradientIndigo.first(), colors.gradientPurple.last())))
+            .clickable(interaction, androidx.compose.material3.ripple(color = Color.White), role = Role.Button, onClick = onClick)
+            .semantics { this.contentDescription = contentDescription; role = Role.Button },
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp))
     }
 }

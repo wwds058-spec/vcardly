@@ -110,8 +110,25 @@ jobs:
         with:
           api-level: 30
           arch: x86_64
+          profile: pixel_6
           disable-animations: true
           script: ./gradlew :app:connectedDebugAndroidTest --stacktrace
+
+      # Screens rendered by ScreenshotTest (fictional sample data), published so the design can be reviewed.
+      - name: Publish UI screenshots to the ui-screenshots branch
+        if: always() && github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'
+        run: |
+          set -e
+          mkdir -p /tmp/shots
+          find app/build/outputs -path '*screenshots*' -name '*.png' -exec cp {} /tmp/shots/ \; || true
+          ls /tmp/shots | head -100
+          [ -n "$(ls -A /tmp/shots)" ] || { echo "no screenshots"; exit 0; }
+          cd /tmp/shots
+          printf 'UI screenshots from commit %s (emulator, API 30, Pixel 6 profile, fictional sample data).\n' "$GITHUB_SHA" > README.txt
+          git init -q -b ui-screenshots
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -q -m "UI screenshots from $GITHUB_SHA"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ui-screenshots
 
       - name: Upload instrumented reports
         if: always()
