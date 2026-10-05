@@ -99,7 +99,7 @@ final class VCardTests: XCTestCase {
         XCTAssertFalse(text.contains("EMAIL"))
         XCTAssertFalse(text.contains("ORG"))
         XCTAssertFalse(text.contains("secret"))
-        XCTAssertTrue(ShareCard.of(Contact(fullName: "A", company: "Acme; Inc")).vCard([.company]).contains("ORG:Acme\; Inc"))
+        XCTAssertTrue(ShareCard.of(Contact(fullName: "A", company: "Acme; Inc")).vCard([.company]).contains(#"ORG:Acme\; Inc"#))
     }
 
     func testFoldingNeverSplitsCharacters() {
