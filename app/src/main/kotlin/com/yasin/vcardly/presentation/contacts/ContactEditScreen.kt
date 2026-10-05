@@ -43,6 +43,7 @@ import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
 import com.yasin.vcardly.core.image.CardImageRef
 import com.yasin.vcardly.presentation.common.CardImageView
+import com.yasin.vcardly.presentation.common.FormField
 import com.yasin.vcardly.core.designsystem.component.EmptyState
 import com.yasin.vcardly.core.designsystem.component.LoadingState
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
@@ -204,32 +205,6 @@ private fun NewTagField(onAdd: (String, (Boolean) -> Unit) -> Unit) {
             Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.tag_add))
         }
     }
-}
-
-@Composable
-private fun FormField(
-    field: ContactField,
-    @androidx.annotation.StringRes label: Int,
-    value: String,
-    errors: Map<ContactField, com.yasin.vcardly.core.common.AppError.Validation.Reason>,
-    keyboard: KeyboardType = KeyboardType.Text,
-    caps: KeyboardCapitalization = KeyboardCapitalization.None,
-    singleLine: Boolean = true,
-    onValueChange: (String) -> Unit,
-) {
-    VCardlyTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = stringResource(label),
-        errorText = errors[field]?.let { stringResource(validationMessageRes(field, it)) },
-        singleLine = singleLine,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboard,
-            capitalization = caps,
-            imeAction = if (singleLine) ImeAction.Next else ImeAction.Default,
-        ),
-        modifier = Modifier.fillMaxWidth(),
-    )
 }
 
 /** OCR output is a guess. This says so, every time, before the user can save. */

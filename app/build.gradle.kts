@@ -115,10 +115,13 @@ dependencies {
     implementation(libs.mlkit.text.recognition)
 
     implementation(libs.androidx.work.runtime.ktx)
+    // QR generation: pure Java, offline.
+    implementation(libs.zxing.core)
 
     implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.junit)
+    testImplementation(libs.zxing.core)
     testImplementation(libs.kotlinx.coroutines.test)
 
     androidTestImplementation(libs.androidx.test.ext.junit)

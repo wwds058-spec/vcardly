@@ -6,6 +6,7 @@ import com.yasin.vcardly.domain.model.ContactDetails
 import com.yasin.vcardly.domain.model.ContactFilter
 import com.yasin.vcardly.domain.model.ContactStats
 import com.yasin.vcardly.domain.model.FollowUp
+import com.yasin.vcardly.domain.model.MyCard
 import com.yasin.vcardly.domain.model.FollowUpBucket
 import com.yasin.vcardly.domain.model.FollowUpCounts
 import com.yasin.vcardly.domain.model.FollowUpWithContact
@@ -65,4 +66,9 @@ interface PreferencesRepository {
     val onboardingCompleted: Flow<Boolean>
     suspend fun setThemeMode(mode: ThemeMode)
     suspend fun setOnboardingCompleted(completed: Boolean)
+}
+
+interface MyCardRepository {
+    val card: Flow<MyCard>
+    suspend fun save(card: MyCard)
 }

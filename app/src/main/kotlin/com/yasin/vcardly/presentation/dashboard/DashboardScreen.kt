@@ -37,6 +37,7 @@ import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.EmptyState
 import com.yasin.vcardly.core.designsystem.component.LoadingState
 import com.yasin.vcardly.core.designsystem.component.PrimaryButton
+import com.yasin.vcardly.core.designsystem.component.SecondaryButton
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
 import com.yasin.vcardly.core.designsystem.component.StatCard
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
@@ -47,6 +48,7 @@ import java.text.NumberFormat
 
 @Composable
 fun DashboardScreen(
+    onOpenMyCard: () -> Unit,
     onOpenContacts: () -> Unit,
     onOpenFollowUps: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
@@ -63,13 +65,13 @@ fun DashboardScreen(
                 message = stringResource(R.string.dashboard_empty_message),
                 action = { PrimaryButton(stringResource(R.string.dashboard_empty_action), onClick = onOpenContacts) },
             )
-            else -> DashboardContent(state, onOpenContacts, onOpenFollowUps)
+            else -> DashboardContent(state, onOpenContacts, onOpenFollowUps, onOpenMyCard)
         }
     }
 }
 
 @Composable
-private fun DashboardContent(state: DashboardUiState, onOpenContacts: () -> Unit, onOpenFollowUps: () -> Unit) {
+private fun DashboardContent(state: DashboardUiState, onOpenContacts: () -> Unit, onOpenFollowUps: () -> Unit, onOpenMyCard: () -> Unit) {
     // Locale-aware digits (e.g. Arabic-Indic for Urdu/Hindi locales that use them).
     val number = remember { NumberFormat.getInstance() }
     val spacing = MaterialTheme.spacing
@@ -99,6 +101,8 @@ private fun DashboardContent(state: DashboardUiState, onOpenContacts: () -> Unit
             SectionHeader(stringResource(R.string.dashboard_section_categories))
             state.categories.forEach { CategoryRow(it, number) }
         }
+
+        SecondaryButton(stringResource(R.string.settings_my_card), onClick = onOpenMyCard, modifier = Modifier.fillMaxWidth().padding(top = spacing.md))
     }
 }
 

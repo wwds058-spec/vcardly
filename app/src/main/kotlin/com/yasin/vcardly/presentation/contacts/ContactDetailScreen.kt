@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -67,6 +68,7 @@ import java.util.Date
 fun ContactDetailScreen(
     onNavigateUp: () -> Unit,
     onEdit: (Long) -> Unit,
+    onShare: (Long) -> Unit,
     onAddFollowUp: (contactId: Long) -> Unit,
     onOpenFollowUp: (Long) -> Unit,
     viewModel: ContactDetailViewModel = hiltViewModel(),
@@ -91,6 +93,9 @@ fun ContactDetailScreen(
                                 contact.fullName,
                             ),
                         )
+                    }
+                    IconButton(onClick = { onShare(contact.id) }) {
+                        Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.contact_share))
                     }
                     IconButton(onClick = { onEdit(contact.id) }) {
                         Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.contact_edit))

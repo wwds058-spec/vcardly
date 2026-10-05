@@ -31,7 +31,11 @@ import com.yasin.vcardly.presentation.contacts.ContactDetailScreen
 import com.yasin.vcardly.presentation.contacts.ContactEditScreen
 import com.yasin.vcardly.presentation.contacts.ContactsScreen
 import com.yasin.vcardly.presentation.dashboard.DashboardScreen
+import com.yasin.vcardly.presentation.mycard.MyCardEditScreen
+import com.yasin.vcardly.presentation.mycard.MyCardScreen
 import com.yasin.vcardly.presentation.organize.OrganizeScreen
+import com.yasin.vcardly.presentation.share.ContactQrScreen
+import com.yasin.vcardly.presentation.transfer.TransferScreen
 import com.yasin.vcardly.presentation.onboarding.OnboardingScreen
 import com.yasin.vcardly.presentation.followups.FollowUpEditScreen
 import com.yasin.vcardly.presentation.followups.FollowUpsScreen
@@ -92,6 +96,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
             }
             composable(Routes.HOME) {
                 DashboardScreen(
+                    onOpenMyCard = { navController.navigate(Routes.MY_CARD) },
                     onOpenContacts = { navController.navigateTopLevel(Routes.CONTACTS) },
                     onOpenFollowUps = { navController.navigateTopLevel(Routes.FOLLOW_UPS) },
                 )
@@ -107,6 +112,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                 ContactDetailScreen(
                     onNavigateUp = { navController.popBackStack() },
                     onEdit = { navController.navigate(Routes.contactEdit(it)) },
+                    onShare = { navController.navigate(Routes.contactQr(it)) },
                     onAddFollowUp = { navController.navigate(Routes.followUpEdit(0, contactId = it)) },
                     onOpenFollowUp = { navController.navigate(Routes.followUpEdit(it)) },
                 )
@@ -147,6 +153,12 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     )
                 }
             }
+            composable(Routes.MY_CARD) {
+                MyCardScreen(onNavigateUp = { navController.popBackStack() }, onEdit = { navController.navigate(Routes.MY_CARD_EDIT) })
+            }
+            composable(Routes.MY_CARD_EDIT) { MyCardEditScreen(onNavigateUp = { navController.popBackStack() }) }
+            composable(Routes.TRANSFER) { TransferScreen(onNavigateUp = { navController.popBackStack() }) }
+            composable(Routes.CONTACT_QR, arguments = contactIdArgs) { ContactQrScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.ORGANIZE) { OrganizeScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.FOLLOW_UPS) {
                 FollowUpsScreen(
@@ -161,7 +173,11 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                 )
             }
             composable(Routes.SETTINGS) {
-                SettingsScreen(onOpenOrganize = { navController.navigate(Routes.ORGANIZE) })
+                SettingsScreen(
+                    onOpenOrganize = { navController.navigate(Routes.ORGANIZE) },
+                    onOpenMyCard = { navController.navigate(Routes.MY_CARD) },
+                    onOpenTransfer = { navController.navigate(Routes.TRANSFER) },
+                )
             }
         }
     }

@@ -12,7 +12,7 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| Pure-Kotlin JVM tests: query builder (6), category breakdown (3), contact validator (7), initials (6), business-card parser (7), crop math (4), reminder planner (6), due-time (4), follow-up validator (5) | 48/48 pass (the query-builder test caught a real bug, fixed) |
+| Pure-Kotlin JVM tests: query builder (6), category breakdown (3), contact validator (7), initials (6), business-card parser (7), crop math (4), reminder planner (6), due-time (4), follow-up validator (5), vCard write/parse (9), vCard import + duplicates (8), share card (4), QR encode→decode with ZXing (5) | 74/74 pass (tests caught two real bugs, fixed) |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
 
@@ -29,12 +29,30 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 3 | Contacts list (search/filter/sort), categories, tags, favorites, details, add/edit + validation | Written, **not build-verified** |
 | 4 | Image storage, CameraX scanner, crop/rotate, ML Kit OCR + heuristic parsing + review screen | Written, **not build-verified** |
 | 5 | Follow-ups + notifications (boot / time-change safe) | Written, **not build-verified** |
-| 6 | Digital card, QR, vCard export/import | Planned |
+| 6 | Digital card, QR, vCard export/import | Written, **not build-verified** |
 | 7 | Reports + PDF/CSV/Excel export | Planned |
 | 8 | Global search, backup/restore (`vcardly-backup-v1`), Drive preparation | Planned |
 | 9 | Biometric lock + auto-lock, privacy screen | Planned |
 | 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 6 contents
+
+- **My digital card** (Settings → My digital card, or the Home button): your own details (stored in DataStore, on-device), validated
+  with the same rules as contacts, shown as a card with a **QR field picker** and "Share as contact file".
+- **QR sharing for any contact** (share icon on contact details): tick which fields go in; the QR is regenerated live from exactly the
+  ticked fields (ZXing core, pure Java, offline). NAME is always included (a vCard needs it). **Private notes can never be shared**
+  (not offered, tested). Too-large selections show a message instead of crashing. QR is drawn dark-on-white in both themes.
+- **vCard**: `VCardWriter` (3.0, CRLF, 75-octet folding that never splits a character, correct escaping, N/FN/ORG/TITLE/TEL/EMAIL/URL/ADR/
+  NOTE/CATEGORIES/REV) and `VCardParser` (2.1/3.0/4.0 tolerant: unfolding, quoted-printable + charsets, group prefixes, bare types,
+  fax dropped, mobile first, BOM, never throws; 5000-card and 5 MB limits). Unicode (Telugu/Hindi/Urdu) round-trips.
+- **Import** (Settings → Import and export contacts): system file picker (no storage permission) → preview list → import selected.
+  Duplicates (same email, same phone by last 9 digits, or same name+company, also within the file) are flagged and unticked. Values that
+  fail form validation are kept in notes rather than lost; categories become tags; imported contacts are marked source=IMPORT.
+- **Export all** via the system "create document" picker; includes notes, category and tags, after a confirmation that warns the file is private.
+  Single-contact/My-card sharing uses the share sheet with a FileProvider URI to a cache file (replaced on each share).
+- Known gaps: opening a `.vcf` from other apps ("Open with VCardly") is not wired yet; QR can be shown but not saved as an image; export is
+  vCard only (PDF/CSV/Excel come in Phase 7); no QR *scanning* of other people's cards (the card scanner reads printed cards only).
 
 ## Phase 5 contents
 

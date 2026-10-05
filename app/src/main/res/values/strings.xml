@@ -241,4 +241,54 @@
     <string name="settings_exact_on">Reminders will arrive on time.</string>
     <string name="settings_exact_off">Android may delay reminders by several minutes. Allow exact alarms for on-time reminders.</string>
     <string name="settings_allow_exact">Allow exact alarms</string>
+
+    <!-- My card, sharing, QR -->
+    <string name="settings_my_card">My digital card</string>
+    <string name="settings_transfer">Import and export contacts</string>
+    <string name="contact_share">Share</string>
+    <string name="mycard_title">My digital card</string>
+    <string name="mycard_edit_title">Edit my card</string>
+    <string name="mycard_empty_title">Create your card</string>
+    <string name="mycard_empty_message">Add your details once, then share them as a QR code or a contact file.</string>
+    <string name="mycard_create">Create my card</string>
+    <string name="share_title">Share contact</string>
+    <string name="share_choose_fields">What to share</string>
+    <string name="share_choose_hint">Only the ticked details go into the QR code and the file. Your private notes are never shared.</string>
+    <string name="share_qr_description">QR code containing the contact details of %1$s</string>
+    <string name="share_qr_too_large">Too much information for one QR code. Untick some details.</string>
+    <string name="share_as_file">Share as contact file</string>
+    <string name="share_chooser_title">Share contact</string>
+    <string name="share_failed">The contact file could not be created. Please try again.</string>
+
+    <!-- Import / export -->
+    <string name="transfer_title">Import and export</string>
+    <string name="transfer_import">Import from a vCard file</string>
+    <string name="transfer_import_description">Choose a .vcf file from your device. You can review the contacts before anything is added.</string>
+    <string name="transfer_choose_file">Choose file</string>
+    <string name="transfer_preview_hint">Contacts you already have are not selected. Untick any you do not want.</string>
+    <string name="transfer_import_selected">Import %1$d selected</string>
+    <string name="transfer_import_another">Import another file</string>
+    <string name="transfer_unnamed">Unnamed</string>
+    <string name="transfer_status_duplicate">Already in your contacts</string>
+    <string name="transfer_status_unusable">No name or details, cannot import</string>
+    <string name="transfer_skipped_duplicates">%1$d skipped because they already exist.</string>
+    <string name="transfer_skipped_unusable">%1$d skipped because they had no usable details.</string>
+    <string name="transfer_error_unreadable">That file could not be read.</string>
+    <string name="transfer_error_too_large">That file is too large (over 5 MB).</string>
+    <string name="transfer_error_no_contacts">No contacts were found in that file.</string>
+    <plurals name="transfer_imported">
+        <item quantity="one">%1$d contact imported.</item>
+        <item quantity="other">%1$d contacts imported.</item>
+    </plurals>
+    <string name="transfer_export">Export to a vCard file</string>
+    <string name="transfer_export_description">Save all your contacts to a .vcf file that other contact apps can open.</string>
+    <string name="transfer_export_all">Export all contacts</string>
+    <string name="transfer_export_file_name">vcardly-contacts.vcf</string>
+    <string name="transfer_export_confirm_title">Export all contacts?</string>
+    <string name="transfer_export_confirm_message">The file will include everything, including your private notes. Keep it somewhere safe and do not share it.</string>
+    <string name="transfer_export_failed">The file could not be written.</string>
+    <plurals name="transfer_exported">
+        <item quantity="one">%1$d contact exported.</item>
+        <item quantity="other">%1$d contacts exported.</item>
+    </plurals>
 </resources>

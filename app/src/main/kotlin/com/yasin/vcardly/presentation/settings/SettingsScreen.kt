@@ -37,7 +37,12 @@ import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.domain.model.ThemeMode
 
 @Composable
-fun SettingsScreen(onOpenOrganize: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(
+    onOpenOrganize: () -> Unit,
+    onOpenMyCard: () -> Unit,
+    onOpenTransfer: () -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel(),
+) {
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize()) {
@@ -62,15 +67,9 @@ fun SettingsScreen(onOpenOrganize: () -> Unit, viewModel: SettingsViewModel = hi
             ReminderStatusSection()
 
             SectionHeader(stringResource(R.string.settings_data))
-            Text(
-                stringResource(R.string.settings_organize),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = MaterialTheme.spacing.minTouchTarget)
-                    .clickable(role = Role.Button, onClick = onOpenOrganize)
-                    .padding(vertical = MaterialTheme.spacing.sm),
-            )
+            SettingsLink(stringResource(R.string.settings_my_card), onOpenMyCard)
+            SettingsLink(stringResource(R.string.settings_organize), onOpenOrganize)
+            SettingsLink(stringResource(R.string.settings_transfer), onOpenTransfer)
 
             SectionHeader(stringResource(R.string.settings_about))
             Text(
@@ -141,4 +140,17 @@ private fun StatusRow(text: String, actionText: String?, onAction: () -> Unit) {
         Text(text, style = MaterialTheme.typography.bodyLarge)
         if (actionText != null) VCardlyTextButton(actionText, onClick = onAction)
     }
+}
+
+@Composable
+private fun SettingsLink(text: String, onClick: () -> Unit) {
+    Text(
+        text,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = MaterialTheme.spacing.minTouchTarget)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(vertical = MaterialTheme.spacing.sm),
+    )
 }
