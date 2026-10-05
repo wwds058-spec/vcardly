@@ -77,7 +77,7 @@ class VCardTest {
     }
 
     @Test fun bomAndMixedLineEndings() {
-        val p = VCardParser.parse("﻿BEGIN:VCARD\r\nFN:Bom Test\rEND:VCARD\r\n").single()
+        val p = VCardParser.parse("\uFEFFBEGIN:VCARD\r\nFN:Bom Test\rEND:VCARD\r\n").single()
         assertEquals("Bom Test", p.fullName)
     }
 }

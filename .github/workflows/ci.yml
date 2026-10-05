@@ -45,6 +45,11 @@ jobs:
           f=$(find app/build -name 'lint-results-debug.txt' | head -1)
           [ -n "$f" ] && grep -oE "(Error|Warning): .*\[[A-Za-z]+\]" "$f" | sed -E 's/^(Error|Warning): .*\[([A-Za-z]+)\]$/\1 \2/' | sort | uniq -c | sort -rn | head -60 || true
 
+      - name: Print generated Room schema
+        if: always()
+        run: |
+          for f in $(find app/schemas -name '*.json' 2>/dev/null); do echo "::SCHEMA-BEGIN $f"; cat "$f"; echo; echo "::SCHEMA-END"; done
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -61,4 +66,40 @@ jobs:
         with:
           name: vcardly-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: ignore
+
+  # Runs the instrumented tests (Room DAOs, repositories) on a real emulator.
+  instrumented:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          disable-animations: true
+          script: ./gradlew :app:connectedDebugAndroidTest --stacktrace
+
+      - name: Upload instrumented reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-reports
+          path: app/build/reports/androidTests/**
           if-no-files-found: ignore
