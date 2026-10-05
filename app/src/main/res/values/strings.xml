@@ -710,4 +710,5 @@
     <string name="backup_validating">Validating backup…</string>
     <string name="backup_failed_title">Backup couldn\'t be completed.</string>
     <string name="backup_restore_failed_title">Restore couldn\'t be completed.</string>
+    <string name="pro_hero_title">Unlock VCardly Pro</string>
 </resources>
