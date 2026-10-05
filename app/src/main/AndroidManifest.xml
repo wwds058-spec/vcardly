@@ -28,6 +28,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="false"
         android:theme="@style/Theme.VCardly.Starting">
 
         <!-- AdMob application ID: Google's test ID in debug; your real one from secrets.properties in release. -->

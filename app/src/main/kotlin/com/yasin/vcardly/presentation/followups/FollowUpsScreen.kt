@@ -121,7 +121,7 @@ private fun FollowUpRow(item: FollowUpWithContact, onClick: () -> Unit, onToggle
     val toggleLabel = stringResource(if (done) R.string.followup_reopen_item else R.string.followup_complete_item, f.title)
 
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 72.dp).clickable(onClick = onClick)
+        Modifier.fillMaxWidth().heightIn(min = 72.dp).clickable(onClickLabel = stringResource(R.string.action_open_followup), onClick = onClick)
             .padding(start = MaterialTheme.spacing.md, end = MaterialTheme.spacing.xs, top = MaterialTheme.spacing.xs, bottom = MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically,
     ) {

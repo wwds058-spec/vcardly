@@ -233,7 +233,7 @@ private fun ContactRow(details: ContactDetails, onClick: () -> Unit, onToggleFav
         Modifier
             .fillMaxWidth()
             .heightIn(min = 64.dp)
-            .clickable(onClick = onClick)
+            .clickable(onClickLabel = stringResource(R.string.action_open_contact), onClick = onClick)
             .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {

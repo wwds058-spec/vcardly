@@ -490,4 +490,8 @@
     <string name="pro_locked_label">%1$s · Pro</string>
     <string name="scan_limit_title">Monthly scan limit reached</string>
     <string name="scan_limit_message">The free plan includes %1$d card scans a month. The count starts again on the 1st. You can still add contacts by typing or importing them, or upgrade to Pro for unlimited scans.</string>
+
+    <!-- Accessibility labels -->
+    <string name="action_open_contact">Open contact</string>
+    <string name="action_open_followup">Edit follow-up</string>
 </resources>
