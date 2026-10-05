@@ -31,11 +31,18 @@ enum class FollowUpStatus {
     val isActive: Boolean get() = this == PENDING || this == RESCHEDULED
 }
 
-/** Seeded categories. Display names come from string resources, so they localize. */
+/**
+ * Seeded categories. Display names come from string resources, so they localize. The order is the order on a fresh
+ * install; categories added in later versions are appended for existing users (see SystemCategorySeeder). Colours are
+ * checked together for colour-blind separation (dataviz validator) and against black/white ink (ContrastTest).
+ */
 enum class SystemCategory(val key: String, val colorArgb: Long) {
+    BUSINESS("business", 0xFF0277BD),
+    CUSTOMER("customer", 0xFF2E7D32),
     CLIENT("client", 0xFF3F51B5),
-    PARTNER("partner", 0xFF00897B),
+    SUPPLIER("supplier", 0xFFA0522D),
     VENDOR("vendor", 0xFFF57C00),
+    PARTNER("partner", 0xFF00897B),
     COLLEAGUE("colleague", 0xFF7B1FA2),
     FRIEND("friend", 0xFFD81B60),
     OTHER("other", 0xFF607D8B);

@@ -43,6 +43,21 @@ abstract class VCardlyDatabase : RoomDatabase() {
  * shows a localized name for rows with a system_key.
  */
 object SystemCategorySeeder : RoomDatabase.Callback() {
+    /**
+     * Existing installs get categories introduced by newer versions (no schema change, so no migration): each missing
+     * system key is appended after the user's current order. The unique index on system_key makes this idempotent.
+     */
+    override fun onOpen(db: SupportSQLiteDatabase) {
+        val now = System.currentTimeMillis()
+        SystemCategory.entries.forEach { category ->
+            db.execSQL(
+                "INSERT OR IGNORE INTO categories (name, color_argb, system_key, sort_order, created_at) " +
+                    "VALUES ('', ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM categories), ?)",
+                arrayOf<Any?>(category.colorArgb, category.key, now),
+            )
+        }
+    }
+
     override fun onCreate(db: SupportSQLiteDatabase) {
         val now = System.currentTimeMillis()
         SystemCategory.entries.forEachIndexed { index, category ->

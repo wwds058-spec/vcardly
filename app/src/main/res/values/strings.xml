@@ -57,6 +57,9 @@
     <string name="settings_offline_note">VCardly stores your data on this device only.</string>
 
     <!-- System categories -->
+    <string name="category_business">Business</string>
+    <string name="category_customer">Customer</string>
+    <string name="category_supplier">Supplier</string>
     <string name="category_client">Client</string>
     <string name="category_partner">Partner</string>
     <string name="category_vendor">Vendor</string>

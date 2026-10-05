@@ -7,6 +7,9 @@ import com.yasin.vcardly.domain.model.SystemCategory
 
 /** System categories show a localized resource name; custom ones show the user's text. */
 fun Category.displayName(): UiText = when (systemCategory) {
+    SystemCategory.BUSINESS -> UiText.of(R.string.category_business)
+    SystemCategory.CUSTOMER -> UiText.of(R.string.category_customer)
+    SystemCategory.SUPPLIER -> UiText.of(R.string.category_supplier)
     SystemCategory.CLIENT -> UiText.of(R.string.category_client)
     SystemCategory.PARTNER -> UiText.of(R.string.category_partner)
     SystemCategory.VENDOR -> UiText.of(R.string.category_vendor)
