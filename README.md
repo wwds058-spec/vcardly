@@ -6,6 +6,7 @@ digital card as a QR code. Offline-first: everything stays on your device.
 
 Kotlin, Jetpack Compose (Material 3), MVVM / clean layering, Hilt, Room, DataStore, Coroutines/Flow, CameraX, ML Kit text
 recognition, AndroidX Biometric, WorkManager + AlarmManager, Play Billing, AdMob. Package `com.yasin.vcardly`, minSdk 26, target 35.
+An iPhone version (SwiftUI, iOS 17+) with the same design lives in `ios/` — see [docs/IOS.md](docs/IOS.md).
 English only (right-to-left layouts are supported by the manifest and Compose, but no translations ship).
 
 | Document | What it covers |
@@ -14,6 +15,7 @@ English only (right-to-left layouts are supported by the manifest and Compose, b
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | UI and data architecture, design system (the technical source of truth) |
 | [PRIVACY_AND_SECURITY.md](PRIVACY_AND_SECURITY.md) | Where data lives, permissions, protections, logging rules |
 | [PLAY_STORE_CHECKLIST.md](PLAY_STORE_CHECKLIST.md) | Release and store-listing steps |
+| [docs/IOS.md](docs/IOS.md) | The native SwiftUI iPhone app in `ios/`: stack, build, tests, what needs your Apple account |
 | [docs/PLAY_CONSOLE_SETUP.md](docs/PLAY_CONSOLE_SETUP.md), [docs/GOOGLE_DRIVE_SETUP.md](docs/GOOGLE_DRIVE_SETUP.md) | Billing, AdMob and Drive setup |
 
 ## Build and test

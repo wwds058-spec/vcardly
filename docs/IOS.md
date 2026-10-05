@@ -1,0 +1,74 @@
+# VCardly for iPhone (native SwiftUI)
+
+A native iOS app in `ios/` with the same design system, screens and rules as the Android app. It is a separate codebase (Swift),
+not a port of the Kotlin code; the domain logic (business-card parser, validator, vCard writer, follow-up buckets and statuses) is
+ported line by line and covered by the same test cases.
+
+## Stack
+
+| Concern | Android | iOS |
+|---|---|---|
+| UI | Jetpack Compose, Material 3 | SwiftUI (iOS 17+) |
+| State | ViewModel + StateFlow | `@Observable` `AppEnvironment`, `DataRevision` bumped after every write, screens reload with `.task(id:)` |
+| Storage | Room | SwiftData (`ContactEntity`, `CategoryEntity`, `TagEntity`, `FollowUpEntity`), app-private Application Support |
+| Settings, My card | DataStore | `UserDefaults` (`Preferences`) |
+| Card photos | app-private files | `Application Support/cards`, atomic writes, excluded from iCloud backup, data protection |
+| OCR | ML Kit (on device) | Apple Vision `VNRecognizeTextRequest` (on device) + the ported `BusinessCardParser` |
+| Scanner | CameraX + manual crop | VisionKit document camera (edge detection and perspective crop; page 2 = back of card), or a photo from the library |
+| Reminders | AlarmManager / WorkManager | `UNUserNotificationCenter` calendar triggers (soonest 60, re-armed at launch) |
+| App lock | AndroidX Biometric | LocalAuthentication (`deviceOwnerAuthentication`: Face ID / Touch ID / passcode), monotonic uptime timer |
+| Charts | custom Canvas | Swift Charts |
+| Fonts | Plus Jakarta Sans in `res/font` | same four weights in `Resources/Fonts`, `UIAppFonts`, Dynamic Type via `relativeTo:` |
+| Strings | `strings.xml` | `Resources/en.lproj/Localizable.strings` (`L10n.s` / `L10n.plural`) |
+
+## Layout
+
+```
+ios/
+  project.yml                 XcodeGen spec (the .xcodeproj is generated, not committed)
+  VCardly/
+    App/                      VCardlyApp, AppEnvironment (+ AppLock), RootView (tabs, centre Scan action, routes)
+    DesignSystem/             Theme (tokens, tones, gradients, fonts, vcCard), Components, FormFields
+    Domain/                   Models, L10n, ContactValidator, BusinessCardParser, VCard
+    Data/                     SwiftData entities, repositories, CardImageStore, ReminderScheduler, Preferences
+    Features/                 Home, Contacts (list, detail, edit), FollowUps, MyCard (+ QR share), Reports, Settings,
+                              Search (+ Privacy, Pro), Onboarding (+ Lock), Scan
+    Resources/                Fonts (OFL), Assets (app icon, launch colour), en.lproj/Localizable.strings
+  VCardlyTests/               parser, validator, vCard, resources, repositories (in-memory store), screenshot renders
+```
+
+Every screen follows the Android pattern: a thin `XxxScreen` that reads the environment and passes plain state and closures to a
+stateless `XxxContent` view. Screens never navigate; the shell (`MainShell`) owns one `NavigationStack` per tab and the scan
+full-screen cover.
+
+## Build and test
+
+Needs a Mac with Xcode 16 or later.
+
+```
+brew install xcodegen
+cd ios && xcodegen generate
+open VCardly.xcodeproj            # run on a simulator, or on a device after choosing your team
+xcodebuild test -project VCardly.xcodeproj -scheme VCardly -destination 'platform=iOS Simulator,name=iPhone 16 Pro' CODE_SIGNING_ALLOWED=NO
+```
+
+CI (`ios` job in `.github/workflows/ci.yml`, `macos-15` runner) generates the project, builds, runs all tests and publishes the
+rendered screens (light and dark, fictional sample data) to the `ios-screenshots` branch. macOS runner minutes are billed at a
+higher rate than Linux on private repositories.
+
+## Needs your configuration (never faked)
+
+| What | Status | What you need to do |
+|---|---|---|
+| Apple Developer account, signing | not set up; `DEVELOPMENT_TEAM` is empty and CI builds with signing off | join the Apple Developer Program, set your team in Xcode (or `project.yml`), create the App ID `com.yasin.vcardly` |
+| In-app purchases (Pro) | the Pro screen says purchases are not set up and sells nothing | create products in App Store Connect, then add StoreKit 2 purchase code |
+| TestFlight / App Store | not prepared | App Store Connect record, privacy nutrition label (no data collected), screenshots, review notes |
+
+## Differences from Android (by design or not yet built)
+
+- **No ads on iPhone** (AdMob is not included).
+- **Backup and restore, CSV/vCard import, Excel/PDF export, Google Drive**: not built for iOS yet; Settings says so.
+- **Free-plan scan quota**: not enforced on iOS (no purchases exist yet).
+- Scanning uses Apple's document camera instead of a custom camera screen; on devices without it (and in the simulator) the user
+  picks a photo instead.
+- Never verified on a real iPhone: camera, OCR on real cards, notifications on the lock screen, Face ID.

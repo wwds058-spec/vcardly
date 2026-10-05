@@ -59,6 +59,12 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
     `ThemeContrastTest` and `WhatsAppDigitsTest` (JVM).
   - New launcher/splash icon (V mark on a navy-to-blue gradient, themed monochrome variant).
 
+- **iOS app (2026-10)**: native SwiftUI iPhone app in `ios/` with the same design system and screens (onboarding, Home,
+  Contacts, contact details, 4-step add/edit, scan with VisionKit + Vision OCR and review, Follow-ups + editor, My card + QR/vCard
+  share, Reports with Swift Charts, Settings, Search, Privacy, Pro (honest "not set up"), Lock). SwiftData, local notifications,
+  Face ID lock. Unit, repository and screenshot tests on a macOS CI runner; screenshots on the `ios-screenshots` branch.
+  Details, gaps and the Apple-account steps: `docs/IOS.md`.
+
 ## In progress
 
 - Nothing half-done is committed. Next candidates, in order: Organize and Transfer screens still use the generic new components but
@@ -76,6 +82,7 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
 | AdMob | debug builds use Google's test IDs; release ads stay off until `secrets.properties` has `admob.appId` and `admob.bannerUnitId` | create the app and banner unit, publish a UMP consent message |
 | Play Billing | `PlayBillingRepository`, products `vcardly_pro_lifetime` (in-app) and `vcardly_pro_yearly` (subscription) | create the products, upload to a testing track, add licence testers (`docs/PLAY_CONSOLE_SETUP.md`); the Pro screen honestly says "not set up" until then |
 | Google Drive backup | `CloudBackupProvider` with `UnconfiguredDriveProvider` | Cloud project, OAuth client, Drive appdata scope (`docs/GOOGLE_DRIVE_SETUP.md`) |
+| iOS signing, App Store, in-app purchases | `ios/project.yml` (empty team), Pro screen says not set up | Apple Developer account; see `docs/IOS.md` |
 | Store listing | `PLAY_STORE_CHECKLIST.md` | privacy-policy URL, Data-safety form, screenshots, content rating |
 
 ## Known limitations
