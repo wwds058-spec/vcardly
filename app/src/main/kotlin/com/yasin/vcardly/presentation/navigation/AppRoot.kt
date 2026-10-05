@@ -30,7 +30,9 @@ import androidx.navigation.navArgument
 import com.yasin.vcardly.presentation.contacts.ContactDetailScreen
 import com.yasin.vcardly.presentation.contacts.ContactEditScreen
 import com.yasin.vcardly.presentation.contacts.ContactsScreen
+import com.yasin.vcardly.presentation.backup.BackupScreen
 import com.yasin.vcardly.presentation.dashboard.DashboardScreen
+import com.yasin.vcardly.presentation.search.SearchScreen
 import com.yasin.vcardly.presentation.mycard.MyCardEditScreen
 import com.yasin.vcardly.presentation.mycard.MyCardScreen
 import com.yasin.vcardly.presentation.organize.OrganizeScreen
@@ -99,6 +101,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                 DashboardScreen(
                     onOpenMyCard = { navController.navigate(Routes.MY_CARD) },
                     onOpenReports = { navController.navigate(Routes.REPORTS) },
+                    onOpenSearch = { navController.navigate(Routes.SEARCH) },
                     onOpenContacts = { navController.navigateTopLevel(Routes.CONTACTS) },
                     onOpenFollowUps = { navController.navigateTopLevel(Routes.FOLLOW_UPS) },
                 )
@@ -155,6 +158,14 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     )
                 }
             }
+            composable(Routes.SEARCH) {
+                SearchScreen(
+                    onNavigateUp = { navController.popBackStack() },
+                    onOpenContact = { navController.navigate(Routes.contactDetail(it)) },
+                    onOpenFollowUp = { navController.navigate(Routes.followUpEdit(it)) },
+                )
+            }
+            composable(Routes.BACKUP) { BackupScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.REPORTS) { ReportsScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.MY_CARD) {
                 MyCardScreen(onNavigateUp = { navController.popBackStack() }, onEdit = { navController.navigate(Routes.MY_CARD_EDIT) })
@@ -181,6 +192,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     onOpenMyCard = { navController.navigate(Routes.MY_CARD) },
                     onOpenTransfer = { navController.navigate(Routes.TRANSFER) },
                     onOpenReports = { navController.navigate(Routes.REPORTS) },
+                    onOpenBackup = { navController.navigate(Routes.BACKUP) },
                 )
             }
         }

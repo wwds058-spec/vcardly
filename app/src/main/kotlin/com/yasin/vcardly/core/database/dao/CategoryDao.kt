@@ -21,6 +21,12 @@ interface CategoryDao {
     @Update
     suspend fun update(category: CategoryEntity): Int
 
+    @Query("SELECT * FROM categories")
+    suspend fun getAll(): List<CategoryEntity>
+
+    @Query("DELETE FROM categories")
+    suspend fun deleteAll()
+
     @Query("SELECT COALESCE(MAX(sort_order), -1) + 1 FROM categories")
     suspend fun nextSortOrder(): Int
 

@@ -59,6 +59,20 @@ interface ContactDao {
     @Query("DELETE FROM contact_tags WHERE contact_id = :contactId")
     suspend fun clearTagLinks(contactId: Long)
 
+    // ---- backup / restore ----
+
+    @Query("SELECT * FROM contacts")
+    suspend fun getAll(): List<ContactEntity>
+
+    @Query("SELECT * FROM contact_tags")
+    suspend fun getAllTagLinks(): List<ContactTagCrossRef>
+
+    @Query("DELETE FROM contact_tags")
+    suspend fun deleteAllTagLinks()
+
+    @Query("DELETE FROM contacts")
+    suspend fun deleteAll()
+
     // ---- stats for the dashboard / reports ----
 
     @Query("SELECT COUNT(*) FROM contacts")

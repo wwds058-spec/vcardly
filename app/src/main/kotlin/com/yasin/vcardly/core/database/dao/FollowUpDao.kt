@@ -35,6 +35,12 @@ interface FollowUpDao {
     @Query("SELECT * FROM follow_ups ORDER BY due_at DESC")
     fun observeAllWithContact(): Flow<List<FollowUpWithContactEntity>>
 
+    @Query("SELECT * FROM follow_ups")
+    suspend fun getAll(): List<FollowUpEntity>
+
+    @Query("DELETE FROM follow_ups")
+    suspend fun deleteAll()
+
     @Query("UPDATE follow_ups SET notified_at = :at WHERE id = :id")
     suspend fun markNotified(id: Long, at: Long)
 

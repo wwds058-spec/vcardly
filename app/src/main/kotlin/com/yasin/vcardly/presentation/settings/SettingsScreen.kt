@@ -42,6 +42,7 @@ fun SettingsScreen(
     onOpenMyCard: () -> Unit,
     onOpenTransfer: () -> Unit,
     onOpenReports: () -> Unit,
+    onOpenBackup: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
@@ -72,6 +73,7 @@ fun SettingsScreen(
             SettingsLink(stringResource(R.string.settings_organize), onOpenOrganize)
             SettingsLink(stringResource(R.string.settings_transfer), onOpenTransfer)
             SettingsLink(stringResource(R.string.reports_title), onOpenReports)
+            SettingsLink(stringResource(R.string.backup_title), onOpenBackup)
 
             SectionHeader(stringResource(R.string.settings_about))
             Text(

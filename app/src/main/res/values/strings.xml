@@ -339,4 +339,72 @@
     <string name="export_col_status">Status</string>
     <string name="export_col_completed">Completed</string>
     <string name="export_status_pending">Pending</string>
+
+    <!-- Global search -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search contacts and follow-ups</string>
+    <string name="search_prompt_title">Search everything</string>
+    <string name="search_prompt_message">Find people by name, company, phone, email, notes, tag or category, and follow-ups by title or contact.</string>
+    <string name="search_no_results_message">Nothing matches. Check the spelling or try fewer words.</string>
+    <plurals name="search_contacts_header">
+        <item quantity="one">Contact (%1$d)</item>
+        <item quantity="other">Contacts (%1$d)</item>
+    </plurals>
+    <plurals name="search_followups_header">
+        <item quantity="one">Follow-up (%1$d)</item>
+        <item quantity="other">Follow-ups (%1$d)</item>
+    </plurals>
+
+    <!-- Backup and restore -->
+    <string name="backup_title">Backup and restore</string>
+    <string name="backup_create">Back up</string>
+    <string name="backup_create_description">Save all your contacts, card images, tags, categories and follow-ups to one file that you keep wherever you like.</string>
+    <string name="backup_last">Last backup: %1$s</string>
+    <string name="backup_never">You have not made a backup yet.</string>
+    <string name="backup_protect">Protect with a password</string>
+    <string name="backup_password">Password</string>
+    <string name="backup_password_confirm">Confirm password</string>
+    <string name="backup_password_short">Use at least %1$d characters.</string>
+    <string name="backup_password_mismatch">The passwords do not match.</string>
+    <string name="backup_password_warning">There is no way to recover a forgotten password, and nobody, including us, can open the file without it.</string>
+    <string name="backup_unprotected_warning">Without a password anyone who gets this file can read all your contacts.</string>
+    <string name="backup_create_button">Create backup file</string>
+    <string name="backup_file_name">vcardly-backup-%1$s.%2$s</string>
+    <plurals name="backup_created">
+        <item quantity="one">Backup saved: %1$d contact, %2$d follow-ups, %3$d images.</item>
+        <item quantity="other">Backup saved: %1$d contacts, %2$d follow-ups, %3$d images.</item>
+    </plurals>
+    <string name="backup_restore">Restore</string>
+    <string name="backup_restore_description">Choose a VCardly backup file. You will see what it contains before anything changes.</string>
+    <string name="backup_choose_file">Choose backup file</string>
+    <string name="backup_file_from">Backup made %1$s</string>
+    <plurals name="backup_contents">
+        <item quantity="one">%1$d contact, %2$d follow-ups, %3$d images</item>
+        <item quantity="other">%1$d contacts, %2$d follow-ups, %3$d images</item>
+    </plurals>
+    <string name="backup_mode_merge">Add to what I have</string>
+    <string name="backup_mode_merge_hint">Adds missing contacts and skips ones you already have. Nothing is deleted.</string>
+    <string name="backup_mode_replace">Replace everything</string>
+    <string name="backup_mode_replace_hint">Makes this device exactly like the backup. Current data is removed.</string>
+    <string name="backup_restore_button">Restore</string>
+    <string name="backup_replace_confirm_title">Replace all data?</string>
+    <string name="backup_replace_confirm_message">All contacts, images, tags, categories and follow-ups on this device will be deleted and replaced by the backup. This cannot be undone.</string>
+    <string name="backup_replace_confirm">Replace</string>
+    <string name="backup_password_prompt">This backup is protected</string>
+    <plurals name="backup_restored">
+        <item quantity="one">Restored. %1$d contact added.</item>
+        <item quantity="other">Restored. %1$d contacts added.</item>
+    </plurals>
+    <string name="backup_skipped_duplicates">%1$d skipped because you already have them.</string>
+    <string name="backup_restore_another">Restore another file</string>
+    <string name="backup_error_not_a_backup">That file is not a VCardly backup.</string>
+    <string name="backup_error_newer">That backup was made by a newer version of VCardly. Update the app to restore it.</string>
+    <string name="backup_error_wrong_password">Wrong password, or the file is damaged.</string>
+    <string name="backup_error_corrupt">The backup is damaged and cannot be restored. Nothing was changed.</string>
+    <string name="backup_error_too_large">That backup is larger than this app can safely restore.</string>
+    <string name="backup_error_io">The file could not be read or written.</string>
+    <string name="backup_drive_title">Google Drive</string>
+    <string name="backup_drive_not_configured">Not set up in this build</string>
+    <string name="backup_drive_ready">Ready</string>
+    <string name="backup_drive_explanation">Backing up to Google Drive needs a Google Cloud project and sign-in settings that the app developer must add. Until then, save the backup file wherever you like, including a Drive folder, using the button above.</string>
 </resources>

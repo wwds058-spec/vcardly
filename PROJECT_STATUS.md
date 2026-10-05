@@ -12,7 +12,7 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| Pure-Kotlin JVM tests (query builder, category breakdown, validators, initials, card parser, crop math, reminder planner, due time, vCard write/parse/import, share card, QR round trip, report builder, report PDF content, CSV, XLSX) | 89/89 pass (tests caught two real bugs, fixed) |
+| Pure-Kotlin JVM tests (query builder, category breakdown, validators, initials, card parser, crop math, reminder planner, due time, vCard, QR round trip, reports, CSV, XLSX, backup archive, chunked AES-GCM, restore planner, search matcher) | 116/116 pass (tests caught three real bugs, fixed) |
 | Generated `.xlsx` opened with `openpyxl` (independent reader) | OK: sheets, bold frozen header, Unicode, text-only cells |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
@@ -32,10 +32,42 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 5 | Follow-ups + notifications (boot / time-change safe) | Written, **not build-verified** |
 | 6 | Digital card, QR, vCard export/import | Written, **not build-verified** |
 | 7 | Reports + PDF/CSV/Excel export | Written, **not build-verified** |
-| 8 | Global search, backup/restore (`vcardly-backup-v1`), Drive preparation | Planned |
+| 8 | Global search, backup/restore (`vcardly-backup-v1`), Drive preparation | Written, **not build-verified** (Drive: **needs your configuration**) |
 | 9 | Biometric lock + auto-lock, privacy screen | Planned |
 | 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 8 contents
+
+- **Global search** (magnifier on Home): one box over contacts (name, company, title, phone, email, notes, tags, and category
+  name in the current language) and follow-ups (title, notes, contact name/company). Every typed word must match (AND), debounced,
+  grouped results, tap to open. Pure `SearchMatcher` is tested.
+- **Backup format `vcardly-backup-v1`** (file extension `.vcbackup`): a ZIP containing `manifest.json` (first; format id, version,
+  created time, app version, counts, SHA-256 of every other file), `data.json` (categories, tags, contacts incl. tag links and image
+  references, follow-ups, my card) and `images/<uuid>.jpg`. Fields have defaults and unknown keys are ignored, so a future v1.x can
+  add fields; a breaking change must bump the id. Newer-than-supported backups are refused with a clear message.
+- **Optional password encryption** (recommended; default on): PBKDF2-HMAC-SHA256 (310k iterations) -> AES-256-GCM in 64 KiB chunks
+  (STREAM construction): per-chunk nonce, header and "last chunk" flag authenticated, so bit flips, reordering and truncation are
+  detected; memory use is flat. Tested: round trips at chunk boundaries, wrong password, every tamper type. A forgotten password cannot
+  be recovered (the UI says so). Passwords are never stored and are wiped from memory after use.
+- **Safe reading**: entry names are whitelisted (no zip-slip: `../`, absolute paths, sub-folders are ignored and never extracted),
+  size caps per image/data/total (no zip bombs), manifest must come first, all checksums verified before anything is applied, field
+  lengths capped on import, dangling references (category/tag/contact ids) dropped.
+- **Restore** stages the entire file into a cache folder first (a wrong password or damaged file changes nothing), then:
+  *Merge* = add what is missing (categories matched by system key / name, tags by name, duplicates skipped using the same detector as
+  vCard import, follow-ups of skipped duplicates skipped too, images copied under fresh names, my card only filled if empty);
+  *Replace everything* = one DB transaction wiping and re-inserting with original ids (confirmation dialog), then images swapped in;
+  seeded categories are re-created if a backup lacks them. Reminders are re-armed afterwards.
+- **Backup screen** (Settings -> Backup and restore): last backup time, password fields, system "create document" picker; restore flow
+  with password prompt, summary of the file, mode choice, result counts.
+- **Google Drive: NOT CONFIGURED, and nothing fakes it.** `CloudBackupProvider` is the seam; the only implementation,
+  `UnconfiguredDriveProvider`, reports "not configured" and never touches the network. The Backup screen shows Drive as "Not set up in
+  this build". The exact steps you must do (Cloud project, `drive.appdata` scope, Android OAuth client bound to your signing SHA-1,
+  dependencies, enforcing encrypted uploads, adding INTERNET) are in `docs/GOOGLE_DRIVE_SETUP.md`. The app still declares **no
+  INTERNET permission**.
+- Known gaps: no scheduled/automatic backups (manual only); no "share backup" shortcut (use the picker to save to any folder, including
+  a Drive or cloud-synced folder); the Android pieces (`BackupService` DB transaction, pickers, screens) are untested on a device;
+  merge/replace do not carry the theme setting; only one pending restore at a time.
 
 ## Phase 7 contents
 

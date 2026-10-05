@@ -25,6 +25,8 @@ object Routes {
     /** id = 0 creates a new follow-up; [contactId] optionally pre-selects its contact. */
     fun followUpEdit(id: Long, contactId: Long = 0) = "followup/edit/$id?contactId=$contactId"
 
+    const val SEARCH = "search"
+    const val BACKUP = "backup"
     const val REPORTS = "reports"
     const val MY_CARD = "mycard"
     const val MY_CARD_EDIT = "mycard/edit"

@@ -17,6 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,6 +53,7 @@ import java.text.NumberFormat
 fun DashboardScreen(
     onOpenMyCard: () -> Unit,
     onOpenReports: () -> Unit,
+    onOpenSearch: () -> Unit,
     onOpenContacts: () -> Unit,
     onOpenFollowUps: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
@@ -57,7 +61,12 @@ fun DashboardScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize()) {
-        VCardlyTopBar(title = stringResource(R.string.nav_home))
+        VCardlyTopBar(
+            title = stringResource(R.string.nav_home),
+            actions = {
+                IconButton(onClick = onOpenSearch) { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_title)) }
+            },
+        )
         when {
             state.isLoading -> LoadingState()
             state.isEmpty -> EmptyState(

@@ -68,6 +68,10 @@ interface PreferencesRepository {
     val onboardingCompleted: Flow<Boolean>
     suspend fun setThemeMode(mode: ThemeMode)
     suspend fun setOnboardingCompleted(completed: Boolean)
+
+    /** Epoch millis of the last successful local backup, or null if never. */
+    val lastBackupAt: Flow<Long?>
+    suspend fun setLastBackupAt(millis: Long)
 }
 
 interface MyCardRepository {

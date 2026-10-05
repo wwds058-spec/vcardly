@@ -20,6 +20,12 @@ interface TagDao {
     )
     fun observeAllWithCounts(): Flow<List<TagWithCountRow>>
 
+    @Query("SELECT * FROM tags")
+    suspend fun getAll(): List<TagEntity>
+
+    @Query("DELETE FROM tags")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM tags WHERE name = :name COLLATE NOCASE LIMIT 1")
     suspend fun findByName(name: String): TagEntity?
 

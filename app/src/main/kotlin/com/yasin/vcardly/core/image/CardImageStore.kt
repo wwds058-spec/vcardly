@@ -34,6 +34,7 @@ class CardImageStore @Inject constructor(
 ) {
     private val cardsDir get() = File(context.filesDir, CARDS_DIR)
     private val scanDir get() = File(context.cacheDir, SCAN_DIR)
+    private val restoreDir get() = File(context.cacheDir, RESTORE_DIR)
 
     /** A fresh, empty file in the scan cache for the camera to write into. */
     fun newCaptureFile(): File {
@@ -104,6 +105,49 @@ class CardImageStore @Inject constructor(
         }
     }
 
+    /** Opens a stored image for reading (backup). Null if it does not exist or the path escapes the cards directory. */
+    fun openStored(relativePath: String): java.io.InputStream? =
+        resolveStored(relativePath)?.takeIf { it.isFile }?.inputStream()
+
+    /** A fresh empty directory in the cache for unpacking a backup. */
+    fun newRestoreDir(): File {
+        val dir = File(restoreDir, UUID.randomUUID().toString())
+        dir.mkdirs()
+        return dir
+    }
+
+    fun clearRestoreCache() {
+        restoreDir.deleteRecursively()
+    }
+
+    /** Copies an unpacked image into permanent storage under a new random name (merge restore). */
+    suspend fun installFromRestore(staged: File): String? = withContext(dispatchers.io) {
+        try {
+            if (!staged.canonicalFile.startsWith(restoreDir.canonicalFile) || !staged.isFile) return@withContext null
+            cardsDir.mkdirs()
+            val name = "${UUID.randomUUID()}.jpg"
+            staged.copyTo(File(cardsDir, name), overwrite = false)
+            "$CARDS_DIR/$name"
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    /** Replaces ALL stored images with the unpacked ones, keeping their file names (replace restore). */
+    suspend fun replaceAllFromRestore(stagedDir: File): Boolean = withContext(dispatchers.io) {
+        try {
+            if (!stagedDir.canonicalFile.startsWith(restoreDir.canonicalFile)) return@withContext false
+            cardsDir.deleteRecursively()
+            cardsDir.mkdirs()
+            stagedDir.listFiles()?.filter { it.isFile }?.forEach { f ->
+                if (!f.renameTo(File(cardsDir, f.name))) f.copyTo(File(cardsDir, f.name), overwrite = true)
+            }
+            true
+        } catch (_: IOException) {
+            false
+        }
+    }
+
     suspend fun delete(relativePath: String?) {
         if (relativePath == null) return
         withContext(dispatchers.io) { resolveStored(relativePath)?.delete() }
@@ -146,6 +190,7 @@ class CardImageStore @Inject constructor(
     private companion object {
         const val CARDS_DIR = "cards"
         const val SCAN_DIR = "scan"
+        const val RESTORE_DIR = "restore"
         const val JPEG_QUALITY = 90
     }
 }

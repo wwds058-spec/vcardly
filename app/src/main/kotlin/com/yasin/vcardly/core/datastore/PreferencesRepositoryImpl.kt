@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.yasin.vcardly.domain.model.ThemeMode
 import com.yasin.vcardly.domain.repository.PreferencesRepository
@@ -33,6 +34,12 @@ class PreferencesRepositoryImpl @Inject constructor(
         .map { it[ONBOARDING_COMPLETED] ?: false }
         .distinctUntilChanged()
 
+    override val lastBackupAt: Flow<Long?> = prefs.map { it[LAST_BACKUP_AT] }.distinctUntilChanged()
+
+    override suspend fun setLastBackupAt(millis: Long) {
+        dataStore.edit { it[LAST_BACKUP_AT] = millis }
+    }
+
     override suspend fun setThemeMode(mode: ThemeMode) {
         dataStore.edit { it[THEME_MODE] = mode.name }
     }
@@ -44,5 +51,6 @@ class PreferencesRepositoryImpl @Inject constructor(
     private companion object {
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        val LAST_BACKUP_AT = longPreferencesKey("last_backup_at")
     }
 }
