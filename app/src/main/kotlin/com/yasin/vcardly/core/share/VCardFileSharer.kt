@@ -32,8 +32,8 @@ class VCardFileSharer @Inject constructor(
             val send = Intent(Intent.ACTION_SEND)
                 .setType("text/x-vcard")
                 .putExtra(Intent.EXTRA_STREAM, uri)
-                .setClipData(ClipData.newRawUri("", uri))
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            send.clipData = ClipData.newRawUri("", uri) // returns Unit, so not part of the chain; lets the chooser pass the grant on
             Intent.createChooser(send, chooserTitle)
         } catch (_: IOException) {
             null

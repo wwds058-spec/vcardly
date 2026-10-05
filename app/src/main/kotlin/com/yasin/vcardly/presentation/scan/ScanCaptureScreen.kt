@@ -54,7 +54,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.common.util.concurrent.ListenableFuture
+import androidx.concurrent.futures.await
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.EmptyState
 import com.yasin.vcardly.core.designsystem.component.PrimaryButton
@@ -62,10 +62,6 @@ import com.yasin.vcardly.core.designsystem.component.SecondaryButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
-import java.util.concurrent.Executor
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.suspendCancellableCoroutine
 
 /** Camera capture (or gallery import) for one side of a card. Navigates onward via the session's events. */
 @Composable
@@ -146,7 +142,7 @@ private fun androidx.compose.foundation.layout.ColumnScope.CameraContent(
 
     LaunchedEffect(lifecycleOwner) {
         try {
-            val p = ProcessCameraProvider.getInstance(context).await(ContextCompat.getMainExecutor(context))
+            val p = ProcessCameraProvider.getInstance(context).await()
             val preview = Preview.Builder().build().also { it.setSurfaceProvider(previewView.surfaceProvider) }
             p.unbindAll()
             p.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageCapture)
@@ -220,17 +216,6 @@ private fun Context.openAppSettings() {
         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
     )
-}
-
-private suspend fun <T> ListenableFuture<T>.await(executor: Executor): T = suspendCancellableCoroutine { cont ->
-    addListener({
-        try {
-            cont.resume(get())
-        } catch (e: Exception) {
-            cont.resumeWithException(e)
-        }
-    }, executor)
-    cont.invokeOnCancellation { cancel(false) }
 }
 
 internal fun ScanError.messageRes(): Int = when (this) {
