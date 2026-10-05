@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -218,8 +219,8 @@ class ScreenBehaviourTest {
         }
         rule.onNodeWithText(s(R.string.share_qr_title)).assertIsDisplayed()
         // Untick the address-less default "Website" and share: the shared set must not contain it.
-        rule.onNodeWithText(s(R.string.field_website)).performClick()
-        rule.onNodeWithText(s(R.string.contact_share)).performClick()
+        rule.onNodeWithText(s(R.string.field_website)).performScrollTo().performClick()
+        rule.onNodeWithText(s(R.string.contact_share)).performScrollTo().performClick()
         val sel = checkNotNull(shared)
         assertTrue(com.yasin.vcardly.domain.vcard.ShareField.NAME in sel)
         assertTrue(com.yasin.vcardly.domain.vcard.ShareField.WEBSITE !in sel)

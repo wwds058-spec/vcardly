@@ -45,6 +45,7 @@ fun VCardlyTextField(
     required: Boolean = false,
     minLines: Int = 1,
     trailing: (@Composable () -> Unit)? = null,
+    visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
 ) {
     Column(modifier) {
         Text(
@@ -68,6 +69,7 @@ fun VCardlyTextField(
             minLines = if (singleLine) 1 else minLines,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
+            visualTransformation = visualTransformation,
             textStyle = MaterialTheme.typography.bodyLarge,
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(

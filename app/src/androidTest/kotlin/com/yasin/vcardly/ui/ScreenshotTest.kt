@@ -44,6 +44,30 @@ import com.yasin.vcardly.presentation.mycard.MyCardContent
 import com.yasin.vcardly.presentation.navigation.TopLevelDestination
 import com.yasin.vcardly.presentation.onboarding.OnboardingContent
 import com.yasin.vcardly.presentation.share.QrSharePanelContent
+import com.yasin.vcardly.core.billing.BillingStatus
+import com.yasin.vcardly.domain.backup.BackupCounts
+import com.yasin.vcardly.domain.model.ContactDetails
+import com.yasin.vcardly.domain.model.FollowUp
+import com.yasin.vcardly.domain.model.FollowUpStatus
+import com.yasin.vcardly.domain.model.FollowUpType
+import com.yasin.vcardly.domain.report.ReportBuilder
+import com.yasin.vcardly.domain.report.ReportRange
+import com.yasin.vcardly.presentation.backup.BackupActions
+import com.yasin.vcardly.presentation.backup.BackupContent
+import com.yasin.vcardly.presentation.backup.BackupUiState
+import com.yasin.vcardly.presentation.backup.CreateState
+import com.yasin.vcardly.presentation.lock.LockContent
+import com.yasin.vcardly.presentation.pro.ProActions
+import com.yasin.vcardly.presentation.pro.ProContent
+import com.yasin.vcardly.presentation.pro.ProUiState
+import com.yasin.vcardly.presentation.reports.ReportsActions
+import com.yasin.vcardly.presentation.reports.ReportsContent
+import com.yasin.vcardly.presentation.reports.ReportsUiState
+import com.yasin.vcardly.presentation.settings.SettingsContent
+import com.yasin.vcardly.presentation.settings.SettingsUiState
+import com.yasin.vcardly.presentation.settings.SettingsActions
+import java.time.Instant
+import java.time.ZoneId
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -57,13 +81,15 @@ import org.junit.runner.RunWith
 class ScreenshotTest {
     @get:Rule val rule = createComposeRule()
 
-    private fun shoot(name: String, dark: Boolean = false, content: @Composable () -> Unit) {
+    /** [frozen]: for screens with an endless animation, which never let the UI go idle; the clock is stepped manually. */
+    private fun shoot(name: String, dark: Boolean = false, frozen: Boolean = false, content: @Composable () -> Unit) {
+        if (frozen) rule.mainClock.autoAdvance = false
         rule.setContent {
             VCardlyTheme(if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
                 Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { content() }
             }
         }
-        rule.waitForIdle()
+        if (frozen) rule.mainClock.advanceTimeBy(800) else rule.waitForIdle()
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
         TestStorage().openOutputFile("screenshots/$name.png").use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
     }
@@ -176,4 +202,44 @@ class ScreenshotTest {
     @Test fun myCardDark() = shoot("09b_my_card_dark", dark = true) {
         MyCardContent(SampleData.myCard, onNavigateUp = {}, onEdit = {}, sharePanel = { QrSharePanelContent(it, null, {}, {}) })
     }
+
+    /** A year of fictional activity so the charts have something to show. */
+    private fun sampleReport() = run {
+        val cats = SampleData.categories + listOf<com.yasin.vcardly.domain.model.Category?>(null)
+        val month = 30L * 86_400_000L
+        val contacts = (1..96).map { i ->
+            val base = SampleData.contacts[i % SampleData.contacts.size]
+            val cat = cats[(i * 7) % cats.size]
+            ContactDetails(
+                base.contact.copy(id = i.toLong(), createdAt = SampleData.now - (i % 11) * month - (i % 5) * 86_400_000L, categoryId = cat?.id, isFavorite = i % 4 == 0,
+                    source = com.yasin.vcardly.domain.model.ContactSource.entries[i % 3]),
+                cat, if (i % 3 == 0) listOf(SampleData.vip) else emptyList(),
+            )
+        }
+        val followUps = (1..40).map { i ->
+            FollowUp(i.toLong(), (i % 96 + 1).toLong(), FollowUpType.pickable[i % 7], if (i % 5 == 0) FollowUpStatus.PENDING else FollowUpStatus.COMPLETED,
+                "Follow-up $i", dueAt = SampleData.now - i * 4 * 86_400_000L, completedAt = SampleData.now - i * 4 * 86_400_000L + 3_600_000L)
+        }
+        ReportBuilder.build(contacts, followUps, ReportRange.LAST_12_MONTHS, Instant.now(), ZoneId.systemDefault())
+    }
+
+    @Test fun reports() = shoot("10_reports") { ReportsContent(ReportsUiState(report = sampleReport()), isPro = false, actions = ReportsActions()) }
+
+    @Test fun reportsDark() = shoot("10b_reports_dark", dark = true) { ReportsContent(ReportsUiState(report = sampleReport()), isPro = true, actions = ReportsActions()) }
+
+    private val settings = SettingsUiState(version = "0.2.0", notificationsOn = true, exactAlarmsOn = false, canOpenExactSettings = true)
+
+    @Test fun settingsLight() = shoot("11_settings") { WithBottomBar(TopLevelDestination.SETTINGS) { SettingsContent(settings, SettingsActions()) } }
+
+    @Test fun settingsDark() = shoot("11b_settings_dark", dark = true) { WithBottomBar(TopLevelDestination.SETTINGS) { SettingsContent(settings, SettingsActions()) } }
+
+    @Test fun lock() = shoot("13_lock", frozen = true) { LockContent(failed = false, onUnlock = {}) }
+
+    @Test fun pro() = shoot("14_pro") { ProContent(ProUiState(status = BillingStatus.ProductsNotConfigured), ProActions()) }
+
+    @Test fun backup() = shoot("15_backup") {
+        BackupContent(BackupUiState(lastBackupAt = SampleData.now - 3 * 86_400_000L, create = CreateState.Done(BackupCounts(contacts = 128, followUps = 34, images = 96))), 8, BackupActions())
+    }
+
+    @Test fun backupDark() = shoot("15b_backup_dark", dark = true) { BackupContent(BackupUiState(), 8, BackupActions()) }
 }

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -44,12 +45,16 @@ fun VCardlyTheme(
         LocalElevation provides Elevation(),
         LocalVCardlyColors provides if (darkTheme) DarkExtended else LightExtended,
     ) {
+        val colors = if (darkTheme) DarkColors else LightColors
         MaterialTheme(
-            colorScheme = if (darkTheme) DarkColors else LightColors,
+            colorScheme = colors,
             typography = VCardlyTypography,
             shapes = VCardlyShapes,
-            content = content,
-        )
+        ) {
+            // Screens draw on the app background rather than inside a Surface, so set the default text/icon colour here;
+            // otherwise unstyled text would fall back to black and be unreadable in dark mode.
+            CompositionLocalProvider(LocalContentColor provides colors.onBackground, content = content)
+        }
     }
 }
 

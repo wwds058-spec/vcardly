@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class SearchUiState(
     val query: String = "",
@@ -67,4 +68,8 @@ class SearchViewModel @Inject constructor(
             else combine(ids.map { contacts.observeContacts(ContactFilter(categoryId = it)) }) { lists -> lists.toList().flatten() }
         },
     ) { text, byCategory -> (text + byCategory).distinctBy { it.contact.id } }
+
+    fun toggleFavorite(id: Long, current: Boolean) {
+        viewModelScope.launch { contacts.setFavorite(id, !current) }
+    }
 }

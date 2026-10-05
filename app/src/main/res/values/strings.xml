@@ -662,4 +662,52 @@
     <string name="share_qr_saved">QR code saved.</string>
     <string name="share_qr_save_failed">The QR code could not be saved. Nothing was written.</string>
     <string name="share_qr_file_name">vcardly-qr.png</string>
+    <!-- Redesign: settings -->
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_data">Backup and data</string>
+    <string name="settings_section_subscription">Subscription</string>
+    <string name="settings_section_help">Help and privacy</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_appearance_hint">Theme: %1$s</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_hint_on">Follow-up reminders and alerts</string>
+    <string name="settings_notifications_hint_off">Reminders cannot be shown. Tap to fix.</string>
+    <string name="settings_security_hint_on">App lock is on</string>
+    <string name="settings_security_hint_off">Biometric lock, auto-lock, screen privacy</string>
+    <string name="settings_backup_hint">Back up to a file, or restore</string>
+    <string name="settings_transfer_hint">vCard files in and out</string>
+    <string name="settings_reports_hint">Insights and PDF, CSV, Excel export</string>
+    <string name="settings_organize_hint">Manage categories and tags</string>
+    <string name="settings_my_card_hint">Your card, QR code and sharing</string>
+    <string name="settings_pro_hint">Unlimited scans, PDF and Excel, no ads</string>
+    <string name="settings_pro_hint_active">Thank you for supporting VCardly</string>
+    <string name="settings_ad_privacy_hint">Change your ad consent choices</string>
+    <string name="settings_privacy_hint">What VCardly does with your data</string>
+    <string name="settings_erase_hint">Permanently delete everything on this device</string>
+    <string name="settings_pro_banner_title">Upgrade to VCardly Pro</string>
+    <string name="settings_pro_banner_message">Unlimited scans, PDF and Excel reports, and no ads.</string>
+    <!-- Redesign: reports -->
+    <string name="reports_screen_title">Reports</string>
+    <string name="report_total_contacts">Total contacts</string>
+    <string name="report_new_contacts">New contacts</string>
+    <string name="report_completed_follow_ups">Completed follow-ups</string>
+    <string name="report_rate_short">%1$s completion rate</string>
+    <string name="report_contacts_by_category">Contacts by category</string>
+    <string name="report_total_short">Total</string>
+    <string name="report_contact_growth">Contact growth</string>
+    <string name="report_plus_count">+%1$s</string>
+    <string name="report_follow_up_health">Follow-up health</string>
+    <string name="report_follow_up_health_hint">Follow-ups that were due in this period</string>
+    <string name="export_tile_pdf">PDF</string>
+    <string name="export_tile_csv">CSV</string>
+    <string name="export_tile_xlsx">Excel</string>
+    <string name="export_working">Creating your file…</string>
+    <string name="export_failed_detail">The file could not be saved, so nothing was exported. Please try again.</string>
+    <!-- Redesign: backup -->
+    <string name="backup_status_protected">Your data is backed up</string>
+    <string name="backup_status_none">No backup yet</string>
+    <string name="backup_creating">Creating secure backup…</string>
+    <string name="backup_validating">Validating backup…</string>
+    <string name="backup_failed_title">Backup couldn\'t be completed.</string>
+    <string name="backup_restore_failed_title">Restore couldn\'t be completed.</string>
 </resources>
