@@ -6,7 +6,7 @@ package com.yasin.vcardly.core.export
  */
 object CsvWriter {
     /** UTF-8 byte-order mark; without it Excel mis-reads non-Latin text. Written once at the start of the file. */
-    const val BOM = "﻿"
+    const val BOM = "\uFEFF"
 
     private val formulaStart = setOf('=', '+', '-', '@', '\t', '\r')
     /** Digits and phone punctuation only can never form a formula, so real phone numbers like "+91 98765 43210" stay intact. */

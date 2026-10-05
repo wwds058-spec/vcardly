@@ -39,6 +39,12 @@ jobs:
           echo "report: $f"
           grep -A3 " Error: " "$f" | head -150 || true
 
+      - name: Lint summary by issue type
+        if: always()
+        run: |
+          f=$(find app/build -name 'lint-results-debug.txt' | head -1)
+          [ -n "$f" ] && grep -oE "(Error|Warning): .*\[[A-Za-z]+\]" "$f" | sed -E 's/^(Error|Warning): .*\[([A-Za-z]+)\]$/\1 \2/' | sort | uniq -c | sort -rn | head -60 || true
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4

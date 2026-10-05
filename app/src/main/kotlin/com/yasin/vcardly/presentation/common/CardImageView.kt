@@ -9,7 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,9 +32,8 @@ val LocalAuthGate = staticCompositionLocalOf<com.yasin.vcardly.core.security.Aut
 @Composable
 fun CardImageView(ref: CardImageRef, contentDescription: String, modifier: Modifier = Modifier) {
     val store = LocalCardImageStore.current
-    val bitmap by produceState<ImageBitmap?>(initialValue = null, ref) {
-        value = store.load(ref, maxDimension = 1024)?.asImageBitmap()
-    }
+    var bitmap by remember(ref) { mutableStateOf<ImageBitmap?>(null) }
+    LaunchedEffect(ref) { bitmap = store.load(ref, maxDimension = 1024)?.asImageBitmap() }
     Box(
         modifier
             .aspectRatio(1.6f)
