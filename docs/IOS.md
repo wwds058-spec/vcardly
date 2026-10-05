@@ -73,6 +73,16 @@ backup made on an Android phone restores on an iPhone and the other way round.
   `BackupTests` both restore them, and CI checks the backups written by the iOS tests with the same script.
 - Restore needs free space for one decrypted copy of the backup while it runs.
 
+## Import and export
+
+Settings → Import & export, the counterpart of Android's Transfer screen, using a port of the same vCard reader and importer:
+
+- **Import a .vcf file** (up to 5 MB) or **pick people from iPhone Contacts** with Apple's contact picker. The picker needs
+  no address-book permission: only the people you pick are handed over, read-only, and their notes are not read.
+- Everything goes through one review list: contacts you already have (same email, phone or name + company, also within the
+  file) and cards with no usable details are not selected; values the form would reject are kept in the notes, never dropped.
+- **Export all contacts** to one .vcf (every field, including private notes, category and tags as CATEGORIES), after a warning.
+
 ## Needs your configuration (never faked)
 
 | What | Status | What you need to do |
@@ -84,8 +94,8 @@ backup made on an Android phone restores on an iPhone and the other way round.
 ## Differences from Android (by design or not yet built)
 
 - **No ads on iPhone** (AdMob is not included).
-- **CSV/vCard import, Excel/PDF export, Google Drive**: not built for iOS yet. (Backup and restore is built; files are
-  saved with the Files sheet, so iCloud Drive works without any setup.)
+- **Excel/PDF/CSV report export, Google Drive**: not built for iOS yet. (Backup/restore and vCard import/export are built;
+  files are saved with the Files sheet, so iCloud Drive works without any setup.)
 - **Free-plan scan quota**: not enforced on iOS (no purchases exist yet).
 - Scanning uses Apple's document camera instead of a custom camera screen; on devices without it (and in the simulator) the user
   picks a photo instead.

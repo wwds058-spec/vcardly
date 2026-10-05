@@ -68,6 +68,9 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
 - **iOS backup and restore**: the Android `vcardly-backup-v1` format (optional password encryption, staged and checksum-verified
   restore, Merge or Replace), so backups move between iPhone and Android. Cross-platform proof: shared fixtures in
   `testdata/backup/` restored by both test suites, plus CI verification of iPhone-written files with `tools/backup_reference.py`.
+- **iOS import and export**: vCard import (file, or iPhone Contacts via the system picker, no permission) with the same review
+  list as Android, and export of all contacts to .vcf. Fixed on both platforms: text cut off from an overlong job title,
+  company or address on import is now kept in the notes (it was silently dropped).
 
 ## In progress
 

@@ -3,7 +3,7 @@ import ContactsUI
 import SwiftUI
 import UniformTypeIdentifiers
 
-enum ImportFailure: Equatable { case unreadable, tooLarge, noContacts }
+enum ImportFailure: Error, Equatable { case unreadable, tooLarge, noContacts }
 
 enum ImportState: Equatable {
     case idle, reading
