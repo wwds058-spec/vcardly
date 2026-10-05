@@ -25,6 +25,9 @@ interface ContactRepository {
     suspend fun setFavorite(id: Long, favorite: Boolean)
     suspend fun delete(id: Long)
 
+    /** Contacts created by scanning since [sinceMillis]; drives the free-plan scan quota. */
+    suspend fun countScannedSince(sinceMillis: Long): Int
+
     /** [addedSince] is an epoch-millis lower bound for the "recently added" figure. */
     fun observeStats(addedSince: Long): Flow<ContactStats>
 }
@@ -82,6 +85,10 @@ interface PreferencesRepository {
     suspend fun setAppLockEnabled(enabled: Boolean)
     suspend fun setAutoLockSeconds(seconds: Int)
     suspend fun setSecureScreen(enabled: Boolean)
+
+    /** Last answer from Google Play about Pro, kept so a paying user is not downgraded while offline. */
+    val proCached: Flow<Boolean>
+    suspend fun setProCached(pro: Boolean)
 
     val lastBackupAt: Flow<Long?>
     suspend fun setLastBackupAt(millis: Long)

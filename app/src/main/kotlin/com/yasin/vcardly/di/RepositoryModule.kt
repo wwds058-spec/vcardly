@@ -24,6 +24,7 @@ abstract class RepositoryModule {
     @Binds abstract fun categories(impl: CategoryRepositoryImpl): CategoryRepository
     @Binds abstract fun tags(impl: TagRepositoryImpl): TagRepository
     @Binds abstract fun followUps(impl: FollowUpRepositoryImpl): FollowUpRepository
+    @Binds abstract fun billing(impl: com.yasin.vcardly.core.billing.PlayBillingRepository): com.yasin.vcardly.core.billing.BillingRepository
     @Binds abstract fun myCard(impl: MyCardRepositoryImpl): MyCardRepository
     @Binds abstract fun preferences(impl: PreferencesRepositoryImpl): PreferencesRepository
 }

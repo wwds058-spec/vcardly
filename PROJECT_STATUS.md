@@ -12,7 +12,7 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| Pure-Kotlin JVM tests (query builder, category breakdown, validators, initials, card parser, crop math, reminder planner, due time, vCard, QR round trip, reports, CSV, XLSX, backup archive, chunked AES-GCM, restore planner, search matcher, app-lock state machine) | 126/126 pass (tests caught three real bugs, fixed) |
+| Pure-Kotlin JVM tests (query builder, category breakdown, validators, initials, card parser, crop math, reminder planner, due time, vCard, QR round trip, reports, CSV, XLSX, backup archive, chunked AES-GCM, restore planner, search matcher, app-lock state machine, entitlement policy + purchase interpreter) | 136/136 pass (tests caught three real bugs, fixed) |
 | Generated `.xlsx` opened with `openpyxl` (independent reader) | OK: sheets, bold frozen header, Unicode, text-only cells |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
@@ -34,8 +34,36 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 7 | Reports + PDF/CSV/Excel export | Written, **not build-verified** |
 | 8 | Global search, backup/restore (`vcardly-backup-v1`), Drive preparation | Written, **not build-verified** (Drive: **needs your configuration**) |
 | 9 | Biometric lock + auto-lock, privacy screen | Written, **not build-verified** |
-| 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
+| 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Written, **not build-verified** (Billing + AdMob: **need your configuration**) |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 10 contents
+
+- **`EntitlementManager`** (`core/billing`) is the only thing the app asks "may this user do X?". Pure rules live in
+  `domain/entitlement/EntitlementPolicy` (tested): `Feature` = PDF report, Excel export, unlimited scans, ad-free. **Free keeps
+  everything about your own data and safety** (contacts, reminders, backup/restore incl. encrypted, vCard + CSV export, app lock,
+  erase-all); Free gets 25 card scans per calendar month (counted from contacts created by scanning since the 1st; deleting
+  contacts lowers the count, accepted as a soft limit). Change the offer in that one file.
+- **Play Billing** (`PlayBillingRepository`, real `billing-ktx` 7.x): connects, queries two products (`vcardly_pro_lifetime` in-app,
+  `vcardly_pro_yearly` subscription), reads purchases, **acknowledges** them (Google refunds unacknowledged purchases after 3 days),
+  launches the purchase flow, handles **pending** payments (never unlocks until PURCHASED; tested), restores purchases by re-querying.
+  Prices come from Google Play (localized), never hard-coded. Offline-first: a successful Play answer replaces the cache (refunds and
+  expiry take effect); if Play cannot be reached the last answer is kept, so a paying user is not downgraded while offline (tested).
+  **Needs your Play Console setup** (products, testing track, license testers): until then the Pro screen honestly says purchases are
+  not set up. **Not server-verified** (no backend): a modified device could fake Pro; see `docs/PLAY_CONSOLE_SETUP.md`.
+- **Gates**: Reports PDF/Excel buttons show "· Pro" and route free users to the Pro screen (and the ViewModel refuses as a second
+  line of defence); starting a scan checks the monthly quota and offers the upgrade; Settings shows Upgrade / Pro active.
+- **AdMob** (`AdsManager`, `AdBanner`): Google's official **test** App/banner IDs in every debug build; **release builds show ads only if
+  `secrets.properties` supplies real IDs** (otherwise OFF, so test ads can never ship). Consent first: Google's User Messaging
+  Platform form, ads SDK not started until `canRequestAds`; "Ad privacy choices" in Settings when required. Never started for Pro users or
+  while the app is locked (a hidden screen must not log impressions). One adaptive banner on **Home only** (it shows aggregates, no
+  individual's data); a unit test pins the placement list so adding a placement is a deliberate review. The ads SDK receives no
+  app data (plain `AdRequest`), banners are labelled "Advertisement", and a failed load collapses with no gap. No interstitials by design.
+- **Manifest/privacy changes**: `INTERNET` + `ACCESS_NETWORK_STATE` added (for ads and billing only; AD_ID is merged in by the ads
+  library). The in-app Privacy screen no longer says "no internet": it now explains ads, consent, purchases and that contacts are never
+  uploaded. The Play Data-safety form and a public privacy-policy URL must say the same (checklist in `docs/PLAY_CONSOLE_SETUP.md`).
+- Known gaps: no server-side receipt verification; no promo codes/intro-offer UI beyond what Play shows; the subscription uses the first
+  base-plan offer; no A/B of placements; billing and ads code cannot run without your accounts so it is untested on a device.
 
 ## Phase 9 contents
 
@@ -259,6 +287,6 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | Service | Status |
 |---|---|
 | Release signing | Needs your keystore → `keystore.properties` |
-| Google Drive backup | Needs OAuth client / Cloud project (Phase 8 prepares the interface only) |
-| Play Billing | Needs Play Console products (Phase 10) |
-| AdMob | Needs your App ID / unit IDs; Google test IDs only until then (Phase 10) |
+| Google Drive backup | Needs OAuth client / Cloud project (`docs/GOOGLE_DRIVE_SETUP.md`); seam only, always "not configured" |
+| Play Billing | Needs Play Console products `vcardly_pro_lifetime` + `vcardly_pro_yearly` and a testing-track install (`docs/PLAY_CONSOLE_SETUP.md`) |
+| AdMob | Needs your App ID + banner unit ID in `secrets.properties` and a published consent message; test IDs in debug, **ads OFF in release** until then |

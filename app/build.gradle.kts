@@ -17,6 +17,19 @@ val keystoreProps = Properties().apply {
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
+// Ad IDs: Google's official TEST IDs unless secrets.properties (git-ignored) provides real ones.
+// Debug builds ALWAYS use the test IDs (clicking your own live ads violates AdMob policy); release builds use real IDs only
+// when both are present, otherwise ads stay OFF in release (test ads must never ship).
+val secrets = Properties().apply {
+    val f = rootProject.file("secrets.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val testAppId = "ca-app-pub-3940256099942544~3347511713"
+val testBannerId = "ca-app-pub-3940256099942544/9214589741"
+val releaseAppId = secrets.getProperty("admob.appId") ?: testAppId
+val releaseBannerId = secrets.getProperty("admob.bannerUnitId") ?: testBannerId
+val adsConfiguredForRelease = secrets.containsKey("admob.appId") && secrets.containsKey("admob.bannerUnitId")
+
 android {
     namespace = "com.yasin.vcardly"
     compileSdk = 35
@@ -42,7 +55,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders["admobAppId"] = testAppId
+            buildConfigField("String", "ADMOB_BANNER_UNIT_ID", "\"$testBannerId\"")
+            buildConfigField("boolean", "ADS_ENABLED", "true")
+            buildConfigField("boolean", "ADS_USE_TEST_IDS", "true")
+        }
         release {
+            manifestPlaceholders["admobAppId"] = releaseAppId
+            buildConfigField("String", "ADMOB_BANNER_UNIT_ID", "\"$releaseBannerId\"")
+            buildConfigField("boolean", "ADS_ENABLED", "$adsConfiguredForRelease")
+            buildConfigField("boolean", "ADS_USE_TEST_IDS", "${!adsConfiguredForRelease}")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -116,6 +139,9 @@ dependencies {
     implementation(libs.mlkit.text.recognition)
 
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.play.billing.ktx)
+    implementation(libs.play.services.ads)
+    implementation(libs.ump)
     // QR generation: pure Java, offline.
     implementation(libs.zxing.core)
     // App lock: BiometricPrompt needs a FragmentActivity.

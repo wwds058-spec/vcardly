@@ -59,6 +59,9 @@ interface ContactDao {
     @Query("DELETE FROM contact_tags WHERE contact_id = :contactId")
     suspend fun clearTagLinks(contactId: Long)
 
+    @Query("SELECT COUNT(*) FROM contacts WHERE source = 'SCAN' AND created_at >= :since")
+    suspend fun countScannedSince(since: Long): Int
+
     // ---- backup / restore ----
 
     @Query("SELECT * FROM contacts")

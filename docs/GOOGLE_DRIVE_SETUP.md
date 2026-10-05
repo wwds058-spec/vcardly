@@ -23,8 +23,9 @@
 5. **Implement `CloudBackupProvider`** (`DriveBackupProvider`): authorize with `AuthorizationClient` for the appdata scope,
    upload the encrypted file to `appDataFolder`, list/download for restore. Return `CloudResult.SignInRequired` when consent is
    needed. Replace `UnconfiguredDriveProvider` in `di/CloudModule.kt`, and flip the Backup screen card to use `isConfigured`.
-6. **Manifest / network**: `INTERNET` permission is required then (the app currently declares none, which is part of its
-   offline-first promise); mention Drive in the privacy screen and the Play Data safety form.
+6. **Manifest / network**: `INTERNET` is already declared (for ads and Play Billing only). Mention Drive in the Privacy screen
+   and the Play Data safety form when you enable it, and keep the "your contacts are never uploaded" wording true by uploading
+   only the password-encrypted backup.
 7. **Enforce encryption for cloud**: refuse to upload unless a password was set; never upload the plain format.
 
 ## Test checklist once configured

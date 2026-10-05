@@ -11,6 +11,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -19,7 +20,18 @@ import kotlinx.coroutines.launch
 class MainViewModel @Inject constructor(
     private val preferences: PreferencesRepository,
     private val lockManager: AppLockManager,
+    private val entitlements: com.yasin.vcardly.core.billing.EntitlementManager,
+    private val ads: com.yasin.vcardly.core.ads.AdsManager,
 ) : ViewModel() {
+    val isPro: StateFlow<Boolean> = entitlements.state
+        .map { it.isPro }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    /** Consent + ads start for free users once the app is unlocked (the consent form must not appear over the lock screen). */
+    fun startAdsIfAppropriate(activity: android.app.Activity) {
+        if (!isPro.value) ads.initialize(activity)
+    }
+
     /** null until DataStore has loaded; the splash screen is held until then to avoid a theme flash. */
     val themeMode: StateFlow<ThemeMode?> = preferences.themeMode
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)

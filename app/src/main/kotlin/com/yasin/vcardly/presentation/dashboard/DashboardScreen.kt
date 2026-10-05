@@ -46,6 +46,8 @@ import com.yasin.vcardly.core.designsystem.component.StatCard
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.domain.usecase.CategoryBreakdownItem
+import com.yasin.vcardly.domain.entitlement.AdPlacement
+import com.yasin.vcardly.presentation.common.AdBanner
 import com.yasin.vcardly.presentation.common.displayName
 import java.text.NumberFormat
 
@@ -67,6 +69,7 @@ fun DashboardScreen(
                 IconButton(onClick = onOpenSearch) { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_title)) }
             },
         )
+        androidx.compose.foundation.layout.Box(Modifier.weight(1f)) {
         when {
             state.isLoading -> LoadingState()
             state.isEmpty -> EmptyState(
@@ -77,6 +80,9 @@ fun DashboardScreen(
             )
             else -> DashboardContent(state, onOpenContacts, onOpenFollowUps, onOpenMyCard, onOpenReports)
         }
+        }
+        // Home shows aggregate counts and category labels only, never an individual's details, so a banner is allowed (see AdPlacement).
+        AdBanner(AdPlacement.HOME)
     }
 }
 

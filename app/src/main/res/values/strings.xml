@@ -443,10 +443,10 @@
     <string name="privacy_intro">VCardly is built to keep your contacts yours. Here is exactly what it does with your data.</string>
     <string name="privacy_stays_title">Your data stays on this device</string>
     <string name="privacy_stays_body">Contacts, card photos, notes, tags, follow-ups and settings are stored in the app\'s private storage on this phone. Other apps cannot read them. Android\'s automatic cloud backup is switched off for this app.</string>
-    <string name="privacy_no_account_title">No account, no servers</string>
-    <string name="privacy_no_account_body">There is no sign-in. In this version the app does not use the internet at all: it has no internet permission, and it sends nothing to us or to anyone else.</string>
+    <string name="privacy_no_account_title">No account</string>
+    <string name="privacy_no_account_body">There is no sign-in and no VCardly server. Your contacts are never uploaded. The internet permission exists only for two things: showing ads on the free plan and handling purchases through Google Play. Pro users see no ads.</string>
     <string name="privacy_permissions_title">Permissions and why</string>
-    <string name="privacy_permissions_body">Camera: only while you scan a card; photos stay on the device. Notifications: to show your follow-up reminders; on the lock screen they only say "Follow-up reminder". Exact alarms: so reminders arrive on time. Restart: so reminders come back after you restart the phone. Fingerprint and face: only to unlock the app; VCardly never sees your biometric data.</string>
+    <string name="privacy_permissions_body">Camera: only while you scan a card; photos stay on the device. Notifications: to show your follow-up reminders; on the lock screen they only say "Follow-up reminder". Exact alarms: so reminders arrive on time. Restart: so reminders come back after you restart the phone. Fingerprint and face: only to unlock the app; VCardly never sees your biometric data. Internet: only for ads and Google Play purchases, never for your contacts.</string>
     <string name="privacy_ocr_title">Reading business cards</string>
     <string name="privacy_ocr_body">Text on a card is recognised on the device. The recognised text is never stored or logged: you review it, and only what you save is kept. You can always edit or delete it.</string>
     <string name="privacy_sharing_title">Sharing</string>
@@ -457,4 +457,37 @@
     <string name="privacy_lock_body">App lock asks for your fingerprint, face or device PIN, and locks again after the time you choose. Hiding content in recent apps keeps your contacts out of the app switcher and screenshots. App lock controls access to the app; it does not add a second layer of encryption to the stored data.</string>
     <string name="privacy_control_title">You are in control</string>
     <string name="privacy_control_body">You can export everything, restore it elsewhere, or erase all data from Settings at any time. Uninstalling the app removes its data from the phone.</string>
+
+    <string name="privacy_ads_title">Ads and purchases</string>
+    <string name="privacy_ads_body">The free plan shows one banner ad from Google AdMob on the Home screen. It never appears next to a person\'s details, and VCardly gives the ads no information about your contacts. Google may use your device\'s advertising ID to choose and measure ads, and in some regions asks for your consent first (you can change it in Settings). VCardly Pro removes ads entirely. Payments are handled by Google Play; VCardly never sees your payment details.</string>
+
+    <!-- Pro / billing / ads -->
+    <string name="ad_label">Advertisement</string>
+    <string name="ads_privacy_options">Ad privacy choices</string>
+    <string name="pro_title">VCardly Pro</string>
+    <string name="pro_settings_upgrade">Upgrade to Pro</string>
+    <string name="pro_settings_active">VCardly Pro is active</string>
+    <string name="pro_intro">Unlock the full toolkit and remove ads. Your own data is never locked away: backup, restore, vCard and CSV export, app lock and reminders are free for everyone.</string>
+    <string name="pro_includes">Pro includes</string>
+    <string name="pro_feature_pdf">PDF reports</string>
+    <string name="pro_feature_excel">Excel export of contacts and follow-ups</string>
+    <string name="pro_feature_scans">Unlimited card scans</string>
+    <string name="pro_feature_no_ads">No ads</string>
+    <string name="pro_free_note">The free plan includes %1$d card scans a month.</string>
+    <string name="pro_active_title">You have VCardly Pro</string>
+    <string name="pro_active_message">Thank you for supporting VCardly.</string>
+    <string name="pro_manage">Manage subscription in Google Play</string>
+    <string name="pro_buy_lifetime">Buy once for %1$s</string>
+    <string name="pro_buy_yearly">Yearly for %1$s</string>
+    <string name="pro_restore">Restore purchases</string>
+    <string name="pro_pending">Your purchase is waiting for approval. Pro unlocks as soon as the payment completes.</string>
+    <string name="pro_unavailable">Google Play is not available on this device, so purchases cannot be made here.</string>
+    <string name="pro_not_configured">Purchases are not set up in this version yet.</string>
+    <string name="pro_dev_hint">Developer note (debug builds only): create the products in Play Console and install from a testing track. See docs/PLAY_CONSOLE_SETUP.md.</string>
+    <string name="pro_launch_failed">The purchase could not be started. Please try again.</string>
+    <string name="pro_payment_note">Payments are handled by Google Play. VCardly never sees your payment details.</string>
+    <string name="pro_see_pro">See Pro</string>
+    <string name="pro_locked_label">%1$s · Pro</string>
+    <string name="scan_limit_title">Monthly scan limit reached</string>
+    <string name="scan_limit_message">The free plan includes %1$d card scans a month. The count starts again on the 1st. You can still add contacts by typing or importing them, or upgrade to Pro for unlimited scans.</string>
 </resources>

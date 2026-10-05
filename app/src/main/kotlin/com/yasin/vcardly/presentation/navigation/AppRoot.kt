@@ -33,6 +33,7 @@ import com.yasin.vcardly.presentation.contacts.ContactsScreen
 import com.yasin.vcardly.presentation.backup.BackupScreen
 import com.yasin.vcardly.presentation.dashboard.DashboardScreen
 import com.yasin.vcardly.presentation.privacy.PrivacyScreen
+import com.yasin.vcardly.presentation.pro.ProScreen
 import com.yasin.vcardly.presentation.search.SearchScreen
 import com.yasin.vcardly.presentation.mycard.MyCardEditScreen
 import com.yasin.vcardly.presentation.mycard.MyCardScreen
@@ -112,6 +113,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     onOpenContact = { navController.navigate(Routes.contactDetail(it)) },
                     onAddContact = { navController.navigate(Routes.contactEdit(0)) },
                     onScanCard = { navController.navigate(Routes.SCAN_GRAPH) },
+                    onUpgrade = { navController.navigate(Routes.PRO) },
                 )
             }
             composable(Routes.CONTACT_DETAIL, arguments = contactIdArgs) {
@@ -168,7 +170,8 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
             }
             composable(Routes.PRIVACY) { PrivacyScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.BACKUP) { BackupScreen(onNavigateUp = { navController.popBackStack() }) }
-            composable(Routes.REPORTS) { ReportsScreen(onNavigateUp = { navController.popBackStack() }) }
+            composable(Routes.REPORTS) { ReportsScreen(onNavigateUp = { navController.popBackStack() }, onUpgrade = { navController.navigate(Routes.PRO) }) }
+            composable(Routes.PRO) { ProScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.MY_CARD) {
                 MyCardScreen(onNavigateUp = { navController.popBackStack() }, onEdit = { navController.navigate(Routes.MY_CARD_EDIT) })
             }
@@ -196,6 +199,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     onOpenReports = { navController.navigate(Routes.REPORTS) },
                     onOpenBackup = { navController.navigate(Routes.BACKUP) },
                     onOpenPrivacy = { navController.navigate(Routes.PRIVACY) },
+                    onOpenPro = { navController.navigate(Routes.PRO) },
                 )
             }
         }

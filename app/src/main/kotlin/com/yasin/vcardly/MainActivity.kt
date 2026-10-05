@@ -26,6 +26,7 @@ import com.yasin.vcardly.core.notifications.ReminderNotifier
 import com.yasin.vcardly.core.security.AuthGate
 import com.yasin.vcardly.core.security.BiometricGate
 import com.yasin.vcardly.domain.model.ThemeMode
+import com.yasin.vcardly.presentation.common.LocalAppLocked
 import com.yasin.vcardly.presentation.common.LocalAuthGate
 import com.yasin.vcardly.presentation.common.LocalCardImageStore
 import com.yasin.vcardly.presentation.lock.LockScreen
@@ -61,6 +62,12 @@ class MainActivity : FragmentActivity() {
             val locked by viewModel.locked.collectAsStateWithLifecycle()
             val lockRemoved by viewModel.lockWasRemoved.collectAsStateWithLifecycle()
 
+            val isPro by viewModel.isPro.collectAsStateWithLifecycle()
+            val unlockedAndReady = security != null && !(security?.appLockEnabled == true && locked)
+            androidx.compose.runtime.LaunchedEffect(unlockedAndReady, isPro) {
+                if (unlockedAndReady && !isPro) viewModel.startAdsIfAppropriate(this@MainActivity)
+            }
+
             // Hide the app in the recents list and block screenshots when the user asked for it.
             val secure = security?.secureScreen ?: true
             androidx.compose.runtime.LaunchedEffect(secure) {
@@ -68,7 +75,7 @@ class MainActivity : FragmentActivity() {
                 else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
             }
 
-            CompositionLocalProvider(LocalCardImageStore provides cardImageStore, LocalAuthGate provides authGate) {
+            CompositionLocalProvider(LocalCardImageStore provides cardImageStore, LocalAuthGate provides authGate, LocalAppLocked provides (security?.appLockEnabled == true && locked)) {
                 VCardlyTheme(themeMode = themeMode ?: ThemeMode.SYSTEM) {
                     val showLock = security?.appLockEnabled == true && locked
                     Box(Modifier.fillMaxSize()) {

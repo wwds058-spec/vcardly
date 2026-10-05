@@ -63,7 +63,12 @@ class ReportsViewModel @Inject constructor(
     private val clock: Clock,
     private val dispatchers: AppDispatchers,
     private val writer: ExportWriter,
+    private val entitlements: com.yasin.vcardly.core.billing.EntitlementManager,
 ) : ViewModel() {
+    val isPro: StateFlow<Boolean> = entitlements.state
+        .map { it.isPro }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     private val range = MutableStateFlow(ReportRange.LAST_12_MONTHS)
     private val export = MutableStateFlow<ExportStatus>(ExportStatus.Idle)
 
@@ -78,6 +83,13 @@ class ReportsViewModel @Inject constructor(
 
     /** Writes [format] to the file the user chose. Exports always cover the whole library, plus the selected range for PDF. */
     fun export(format: ExportFormat, uri: Uri) {
+        // Defence in depth: the UI already routes free users to the Pro screen.
+        val needed = when (format) {
+            ExportFormat.PDF -> com.yasin.vcardly.domain.entitlement.Feature.PDF_REPORT
+            ExportFormat.XLSX -> com.yasin.vcardly.domain.entitlement.Feature.EXCEL_EXPORT
+            ExportFormat.CSV -> null
+        }
+        if (needed != null && !entitlements.isAllowed(needed)) return
         export.value = ExportStatus.Working
         viewModelScope.launch {
             val allContacts = contacts.observeContacts(ContactFilter()).first()

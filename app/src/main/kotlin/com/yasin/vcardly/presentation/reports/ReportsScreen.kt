@@ -41,9 +41,10 @@ import java.text.NumberFormat
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ReportsScreen(onNavigateUp: () -> Unit, viewModel: ReportsViewModel = hiltViewModel()) {
+fun ReportsScreen(onNavigateUp: () -> Unit, onUpgrade: () -> Unit, viewModel: ReportsViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val report = state.report
+    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
 
     // System file pickers: the user chooses where each file goes; the app needs no storage permission.
     val pdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { it?.let { u -> viewModel.export(ExportFormat.PDF, u) } }
@@ -107,9 +108,9 @@ fun ReportsScreen(onNavigateUp: () -> Unit, viewModel: ReportsViewModel = hiltVi
                 SectionHeader(stringResource(R.string.reports_export))
                 Text(stringResource(R.string.reports_export_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 val busy = state.export == ExportStatus.Working
-                SecondaryButton(stringResource(R.string.export_pdf), onClick = { pdfLauncher.launch(pdfName) }, enabled = !busy, modifier = Modifier.fillMaxWidth())
+                SecondaryButton(proLabel(stringResource(R.string.export_pdf), isPro), onClick = { if (isPro) pdfLauncher.launch(pdfName) else onUpgrade() }, enabled = !busy, modifier = Modifier.fillMaxWidth())
                 SecondaryButton(stringResource(R.string.export_csv), onClick = { csvLauncher.launch(csvName) }, enabled = !busy, modifier = Modifier.fillMaxWidth())
-                SecondaryButton(stringResource(R.string.export_xlsx), onClick = { xlsxLauncher.launch(xlsxName) }, enabled = !busy, modifier = Modifier.fillMaxWidth())
+                SecondaryButton(proLabel(stringResource(R.string.export_xlsx), isPro), onClick = { if (isPro) xlsxLauncher.launch(xlsxName) else onUpgrade() }, enabled = !busy, modifier = Modifier.fillMaxWidth())
                 when (val e = state.export) {
                     ExportStatus.Working -> CircularProgressIndicator()
                     is ExportStatus.Done -> Text(stringResource(R.string.export_done), color = MaterialTheme.colorScheme.primary)
@@ -156,3 +157,7 @@ private fun sourceLabel(source: com.yasin.vcardly.domain.model.ContactSource): S
         com.yasin.vcardly.domain.model.ContactSource.IMPORT -> R.string.source_import
     },
 )
+
+/** "PDF report · Pro" for free users, so the lock is visible before tapping (as text, not only as an icon or colour). */
+@Composable
+private fun proLabel(label: String, isPro: Boolean): String = if (isPro) label else stringResource(R.string.pro_locked_label, label)

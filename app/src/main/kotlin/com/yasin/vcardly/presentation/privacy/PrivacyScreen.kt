@@ -28,6 +28,7 @@ private val sections = listOf(
     PrivacySection(R.string.privacy_stays_title, R.string.privacy_stays_body),
     PrivacySection(R.string.privacy_no_account_title, R.string.privacy_no_account_body),
     PrivacySection(R.string.privacy_permissions_title, R.string.privacy_permissions_body),
+    PrivacySection(R.string.privacy_ads_title, R.string.privacy_ads_body),
     PrivacySection(R.string.privacy_ocr_title, R.string.privacy_ocr_body),
     PrivacySection(R.string.privacy_sharing_title, R.string.privacy_sharing_body),
     PrivacySection(R.string.privacy_backup_title, R.string.privacy_backup_body),

@@ -51,6 +51,9 @@ class PreferencesRepositoryImpl @Inject constructor(
     override suspend fun setAutoLockSeconds(seconds: Int) { dataStore.edit { it[AUTO_LOCK_SECONDS] = seconds } }
     override suspend fun setSecureScreen(enabled: Boolean) { dataStore.edit { it[SECURE_SCREEN] = enabled } }
 
+    override val proCached: Flow<Boolean> = prefs.map { it[PRO_CACHED] ?: false }.distinctUntilChanged()
+    override suspend fun setProCached(pro: Boolean) { dataStore.edit { it[PRO_CACHED] = pro } }
+
     override val lastBackupAt: Flow<Long?> = prefs.map { it[LAST_BACKUP_AT] }.distinctUntilChanged()
 
     override suspend fun setLastBackupAt(millis: Long) {
@@ -71,6 +74,7 @@ class PreferencesRepositoryImpl @Inject constructor(
         val APP_LOCK = booleanPreferencesKey("app_lock_enabled")
         val AUTO_LOCK_SECONDS = intPreferencesKey("auto_lock_seconds")
         val SECURE_SCREEN = booleanPreferencesKey("secure_screen")
+        val PRO_CACHED = booleanPreferencesKey("pro_cached")
         val LAST_BACKUP_AT = longPreferencesKey("last_backup_at")
     }
 }

@@ -56,6 +56,8 @@ class ContactRepositoryImpl @Inject constructor(
 
     override suspend fun delete(id: Long) = dao.deleteById(id)
 
+    override suspend fun countScannedSince(sinceMillis: Long): Int = dao.countScannedSince(sinceMillis)
+
     override fun observeStats(addedSince: Long): Flow<ContactStats> = combine(
         dao.observeTotalCount(),
         dao.observeFavoriteCount(),

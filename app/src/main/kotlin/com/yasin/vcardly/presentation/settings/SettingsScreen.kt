@@ -52,6 +52,7 @@ fun SettingsScreen(
     onOpenReports: () -> Unit,
     onOpenBackup: () -> Unit,
     onOpenPrivacy: () -> Unit,
+    onOpenPro: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
@@ -73,6 +74,14 @@ fun SettingsScreen(
                         onSelect = { viewModel.setThemeMode(mode) },
                     )
                 }
+            }
+
+            val isPro by viewModel.isPro.collectAsStateWithLifecycle()
+            SectionHeader(stringResource(R.string.pro_title))
+            SettingsLink(stringResource(if (isPro) R.string.pro_settings_active else R.string.pro_settings_upgrade), onOpenPro)
+            val activity = androidx.compose.ui.platform.LocalContext.current as? android.app.Activity
+            if (!isPro && viewModel.ads.enabled && viewModel.ads.privacyOptionsRequired() && activity != null) {
+                SettingsLink(stringResource(R.string.ads_privacy_options)) { viewModel.ads.showPrivacyOptions(activity) }
             }
 
             SecuritySection(viewModel, onOpenPrivacy)

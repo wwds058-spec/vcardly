@@ -43,6 +43,7 @@ class ContactsViewModel @Inject constructor(
     private val contacts: ContactRepository,
     categories: CategoryRepository,
     tags: TagRepository,
+    private val entitlements: com.yasin.vcardly.core.billing.EntitlementManager,
 ) : ViewModel() {
 
     private val filter = MutableStateFlow(ContactFilter())
@@ -70,6 +71,16 @@ class ContactsViewModel @Inject constructor(
 
     /** Clears search and filters but keeps the chosen sort order. */
     fun clearFilters() = filter.update { ContactFilter(sort = it.sort) }
+
+    /** Free plan: a monthly scan allowance. [onAllowed] starts the scanner; otherwise [onBlocked] gets the limit to show. */
+    fun requestScan(onAllowed: () -> Unit, onBlocked: (limit: Int) -> Unit) {
+        viewModelScope.launch {
+            when (val a = entitlements.scanAllowance()) {
+                com.yasin.vcardly.domain.entitlement.ScanAllowance.Unlimited -> onAllowed()
+                is com.yasin.vcardly.domain.entitlement.ScanAllowance.Limited -> if (a.isAllowed) onAllowed() else onBlocked(a.limit)
+            }
+        }
+    }
 
     fun toggleFavorite(id: Long, current: Boolean) {
         viewModelScope.launch { contacts.setFavorite(id, !current) }

@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -16,7 +17,13 @@ class SettingsViewModel @Inject constructor(
     private val preferences: PreferencesRepository,
     private val lockManager: com.yasin.vcardly.core.security.AppLockManager,
     private val eraser: com.yasin.vcardly.core.backup.DataEraser,
+    entitlements: com.yasin.vcardly.core.billing.EntitlementManager,
+    val ads: com.yasin.vcardly.core.ads.AdsManager,
 ) : ViewModel() {
+    val isPro: StateFlow<Boolean> = entitlements.state
+        .map { it.isPro }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     val security: StateFlow<com.yasin.vcardly.domain.repository.SecuritySettings> = preferences.securitySettings
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), com.yasin.vcardly.domain.repository.SecuritySettings())
 

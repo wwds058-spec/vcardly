@@ -8,6 +8,10 @@
     <!-- Follow-up reminders. POST_NOTIFICATIONS is requested at runtime (Android 13+) when a reminder is turned on.
          SCHEDULE_EXACT_ALARM lets reminders fire on time; without the user's grant they still fire, possibly delayed.
          RECEIVE_BOOT_COMPLETED re-arms them after a reboot. -->
+    <!-- Needed only for Google Play Billing and AdMob (free plan). No contact data is ever sent. The Pro plan does not load ads. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <!-- App lock (BiometricPrompt). The app never receives biometric data. -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
@@ -25,6 +29,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.VCardly.Starting">
+
+        <!-- AdMob application ID: Google's test ID in debug; your real one from secrets.properties in release. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppId}" />
 
         <activity
             android:name=".MainActivity"

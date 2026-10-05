@@ -63,10 +63,13 @@ fun ContactsScreen(
     onOpenContact: (Long) -> Unit,
     onAddContact: () -> Unit,
     onScanCard: () -> Unit,
+    onUpgrade: () -> Unit,
     viewModel: ContactsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val filter = state.filter
+    var scanLimit by remember { mutableStateOf<Int?>(null) }
+    val startScan = { viewModel.requestScan(onAllowed = onScanCard, onBlocked = { scanLimit = it }) }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
@@ -104,7 +107,7 @@ fun ContactsScreen(
                     message = stringResource(R.string.contacts_empty_message),
                     action = {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
-                            PrimaryButton(stringResource(R.string.contacts_scan), onClick = onScanCard)
+                            PrimaryButton(stringResource(R.string.contacts_scan), onClick = { startScan() })
                             SecondaryButton(stringResource(R.string.contacts_add), onClick = onAddContact)
                         }
                     },
@@ -131,7 +134,7 @@ fun ContactsScreen(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {
             ExtendedFloatingActionButton(
-                onClick = onScanCard,
+                onClick = { startScan() },
                 icon = { Icon(Icons.Filled.AccountBox, contentDescription = null) },
                 text = { Text(stringResource(R.string.contacts_scan)) },
             )
@@ -139,6 +142,16 @@ fun ContactsScreen(
                 Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.contacts_add))
             }
         }
+    }
+
+    scanLimit?.let { limit ->
+        com.yasin.vcardly.core.designsystem.component.ConfirmDialog(
+            title = stringResource(R.string.scan_limit_title),
+            message = stringResource(R.string.scan_limit_message, limit),
+            confirmText = stringResource(R.string.pro_see_pro),
+            onConfirm = { scanLimit = null; onUpgrade() },
+            onDismiss = { scanLimit = null },
+        )
     }
 }
 
