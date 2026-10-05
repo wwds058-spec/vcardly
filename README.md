@@ -1,13 +1,20 @@
 # VCardly
 
-Offline-first business-card manager for Android: scan or type contacts, organise them with categories and tags, set follow-up
-reminders, share a digital card with a QR code, and keep everything on your own device.
+Your smart digital visiting-card book. Scan a visiting card, review what was read, and keep the contact together with the original
+card image; then call, WhatsApp or email, organise with categories and tags, plan follow-ups with reminders, and share your own
+digital card as a QR code. Offline-first: everything stays on your device.
 
 Kotlin, Jetpack Compose (Material 3), MVVM / clean layering, Hilt, Room, DataStore, Coroutines/Flow, CameraX, ML Kit text
 recognition, AndroidX Biometric, WorkManager + AlarmManager, Play Billing, AdMob. Package `com.yasin.vcardly`, minSdk 26, target 35.
 English only (right-to-left layouts are supported by the manifest and Compose, but no translations ship).
 
-See **[PROJECT_STATUS.md](PROJECT_STATUS.md)** for what is built, the assumptions made and what still needs your configuration.
+| Document | What it covers |
+|---|---|
+| [PROJECT_STATUS.md](PROJECT_STATUS.md) | What is built, last build/test results, what needs your configuration, known limitations |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | UI and data architecture, design system (the technical source of truth) |
+| [PRIVACY_AND_SECURITY.md](PRIVACY_AND_SECURITY.md) | Where data lives, permissions, protections, logging rules |
+| [PLAY_STORE_CHECKLIST.md](PLAY_STORE_CHECKLIST.md) | Release and store-listing steps |
+| [docs/PLAY_CONSOLE_SETUP.md](docs/PLAY_CONSOLE_SETUP.md), [docs/GOOGLE_DRIVE_SETUP.md](docs/GOOGLE_DRIVE_SETUP.md) | Billing, AdMob and Drive setup |
 
 ## Build and test
 
@@ -17,10 +24,12 @@ Requires JDK 17+ and the Android SDK (`local.properties` with `sdk.dir=...`, or 
 ./gradlew :app:assembleDebug          # debug APK (uses Google's test ad IDs)
 ./gradlew :app:testDebugUnitTest      # unit tests
 ./gradlew :app:lintDebug              # Android lint
-./gradlew :app:connectedDebugAndroidTest   # instrumented tests (emulator/device): Room DAOs and repositories
+./gradlew :app:connectedDebugAndroidTest   # emulator/device: Room DAOs and repositories, UI interaction tests, screenshots
 ```
 
-GitHub Actions (`.github/workflows/ci.yml`) runs the first three on every push and uploads the debug APK and reports.
+GitHub Actions (`.github/workflows/ci.yml`) runs all four on every push (the last one on an API 30 emulator), publishes debug APKs to
+the `debug-apk` and `debug-apk-arm64` branches, and publishes light and dark screenshots of the redesigned screens to the
+`ui-screenshots` branch.
 
 ## Configuration you must provide (never committed)
 

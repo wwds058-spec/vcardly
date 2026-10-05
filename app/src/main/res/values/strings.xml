@@ -693,7 +693,7 @@
     <string name="reports_screen_title">Reports</string>
     <string name="report_total_contacts">Total contacts</string>
     <string name="report_new_contacts">New contacts</string>
-    <string name="report_completed_follow_ups">Completed follow-ups</string>
+    <string name="report_completed_follow_ups">Follow-ups done</string>
     <string name="report_rate_short">%1$s completion rate</string>
     <string name="report_contacts_by_category">Contacts by category</string>
     <string name="report_total_short">Total</string>

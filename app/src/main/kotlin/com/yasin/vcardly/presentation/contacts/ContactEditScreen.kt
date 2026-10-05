@@ -171,6 +171,24 @@ fun ContactEditScreen(
         cameraTarget?.let { (front, file) -> viewModel.onCameraResult(front, file, ok) }
         cameraTarget = null
     }
+    // An app that declares CAMERA must hold it before using the system camera intent (Android throws otherwise),
+    // so the permission is asked here, in context, the first time the user chooses "Take photo".
+    val launchCamera: (Boolean) -> Unit = { front ->
+        val file = viewModel.newCameraFile()
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        cameraTarget = front to file
+        try {
+            camera.launch(uri)
+        } catch (_: android.content.ActivityNotFoundException) {
+            cameraTarget = null
+        } catch (_: SecurityException) {
+            cameraTarget = null
+        }
+    }
+    var permissionFront by remember { mutableStateOf(true) }
+    val cameraPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) launchCamera(permissionFront)
+    }
     var pickFront by remember { mutableStateOf(true) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
         if (uri != null) viewModel.onImagePicked(pickFront, uri)
@@ -188,10 +206,9 @@ fun ContactEditScreen(
             onRemoveImage = viewModel::removeImage,
             onRotateImage = viewModel::rotateImage,
             onTakePhoto = { front ->
-                val file = viewModel.newCameraFile()
-                val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-                cameraTarget = front to file
-                try { camera.launch(uri) } catch (_: android.content.ActivityNotFoundException) { cameraTarget = null; picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
+                val granted = androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) ==
+                    android.content.pm.PackageManager.PERMISSION_GRANTED
+                if (granted) launchCamera(front) else { permissionFront = front; cameraPermission.launch(android.Manifest.permission.CAMERA) }
             },
             onPickImage = { front -> pickFront = front; picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
             onAddLineToNotes = viewModel::addLineToNotes,

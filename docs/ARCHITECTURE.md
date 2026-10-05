@@ -50,11 +50,17 @@ Screen composable
   `flatMapLatest` into `observeContacts`.
 - **The database drives the UI.** Room returns Flows, so lists update live without manual refreshes.
 - **Loading, empty and error states use shared components** from `States.kt`.
+- **Each screen exposes a stateless `XxxContent(state, actions)`** (for example `DashboardContent`,
+  `ContactsContent`, `ContactEditContent`). The `XxxScreen` wrapper collects the ViewModel and wires the
+  callbacks; tests and screenshots render the content directly with sample state.
 
 ## 3. Navigation graph
 
 Bottom bar (4 top-level tabs): Home, Contacts, Follow-ups, Settings. The bar is shown only on these
-routes; tab switches use `navigateTopLevel` (save/restore state, single top).
+routes; tab switches use `navigateTopLevel` (save/restore state, single top). A raised **Scan** button
+sits in the middle of the bar. It is an action, not a fifth destination: it calls the shared
+`rememberScanLauncher` (free-plan scan allowance check) and then opens the scan graph. Home's quick
+action and the Contacts empty state use the same launcher.
 
 ```
 onboarding ─► home
@@ -67,8 +73,11 @@ settings ─► organize, backup, transfer, privacy, pro
 ```
 
 - **The scan flow is a nested graph.** Capture and crop share one `ScanSessionViewModel`, scoped to
-  the graph's back-stack entry, so the image and crop state survive between the two screens. After
-  saving, `popUpTo(SCAN_GRAPH)` removes the whole flow.
+  the graph's back-stack entry, so the image and crop state survive between the two screens. The
+  OCR review is `contact/edit/0?fromScan=true` above the graph; its "Rescan" calls
+  `ScanSessionViewModel.restart()` and pops back to capture. After saving, `popUpTo(SCAN_GRAPH)`
+  removes the whole flow.
+- **Transitions:** tab switches cross-fade; pushed screens fade in with a small upward slide.
 - **Reminder notification taps** arrive as `openContactId` and are routed to the contact details once
   onboarding is done.
 - **The start destination** is chosen before the first frame (`onboardingCompleted`), so there is no
@@ -91,7 +100,23 @@ settings ─► organize, backup, transfer, privacy, pro
 - **Insets:** each screen owns its top bar and status-bar insets. `AppRoot` applies only the
   bottom-bar padding.
 
-## 5. Where things live
+## 5. Design system
+
+`core/designsystem` holds everything visual that is not tied to a domain model:
+
+| Piece | Contents |
+|---|---|
+| `theme/Color.kt` | Material light scheme and a separately designed deep-navy dark scheme; `VCardlyColors` with tone families (blue, rose, mint, orange, lavender, navy: container, ink, accent), CTA colour, gradients. Read with `MaterialTheme.vcColors`. Pairs are checked by `ThemeContrastTest`. |
+| `theme/Type.kt` | Plus Jakarta Sans (bundled, OFL) with system fallback for non-Latin scripts; `StatValueStyle`, `OverlineStyle` |
+| `theme/Spacing.kt`, `Shape.kt` | 4dp grid, 20dp screen margin, elevation tokens; pill, card, tile and sheet shapes |
+| `component/` | buttons (primary pill, secondary, tonal, text, icon, FAB), cards (`VCardlyCard`, stat card, gradient action tile, navigation row, group), search bar and chips, avatar, info row, timeline, stepper, top bars, bottom navigation, logo, empty/loading/error states and notices |
+
+Components that take domain models live in `presentation/common` (`VCardlyContactCard`,
+`VCardlyFollowUpCard`, `VCardlyDigitalCard`, `BusinessCardArt`, `CardImageView`, `ExternalActions`), so
+the design system never depends on the domain layer. Screens draw on the app background (no `Surface`),
+so `VCardlyTheme` provides `LocalContentColor`.
+
+## 6. Where things live
 
 | I want to change… | Look in |
 |---|---|
@@ -156,14 +181,17 @@ categories ──< contacts >──< contact_tags >── tags
 
 | Table | Key columns | Constraints and indexes |
 |---|---|---|
-| `categories` | `id`, `name`, `color_argb`, `system_key`, `sort_order`, `created_at` | unique `system_key`. System categories are seeded on create with a blank name; the UI shows a translated label |
+| `categories` | `id`, `name`, `color_argb`, `system_key`, `sort_order`, `created_at` | unique `system_key`. System categories are seeded on create with a blank name (the UI shows a translated label); categories added in later versions are appended on open with `INSERT OR IGNORE` (no schema change) |
 | `tags` | `id`, `name` (NOCASE), `color_argb`, `created_at` | unique `name`, case-insensitive |
 | `contacts` | name, job title, company, 2 phones, 2 emails, website, address, notes, `category_id`, `is_favorite`, `front/back_image_path`, `source` (MANUAL/SCAN/IMPORT…), `created_at`, `updated_at` | FK `category_id → categories` **ON DELETE SET NULL**; indexes on `category_id`, `is_favorite`, `created_at` |
 | `contact_tags` | `contact_id`, `tag_id` (composite PK) | both FKs **ON DELETE CASCADE**; index on `tag_id` |
 | `follow_ups` | `contact_id`, `type`, `status`, `title`, `notes`, `due_at`, `reminder_enabled`, `reminder_offset_minutes`, `completed_at`, `notified_at`, timestamps | FK `contact_id → contacts` **ON DELETE CASCADE**; indexes on `contact_id` and `(status, due_at)` |
 
 - **Enums are stored by name.** `Converters` falls back to a safe default for unknown values (for
-  example from a newer backup) instead of failing the whole query.
+  example from a newer backup) instead of failing the whole query. Follow-up statuses: `PENDING` and
+  `RESCHEDULED` are active (Today/Upcoming/Overdue, reminders), `COMPLETED` and `CANCELLED` are closed
+  (the Completed tab). Types: call, WhatsApp, email, meeting, quotation, payment, other (`MESSAGE` kept
+  for older data).
 - **Read models** use `@Relation`: `ContactWithRelations` (contact + category + tags through the
   junction) and `FollowUpWithContactEntity`, loaded inside `@Transaction` queries.
 - **Migrations:** the schema JSON is exported to `app/schemas/`, and every change must add a
@@ -253,5 +281,8 @@ survive reboots and clock changes.
 
 | What | Where |
 |---|---|
-| Query builder, validators, parser, planners, vCard, backup archive, crypto, restore planner (JVM, 139 tests) | `app/src/test` |
+| Query builder, validators, parser, planners, vCard, backup archive, crypto, restore planner (JVM) | `app/src/test` |
 | Room DAOs and repositories on a real SQLite database (emulator) | `app/src/androidTest`: `DatabaseTest`, `ContactRepositoryTest`, `FollowUpRepositoryTest` |
+| UI interactions on the stateless screen content | `app/src/androidTest/.../ui/ScreenBehaviourTest` |
+| Screenshots of every redesigned screen, light and dark, published by CI to the `ui-screenshots` branch | `app/src/androidTest/.../ui/ScreenshotTest` |
+| Theme contrast, WhatsApp number handling | `ThemeContrastTest`, `WhatsAppDigitsTest` (JVM) |

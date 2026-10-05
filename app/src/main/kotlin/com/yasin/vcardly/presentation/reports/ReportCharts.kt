@@ -133,8 +133,8 @@ fun StackedBar(segments: List<Segment>, modifier: Modifier = Modifier) {
 }
 
 /**
- * Contact growth: one series of rounded bars per month in a single brand gradient (no legend needed), the tallest
- * value labelled, months along a recessive baseline.
+ * Contact growth: one series of rounded bars per month in a single brand gradient (no legend needed), months along a
+ * recessive baseline; each bar announces its month and value to TalkBack.
  */
 @Composable
 fun GrowthChart(items: List<MonthCount>, color: Color, modifier: Modifier = Modifier, chartHeight: Dp = 140.dp) {
@@ -156,10 +156,7 @@ fun GrowthChart(items: List<MonthCount>, color: Color, modifier: Modifier = Modi
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom,
                 ) {
-                    if (m.count == max && m.count > 0) {
-                        Text(number.format(m.count), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface, maxLines = 1)
-                        Spacer(Modifier.height(2.dp))
-                    }
+                    // Every column has the same plot height (the headline total sits above the chart), so bars stay comparable.
                     Canvas(Modifier.fillMaxWidth(0.62f).weight(1f, fill = true)) {
                         val h = size.height * (m.count.toFloat() / max) * grow.value
                         val w = size.width
