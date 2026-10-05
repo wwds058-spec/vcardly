@@ -291,4 +291,52 @@
         <item quantity="one">%1$d contact exported.</item>
         <item quantity="other">%1$d contacts exported.</item>
     </plurals>
+
+    <!-- Reports and exports -->
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
+    <string name="reports_title">Reports and export</string>
+    <string name="reports_empty_title">Nothing to report yet</string>
+    <string name="reports_empty_message">Add contacts and follow-ups, and your reports will appear here.</string>
+    <string name="report_range_3_months">Last 3 months</string>
+    <string name="report_range_12_months">Last 12 months</string>
+    <string name="report_range_all">All time</string>
+    <string name="report_section_activity">Activity</string>
+    <string name="report_section_library">Your contacts today</string>
+    <string name="report_library_note">These figures cover everything you have saved, whatever period is selected.</string>
+    <string name="report_section_summary">Summary</string>
+    <string name="report_added_in_range">Contacts added</string>
+    <string name="report_added_per_month">Contacts added per month</string>
+    <string name="report_followups_due">Follow-ups due</string>
+    <string name="report_completion_rate">Completion rate</string>
+    <string name="report_completion_summary">%1$s%% completed (%2$s of %3$s follow-ups that were due)</string>
+    <string name="report_followups_by_type">Follow-ups by type</string>
+    <string name="report_by_source">How contacts were added</string>
+    <string name="report_top_tags">Most used tags</string>
+    <string name="report_directory">Contact directory</string>
+    <string name="report_none">None</string>
+    <string name="report_pdf_title">VCardly report</string>
+    <string name="report_generated_on">Created %1$s</string>
+    <string name="source_manual">Typed in</string>
+    <string name="source_scan">Scanned</string>
+    <string name="source_import">Imported</string>
+    <string name="reports_export">Export</string>
+    <string name="reports_export_hint">Choose where to save the file. Nothing is uploaded anywhere.</string>
+    <string name="export_pdf">PDF report</string>
+    <string name="export_csv">Contacts as CSV</string>
+    <string name="export_xlsx">Contacts and follow-ups as Excel</string>
+    <string name="export_file_pdf">vcardly-report.pdf</string>
+    <string name="export_file_csv">vcardly-contacts.csv</string>
+    <string name="export_file_xlsx">vcardly-workbook.xlsx</string>
+    <string name="export_done">File saved.</string>
+    <string name="export_failed">The file could not be saved.</string>
+    <string name="export_privacy_note">Exports contain your contacts\' personal details and private notes. Store and share them carefully.</string>
+    <string name="export_sheet_contacts">Contacts</string>
+    <string name="export_sheet_follow_ups">Follow-ups</string>
+    <string name="export_col_favorite">Favorite</string>
+    <string name="export_col_source">Source</string>
+    <string name="export_col_added">Added</string>
+    <string name="export_col_status">Status</string>
+    <string name="export_col_completed">Completed</string>
+    <string name="export_status_pending">Pending</string>
 </resources>

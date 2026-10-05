@@ -48,6 +48,8 @@ interface TagRepository {
 interface FollowUpRepository {
     fun observe(bucket: FollowUpBucket): Flow<List<FollowUpWithContact>>
     fun observeForContact(contactId: Long): Flow<List<FollowUp>>
+    /** Every follow-up, newest due first; used by reports and exports. */
+    fun observeAll(): Flow<List<FollowUpWithContact>>
     fun observeCounts(): Flow<FollowUpCounts>
     suspend fun get(id: Long): FollowUp?
     suspend fun getWithContact(id: Long): FollowUpWithContact?

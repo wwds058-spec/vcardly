@@ -34,6 +34,7 @@ import com.yasin.vcardly.presentation.dashboard.DashboardScreen
 import com.yasin.vcardly.presentation.mycard.MyCardEditScreen
 import com.yasin.vcardly.presentation.mycard.MyCardScreen
 import com.yasin.vcardly.presentation.organize.OrganizeScreen
+import com.yasin.vcardly.presentation.reports.ReportsScreen
 import com.yasin.vcardly.presentation.share.ContactQrScreen
 import com.yasin.vcardly.presentation.transfer.TransferScreen
 import com.yasin.vcardly.presentation.onboarding.OnboardingScreen
@@ -97,6 +98,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
             composable(Routes.HOME) {
                 DashboardScreen(
                     onOpenMyCard = { navController.navigate(Routes.MY_CARD) },
+                    onOpenReports = { navController.navigate(Routes.REPORTS) },
                     onOpenContacts = { navController.navigateTopLevel(Routes.CONTACTS) },
                     onOpenFollowUps = { navController.navigateTopLevel(Routes.FOLLOW_UPS) },
                 )
@@ -153,6 +155,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     )
                 }
             }
+            composable(Routes.REPORTS) { ReportsScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.MY_CARD) {
                 MyCardScreen(onNavigateUp = { navController.popBackStack() }, onEdit = { navController.navigate(Routes.MY_CARD_EDIT) })
             }
@@ -177,6 +180,7 @@ fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenCon
                     onOpenOrganize = { navController.navigate(Routes.ORGANIZE) },
                     onOpenMyCard = { navController.navigate(Routes.MY_CARD) },
                     onOpenTransfer = { navController.navigate(Routes.TRANSFER) },
+                    onOpenReports = { navController.navigate(Routes.REPORTS) },
                 )
             }
         }

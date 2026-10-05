@@ -12,7 +12,8 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| Pure-Kotlin JVM tests: query builder (6), category breakdown (3), contact validator (7), initials (6), business-card parser (7), crop math (4), reminder planner (6), due-time (4), follow-up validator (5), vCard write/parse (9), vCard import + duplicates (8), share card (4), QR encode→decode with ZXing (5) | 74/74 pass (tests caught two real bugs, fixed) |
+| Pure-Kotlin JVM tests (query builder, category breakdown, validators, initials, card parser, crop math, reminder planner, due time, vCard write/parse/import, share card, QR round trip, report builder, report PDF content, CSV, XLSX) | 89/89 pass (tests caught two real bugs, fixed) |
+| Generated `.xlsx` opened with `openpyxl` (independent reader) | OK: sheets, bold frozen header, Unicode, text-only cells |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
 
@@ -30,11 +31,35 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 4 | Image storage, CameraX scanner, crop/rotate, ML Kit OCR + heuristic parsing + review screen | Written, **not build-verified** |
 | 5 | Follow-ups + notifications (boot / time-change safe) | Written, **not build-verified** |
 | 6 | Digital card, QR, vCard export/import | Written, **not build-verified** |
-| 7 | Reports + PDF/CSV/Excel export | Planned |
+| 7 | Reports + PDF/CSV/Excel export | Written, **not build-verified** |
 | 8 | Global search, backup/restore (`vcardly-backup-v1`), Drive preparation | Planned |
 | 9 | Biometric lock + auto-lock, privacy screen | Planned |
 | 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 7 contents
+
+- **Reports and export** (Home button, or Settings): range chips (3 months / 12 months / all time).
+  *Activity* (follows the range): contacts added, follow-ups completed / overdue, contacts-added-per-month column chart,
+  follow-up completion bar, follow-ups by type. *Your contacts today* (always the whole library): totals, favorites,
+  by category, how contacts were added (typed / scanned / imported), most-used tags. All numbers come from the real database
+  through the pure, tested `ReportBuilder` (calendar months in the device zone, zero-filled, 36-month cap for All time).
+- **Charts** are plain Compose (no chart library): one hue, thin rounded bars on a baseline, direct value labels, text in text
+  colours, every bar has a spoken description ("June 2026: 3"). Category colours are deliberately not used for magnitude;
+  the validator flagged some seeded category colours (slate "Other" reads gray, orange has low contrast on the surface), which is
+  fine because they only mark identity next to a visible label, but is a reason not to build charts on them.
+- **Export through the system file picker** (no storage permission; "wt" mode so overwriting never leaves stale bytes):
+  - *PDF report*: summary, monthly bars, follow-up stats, category/source/tag bars and a contact directory table; A4, paginated,
+    table header repeats per page, text truncated with ellipsis, mirrored for RTL locales. Content is built by a pure tested
+    `ReportPdfContent`; `PdfDocRenderer` only draws it (platform `PdfDocument`, no library).
+  - *CSV*: UTF-8 with BOM (Excel reads Unicode correctly), RFC 4180 quoting, and **formula-injection protection** (cells starting
+    with `= + - @` get a leading `'`, except plain phone numbers like `+91 98765 43210`).
+  - *Excel (.xlsx)*: two sheets (Contacts, Follow-ups), hand-written Office Open XML, inline strings only so nothing can run as a
+    formula, bold frozen header, fitted column widths, XML-illegal control characters stripped.
+  - Headers, yes/no, sources, statuses are localized from resources, so exports follow the app language.
+- Known gaps: the PDF renderer has not been run on a device (layout may need tuning, e.g. long Telugu/Urdu names); no chart images in
+  the PDF (bars are drawn as shapes, which is fine for print); exports are all-or-nothing (no per-category filter yet);
+  the earlier "Import and export" screen handles vCard only, the Reports screen handles PDF/CSV/Excel.
 
 ## Phase 6 contents
 

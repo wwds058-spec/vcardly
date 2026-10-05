@@ -58,6 +58,9 @@ class FollowUpRepositoryImpl @Inject constructor(
     override fun observeForContact(contactId: Long): Flow<List<FollowUp>> =
         dao.observeForContact(contactId).map { rows -> rows.map { it.toDomain() } }
 
+    override fun observeAll(): Flow<List<FollowUpWithContact>> =
+        dao.observeAllWithContact().map { rows -> rows.map { it.toDomain() } }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeCounts(): Flow<FollowUpCounts> = dayBoundsFlow().flatMapLatest { (start, next) ->
         combine(

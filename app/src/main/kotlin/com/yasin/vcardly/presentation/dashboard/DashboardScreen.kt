@@ -49,6 +49,7 @@ import java.text.NumberFormat
 @Composable
 fun DashboardScreen(
     onOpenMyCard: () -> Unit,
+    onOpenReports: () -> Unit,
     onOpenContacts: () -> Unit,
     onOpenFollowUps: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
@@ -65,13 +66,13 @@ fun DashboardScreen(
                 message = stringResource(R.string.dashboard_empty_message),
                 action = { PrimaryButton(stringResource(R.string.dashboard_empty_action), onClick = onOpenContacts) },
             )
-            else -> DashboardContent(state, onOpenContacts, onOpenFollowUps, onOpenMyCard)
+            else -> DashboardContent(state, onOpenContacts, onOpenFollowUps, onOpenMyCard, onOpenReports)
         }
     }
 }
 
 @Composable
-private fun DashboardContent(state: DashboardUiState, onOpenContacts: () -> Unit, onOpenFollowUps: () -> Unit, onOpenMyCard: () -> Unit) {
+private fun DashboardContent(state: DashboardUiState, onOpenContacts: () -> Unit, onOpenFollowUps: () -> Unit, onOpenMyCard: () -> Unit, onOpenReports: () -> Unit) {
     // Locale-aware digits (e.g. Arabic-Indic for Urdu/Hindi locales that use them).
     val number = remember { NumberFormat.getInstance() }
     val spacing = MaterialTheme.spacing
@@ -102,7 +103,8 @@ private fun DashboardContent(state: DashboardUiState, onOpenContacts: () -> Unit
             state.categories.forEach { CategoryRow(it, number) }
         }
 
-        SecondaryButton(stringResource(R.string.settings_my_card), onClick = onOpenMyCard, modifier = Modifier.fillMaxWidth().padding(top = spacing.md))
+        SecondaryButton(stringResource(R.string.reports_title), onClick = onOpenReports, modifier = Modifier.fillMaxWidth().padding(top = spacing.md))
+        SecondaryButton(stringResource(R.string.settings_my_card), onClick = onOpenMyCard, modifier = Modifier.fillMaxWidth())
     }
 }
 
