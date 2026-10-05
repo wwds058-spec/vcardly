@@ -61,4 +61,6 @@ accepts counts and ids and only writes in debug builds.
 
 - Purchases are verified on the device only (no server). A modified or rooted device could fake Pro.
 - A lost backup password cannot be recovered.
+- iPhone: backups use the same encryption and checks as Android (see `docs/IOS.md`); card photos are excluded from iCloud device
+  backup, and the backup file goes only where the user saves it.
 - Rooted devices, `adb` access and a compromised OS are out of scope.

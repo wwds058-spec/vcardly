@@ -178,7 +178,11 @@ final class BackupService {
         let oldPaths = oldContacts.flatMap { [$0.frontImagePath, $0.backImagePath] }
         var installed: [String] = []
         var paths: [Int64: (String?, String?)] = [:]
-        for c in d.contacts { paths[c.id] = (install(c.frontImage, from: p, into: &installed), install(c.backImage, from: p, into: &installed)) }
+        for c in d.contacts {
+            let front = install(c.frontImage, from: p, into: &installed)
+            let back = install(c.backImage, from: p, into: &installed)
+            paths[c.id] = (front, back)
+        }
 
         var followUpCount = 0
         do {
@@ -238,8 +242,11 @@ final class BackupService {
         let plan = RestorePlanner.planMerge(p.data, existingContacts: existingContacts, existingCategories: existingCategoryEntities.map(\.domain))
 
         var installed: [String] = []
-        let prepared = plan.contacts.map { pc in
-            (pc, install(pc.contact.frontImage, from: p, into: &installed), install(pc.contact.backImage, from: p, into: &installed))
+        var prepared: [(PlannedContact, String?, String?)] = []
+        for pc in plan.contacts {
+            let front = install(pc.contact.frontImage, from: p, into: &installed)
+            let back = install(pc.contact.backImage, from: p, into: &installed)
+            prepared.append((pc, front, back))
         }
         var followUpCount = 0
         do {
@@ -301,7 +308,10 @@ final class BackupService {
         if let key = b.systemKey, SystemCategory(rawValue: key) != nil, keepSystemKey(key) {
             return CategoryEntity(name: "", colorARGB: b.colorArgb, systemKey: key, sortOrder: sortOrder, createdAt: created)
         }
-        let fallback = b.systemKey.flatMap { SystemCategory(rawValue: $0).map { L10n.s("category.\($0.rawValue)") } ?? $0.capitalized } ?? ""
+        var fallback = ""
+        if let key = b.systemKey {
+            fallback = SystemCategory(rawValue: key).map { L10n.s("category.\($0.rawValue)") } ?? key.capitalized
+        }
         let name = b.name.trimmed.isEmpty ? fallback : b.name.trimmed
         return CategoryEntity(name: name.capped(80), colorARGB: b.colorArgb, systemKey: nil, sortOrder: sortOrder, createdAt: created)
     }

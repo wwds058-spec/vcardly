@@ -18,6 +18,7 @@ ported line by line and covered by the same test cases.
 | Reminders | AlarmManager / WorkManager | `UNUserNotificationCenter` calendar triggers (soonest 60, re-armed at launch) |
 | App lock | AndroidX Biometric | LocalAuthentication (`deviceOwnerAuthentication`: Face ID / Touch ID / passcode), monotonic uptime timer |
 | Charts | custom Canvas | Swift Charts |
+| Backup / restore | `BackupArchive` (java.util.zip), `ChunkedAesGcm` | `BackupArchive` + own `ZipArchive` (Foundation has no ZIP API), `BackupCrypto` (CommonCrypto PBKDF2 + CryptoKit AES-GCM); **same file format, files move between platforms** |
 | Fonts | Plus Jakarta Sans in `res/font` | same four weights in `Resources/Fonts`, `UIAppFonts`, Dynamic Type via `relativeTo:` |
 | Strings | `strings.xml` | `Resources/en.lproj/Localizable.strings` (`L10n.s` / `L10n.plural`) |
 
@@ -56,18 +57,35 @@ CI (`ios` job in `.github/workflows/ci.yml`, `macos-15` runner) generates the pr
 rendered screens (light and dark, fictional sample data) to the `ios-screenshots` branch. macOS runner minutes are billed at a
 higher rate than Linux on private repositories.
 
+## Backup and restore
+
+Settings → Backup & restore. Same `vcardly-backup-v1` file as Android (see `docs/ARCHITECTURE.md`, "Backup and restore"), so a
+backup made on an Android phone restores on an iPhone and the other way round.
+
+- **Create**: optional password (at least 8 characters; PBKDF2-HMAC-SHA256 with 310,000 iterations, AES-256-GCM in authenticated
+  64 KiB chunks). The file is written to a private temporary folder, handed to the system "Save to Files" sheet, then deleted.
+- **Restore**: pick any file. It is decrypted and every entry is checked (manifest first, SHA-256 of every file, size caps, no
+  path traversal, no ZIP64) into a private staging folder before anything changes. Then **Add to what I have** (skips contacts
+  you already have: same email, same phone's last 9 digits, or same name + company) or **Replace everything** (confirmed first).
+  The database is saved in one go and rolled back, with copied photos removed, if that fails. Reminders are re-armed afterwards.
+- **Proof of compatibility**: `tools/backup_reference.py` is a small reference implementation of the format. It wrote the fixtures
+  in `testdata/backup/` (shaped like Android's `java.util.zip` output); Android's `BackupFixtureCompatTest` and the iOS
+  `BackupTests` both restore them, and CI checks the backups written by the iOS tests with the same script.
+- Restore needs free space for one decrypted copy of the backup while it runs.
+
 ## Needs your configuration (never faked)
 
 | What | Status | What you need to do |
 |---|---|---|
 | Apple Developer account, signing | not set up; `DEVELOPMENT_TEAM` is empty and CI builds with signing off | join the Apple Developer Program, set your team in Xcode (or `project.yml`), create the App ID `com.yasin.vcardly` |
 | In-app purchases (Pro) | the Pro screen says purchases are not set up and sells nothing | create products in App Store Connect, then add StoreKit 2 purchase code |
-| TestFlight / App Store | not prepared | App Store Connect record, privacy nutrition label (no data collected), screenshots, review notes |
+| TestFlight / App Store | not prepared | App Store Connect record, privacy nutrition label (no data collected), screenshots, review notes. Export compliance: backups use only Apple's built-in encryption (CryptoKit, CommonCrypto) to protect the user's own data; `ITSAppUsesNonExemptEncryption` is set to `false` on that basis, so confirm it when you submit |
 
 ## Differences from Android (by design or not yet built)
 
 - **No ads on iPhone** (AdMob is not included).
-- **Backup and restore, CSV/vCard import, Excel/PDF export, Google Drive**: not built for iOS yet; Settings says so.
+- **CSV/vCard import, Excel/PDF export, Google Drive**: not built for iOS yet. (Backup and restore is built; files are
+  saved with the Files sheet, so iCloud Drive works without any setup.)
 - **Free-plan scan quota**: not enforced on iOS (no purchases exist yet).
 - Scanning uses Apple's document camera instead of a custom camera screen; on devices without it (and in the simulator) the user
   picks a photo instead.

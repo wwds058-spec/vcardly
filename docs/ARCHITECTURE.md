@@ -257,6 +257,8 @@ survive reboots and clock changes.
     - **Merge** uses `RestorePlanner` (pure Kotlin) to remap IDs, match categories and skip
       duplicate contacts;
     - reminders are rescheduled afterwards.
+- **Same format on iPhone** (`ios/VCardly/Data/Backup`): files move between the two apps. The shared fixtures in
+  `testdata/backup/` (written by the reference implementation `tools/backup_reference.py`) are restored by both test suites.
 - **Google Drive** sits behind `CloudBackupProvider`. The current implementation is
   `UnconfiguredDriveProvider`, which honestly reports that Drive isn't set up yet (see
   `docs/GOOGLE_DRIVE_SETUP.md`).

@@ -1,6 +1,7 @@
 import CommonCrypto
 import CryptoKit
 import Foundation
+import Security
 
 /// Password encryption for backups, byte-compatible with Android's `ChunkedAesGcm`:
 /// PBKDF2-HMAC-SHA256 key derivation, then AES-256-GCM over 64 KiB chunks. Each chunk's nonce is a random 8-byte prefix plus
@@ -92,12 +93,13 @@ enum BackupCrypto {
     private static func derive(_ password: String, salt: Data, iterations: UInt32) throws -> SymmetricKey {
         let pw = Array(password.utf8)
         guard !pw.isEmpty else { throw CryptoError.wrongPasswordOrCorrupt }
-        var key = [UInt8](repeating: 0, count: 32)
+        let keyLength = 32
+        var key = [UInt8](repeating: 0, count: keyLength)
         let status = salt.withUnsafeBytes { s in
             pw.withUnsafeBufferPointer { p in
                 p.baseAddress!.withMemoryRebound(to: Int8.self, capacity: pw.count) { pp in
                     CCKeyDerivationPBKDF(CCPBKDFAlgorithm(kCCPBKDF2), pp, pw.count, s.bindMemory(to: UInt8.self).baseAddress!, salt.count,
-                                         CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256), iterations, &key, key.count)
+                                         CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256), iterations, &key, keyLength)
                 }
             }
         }

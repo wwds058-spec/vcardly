@@ -48,6 +48,8 @@ private extension KeyedDecodingContainer {
 }
 
 struct BackupCounts: Codable, Equatable {
+    enum CodingKeys: String, CodingKey { case contacts, categories, tags, followUps, images }
+
     var contacts = 0, categories = 0, tags = 0, followUps = 0, images = 0
 
     init(contacts: Int = 0, categories: Int = 0, tags: Int = 0, followUps: Int = 0, images: Int = 0) {
@@ -62,6 +64,8 @@ struct BackupCounts: Codable, Equatable {
 }
 
 struct BackupManifest: Codable, Equatable {
+    enum CodingKeys: String, CodingKey { case format, formatVersion, createdAt, appVersion, encrypted, counts, files }
+
     var format: String
     var formatVersion: Int
     var createdAt: Int64 = 0
@@ -88,6 +92,8 @@ struct BackupManifest: Codable, Equatable {
 }
 
 struct BCategory: Codable, Equatable {
+    enum CodingKeys: String, CodingKey { case id, name, colorArgb, systemKey, sortOrder, createdAt }
+
     var id: Int64
     var name = ""
     var colorArgb: Int64 = 0xFF607D8B
@@ -114,6 +120,8 @@ struct BCategory: Codable, Equatable {
 }
 
 struct BTag: Codable, Equatable {
+    enum CodingKeys: String, CodingKey { case id, name, colorArgb, createdAt }
+
     var id: Int64
     var name: String
     var colorArgb: Int64?
@@ -134,6 +142,8 @@ struct BTag: Codable, Equatable {
 }
 
 struct BContact: Codable, Equatable {
+    enum CodingKeys: String, CodingKey { case id, fullName, jobTitle, company, phone, phoneAlt, email, emailAlt, website, address, notes, categoryId, isFavorite, frontImage, backImage, source, createdAt, updatedAt, tagIds }
+
     var id: Int64
     var fullName: String
     var jobTitle = "", company = "", phone = "", phoneAlt = "", email = "", emailAlt = "", website = "", address = "", notes = ""
@@ -172,6 +182,8 @@ struct BContact: Codable, Equatable {
 }
 
 struct BFollowUp: Codable, Equatable {
+    enum CodingKeys: String, CodingKey { case id, contactId, title, type, status, notes, dueAt, reminderEnabled, reminderOffsetMinutes, completedAt, notifiedAt, createdAt, updatedAt }
+
     var id: Int64
     var contactId: Int64
     var title: String
@@ -208,6 +220,8 @@ struct BFollowUp: Codable, Equatable {
 }
 
 struct BMyCard: Codable, Equatable {
+    enum CodingKeys: String, CodingKey { case fullName, jobTitle, company, phone, phoneAlt, email, emailAlt, website, address }
+
     var fullName = "", jobTitle = "", company = "", phone = "", phoneAlt = "", email = "", emailAlt = "", website = "", address = ""
 
     init(_ m: MyCard) {
@@ -230,6 +244,8 @@ struct BMyCard: Codable, Equatable {
 }
 
 struct BackupData: Codable, Equatable {
+    enum CodingKeys: String, CodingKey { case categories, tags, contacts, followUps, myCard }
+
     var categories: [BCategory] = []
     var tags: [BTag] = []
     var contacts: [BContact] = []

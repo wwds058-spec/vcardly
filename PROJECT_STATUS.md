@@ -65,6 +65,9 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
   share, Reports with Swift Charts, Settings, Search, Privacy, Pro (honest "not set up"), Lock). SwiftData, local notifications,
   Face ID lock. Unit, repository and screenshot tests on a macOS CI runner; screenshots on the `ios-screenshots` branch.
   Details, gaps and the Apple-account steps: `docs/IOS.md`.
+- **iOS backup and restore**: the Android `vcardly-backup-v1` format (optional password encryption, staged and checksum-verified
+  restore, Merge or Replace), so backups move between iPhone and Android. Cross-platform proof: shared fixtures in
+  `testdata/backup/` restored by both test suites, plus CI verification of iPhone-written files with `tools/backup_reference.py`.
 
 ## In progress
 
