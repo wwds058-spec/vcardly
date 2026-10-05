@@ -50,7 +50,9 @@ object ReportStringsFactory {
         type = FollowUpType.entries.associateWith { typeName(c, it) },
         status = mapOf(
             FollowUpStatus.PENDING to c.getString(R.string.export_status_pending),
+            FollowUpStatus.RESCHEDULED to c.getString(R.string.followup_status_rescheduled),
             FollowUpStatus.COMPLETED to c.getString(R.string.followup_completed),
+            FollowUpStatus.CANCELLED to c.getString(R.string.followup_status_cancelled),
         ),
     )
 

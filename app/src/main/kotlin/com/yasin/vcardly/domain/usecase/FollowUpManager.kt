@@ -28,6 +28,16 @@ class FollowUpManager @Inject constructor(
         repository.get(id)?.let(scheduler::schedule)
     }
 
+    suspend fun reschedule(id: Long, dueAt: Long) {
+        repository.reschedule(id, dueAt)
+        repository.get(id)?.let(scheduler::schedule)
+    }
+
+    suspend fun cancel(id: Long) {
+        repository.cancel(id)
+        scheduler.cancel(id)
+    }
+
     suspend fun delete(id: Long) {
         repository.delete(id)
         scheduler.cancel(id)

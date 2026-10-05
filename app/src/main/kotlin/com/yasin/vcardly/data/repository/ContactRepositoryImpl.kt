@@ -36,6 +36,9 @@ class ContactRepositoryImpl @Inject constructor(
     override fun observeContact(id: Long): Flow<ContactDetails?> =
         dao.observeDetails(id).map { it?.toDomain() }
 
+    override fun observeRecent(limit: Int): Flow<List<ContactDetails>> =
+        dao.observeRecent(limit).map { rows -> rows.map { it.toDomain() } }
+
     override suspend fun getContact(id: Long): ContactDetails? = dao.getDetails(id)?.toDomain()
 
     override suspend fun save(contact: Contact, tagIds: Set<Long>): Long = db.withTransaction {

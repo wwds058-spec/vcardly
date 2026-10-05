@@ -3,7 +3,6 @@ package com.yasin.vcardly.core.notifications
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.yasin.vcardly.domain.model.FollowUpStatus
 import com.yasin.vcardly.domain.repository.FollowUpRepository
 import com.yasin.vcardly.domain.usecase.FollowUpManager
 import dagger.hilt.EntryPoint
@@ -55,7 +54,7 @@ class ReminderReceiver : BroadcastReceiver() {
     private suspend fun fire(id: Long, repository: FollowUpRepository, notifier: ReminderNotifier, clock: Clock) {
         val item = repository.getWithContact(id) ?: return
         val f = item.followUp
-        if (f.status != FollowUpStatus.PENDING || !f.reminderEnabled || f.notifiedAt != null) return
+        if (!f.status.isActive || !f.reminderEnabled || f.notifiedAt != null) return
         if (notifier.show(item)) repository.markNotified(id, clock.millis())
     }
 }

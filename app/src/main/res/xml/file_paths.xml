@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Only the cache "exports" folder is ever shared. -->
+<!-- Only these cache folders are ever shared: "exports" (files the user shares) and "scan" (a one-off write grant
+     so the camera app can save a card photo the user is taking). -->
 <paths>
     <cache-path name="exports" path="exports/" />
+    <cache-path name="capture" path="scan/" />
 </paths>

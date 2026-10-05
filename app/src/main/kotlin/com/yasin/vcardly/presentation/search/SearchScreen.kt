@@ -36,11 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
-import com.yasin.vcardly.core.designsystem.component.EmptyState
+import com.yasin.vcardly.core.designsystem.component.VCardlyEmptyState
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
-import com.yasin.vcardly.presentation.common.ContactAvatar
+import com.yasin.vcardly.core.designsystem.component.VCardlyAvatar
 import com.yasin.vcardly.presentation.followups.labelRes
 import java.text.DateFormat
 import java.util.Date
@@ -74,8 +74,8 @@ fun SearchScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = MaterialTheme.spacing.md).focusRequester(focus),
         )
         when {
-            state.isBlank -> EmptyState(Icons.Filled.Search, stringResource(R.string.search_prompt_title), stringResource(R.string.search_prompt_message))
-            state.isEmpty -> EmptyState(Icons.Filled.Search, stringResource(R.string.contacts_no_results_title), stringResource(R.string.search_no_results_message))
+            state.isBlank -> VCardlyEmptyState(Icons.Filled.Search, stringResource(R.string.search_prompt_title), stringResource(R.string.search_prompt_message))
+            state.isEmpty -> VCardlyEmptyState(Icons.Filled.Search, stringResource(R.string.contacts_no_results_title), stringResource(R.string.search_no_results_message))
             else -> LazyColumn(Modifier.fillMaxSize()) {
                 if (state.contacts.isNotEmpty()) {
                     item(key = "h-contacts") {
@@ -89,7 +89,7 @@ fun SearchScreen(
                                 .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            ContactAvatar(c.fullName, d.category?.colorArgb)
+                            VCardlyAvatar(c.fullName, d.category?.colorArgb)
                             Column(Modifier.padding(start = MaterialTheme.spacing.md)) {
                                 Text(c.fullName, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                 if (sub.isNotEmpty()) Text(sub, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)

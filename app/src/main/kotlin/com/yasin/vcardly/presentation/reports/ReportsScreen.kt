@@ -26,9 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
-import com.yasin.vcardly.core.designsystem.component.EmptyState
-import com.yasin.vcardly.core.designsystem.component.LoadingState
-import com.yasin.vcardly.core.designsystem.component.SecondaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlyEmptyState
+import com.yasin.vcardly.core.designsystem.component.VCardlyLoadingState
+import com.yasin.vcardly.core.designsystem.component.VCardlySecondaryButton
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
 import com.yasin.vcardly.core.designsystem.component.StatCard
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
@@ -60,8 +60,8 @@ fun ReportsScreen(onNavigateUp: () -> Unit, onUpgrade: () -> Unit, viewModel: Re
     Column(Modifier.fillMaxSize()) {
         VCardlyTopBar(title = stringResource(R.string.reports_title), onNavigateUp = onNavigateUp)
         when {
-            report == null -> LoadingState()
-            report.totalContacts == 0 && report.followUps.dueSoFar == 0 -> EmptyState(
+            report == null -> VCardlyLoadingState()
+            report.totalContacts == 0 && report.followUps.dueSoFar == 0 -> VCardlyEmptyState(
                 icon = Icons.Filled.Info,
                 title = stringResource(R.string.reports_empty_title),
                 message = stringResource(R.string.reports_empty_message),
@@ -108,9 +108,9 @@ fun ReportsScreen(onNavigateUp: () -> Unit, onUpgrade: () -> Unit, viewModel: Re
                 SectionHeader(stringResource(R.string.reports_export))
                 Text(stringResource(R.string.reports_export_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 val busy = state.export == ExportStatus.Working
-                SecondaryButton(proLabel(stringResource(R.string.export_pdf), isPro), onClick = { if (isPro) pdfLauncher.launch(pdfName) else onUpgrade() }, enabled = !busy, modifier = Modifier.fillMaxWidth())
-                SecondaryButton(stringResource(R.string.export_csv), onClick = { csvLauncher.launch(csvName) }, enabled = !busy, modifier = Modifier.fillMaxWidth())
-                SecondaryButton(proLabel(stringResource(R.string.export_xlsx), isPro), onClick = { if (isPro) xlsxLauncher.launch(xlsxName) else onUpgrade() }, enabled = !busy, modifier = Modifier.fillMaxWidth())
+                VCardlySecondaryButton(proLabel(stringResource(R.string.export_pdf), isPro), onClick = { if (isPro) pdfLauncher.launch(pdfName) else onUpgrade() }, enabled = !busy, modifier = Modifier.fillMaxWidth())
+                VCardlySecondaryButton(stringResource(R.string.export_csv), onClick = { csvLauncher.launch(csvName) }, enabled = !busy, modifier = Modifier.fillMaxWidth())
+                VCardlySecondaryButton(proLabel(stringResource(R.string.export_xlsx), isPro), onClick = { if (isPro) xlsxLauncher.launch(xlsxName) else onUpgrade() }, enabled = !busy, modifier = Modifier.fillMaxWidth())
                 when (val e = state.export) {
                     ExportStatus.Working -> CircularProgressIndicator()
                     is ExportStatus.Done -> Text(stringResource(R.string.export_done), color = MaterialTheme.colorScheme.primary)

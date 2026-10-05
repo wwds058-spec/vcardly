@@ -39,7 +39,11 @@ fun VCardlyTheme(
         }
     }
 
-    CompositionLocalProvider(LocalSpacing provides Spacing()) {
+    CompositionLocalProvider(
+        LocalSpacing provides Spacing(),
+        LocalElevation provides Elevation(),
+        LocalVCardlyColors provides if (darkTheme) DarkExtended else LightExtended,
+    ) {
         MaterialTheme(
             colorScheme = if (darkTheme) DarkColors else LightColors,
             typography = VCardlyTypography,

@@ -34,8 +34,8 @@ import com.yasin.vcardly.BuildConfig
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.billing.BillingStatus
 import com.yasin.vcardly.core.billing.ProductKind
-import com.yasin.vcardly.core.designsystem.component.PrimaryButton
-import com.yasin.vcardly.core.designsystem.component.SecondaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlySecondaryButton
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
@@ -92,14 +92,14 @@ fun ProScreen(onNavigateUp: () -> Unit, viewModel: ProViewModel = hiltViewModel(
                         }
                         val button: @Composable () -> Unit = {
                             val onClick = { (context.findActivity())?.let { viewModel.purchase(it, p.id) }; Unit }
-                            if (p.kind == ProductKind.YEARLY) PrimaryButton(label, onClick, Modifier.fillMaxWidth())
-                            else SecondaryButton(label, onClick, Modifier.fillMaxWidth())
+                            if (p.kind == ProductKind.YEARLY) VCardlyPrimaryButton(label, onClick, Modifier.fillMaxWidth())
+                            else VCardlySecondaryButton(label, onClick, Modifier.fillMaxWidth())
                         }
                         button()
                     }
                 }
                 if (state.launchFailed) Text(stringResource(R.string.pro_launch_failed), color = MaterialTheme.colorScheme.error)
-                SecondaryButton(stringResource(R.string.pro_restore), onClick = viewModel::restore, enabled = !state.restoring, modifier = Modifier.fillMaxWidth())
+                VCardlySecondaryButton(stringResource(R.string.pro_restore), onClick = viewModel::restore, enabled = !state.restoring, modifier = Modifier.fillMaxWidth())
                 Text(stringResource(R.string.pro_payment_note), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }

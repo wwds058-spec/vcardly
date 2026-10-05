@@ -80,6 +80,9 @@ class ReminderNotifier @Inject constructor(
 
     private fun typeLabel(type: FollowUpType): Int = when (type) {
         FollowUpType.CALL -> R.string.notif_text_call
+        FollowUpType.WHATSAPP -> R.string.notif_text_whatsapp
+        FollowUpType.QUOTATION -> R.string.notif_text_quotation
+        FollowUpType.PAYMENT -> R.string.notif_text_payment
         FollowUpType.EMAIL -> R.string.notif_text_email
         FollowUpType.MEETING -> R.string.notif_text_meeting
         FollowUpType.MESSAGE -> R.string.notif_text_message

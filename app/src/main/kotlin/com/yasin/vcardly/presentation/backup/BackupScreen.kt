@@ -43,8 +43,8 @@ import com.yasin.vcardly.R
 import com.yasin.vcardly.core.backup.BackupFailure
 import com.yasin.vcardly.core.backup.RestoreMode
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
-import com.yasin.vcardly.core.designsystem.component.PrimaryButton
-import com.yasin.vcardly.core.designsystem.component.SecondaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlySecondaryButton
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
@@ -107,7 +107,7 @@ fun BackupScreen(onNavigateUp: () -> Unit, viewModel: BackupViewModel = hiltView
             } else {
                 Text(stringResource(R.string.backup_unprotected_warning), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
             }
-            PrimaryButton(
+            VCardlyPrimaryButton(
                 stringResource(R.string.backup_create_button),
                 onClick = { saveLauncher.launch(suggestedName) },
                 enabled = passwordOk && state.create != CreateState.Working,
@@ -162,7 +162,7 @@ private fun RestoreSection(restore: RestoreState, viewModel: BackupViewModel, on
     when (restore) {
         RestoreState.Idle -> {
             Text(stringResource(R.string.backup_restore_description), style = MaterialTheme.typography.bodyMedium)
-            SecondaryButton(stringResource(R.string.backup_choose_file), onClick = onChoose, modifier = Modifier.fillMaxWidth())
+            VCardlySecondaryButton(stringResource(R.string.backup_choose_file), onClick = onChoose, modifier = Modifier.fillMaxWidth())
         }
         RestoreState.Working -> CircularProgressIndicator()
         is RestoreState.NeedsPassword -> PasswordDialog(wrong = restore.wrong, onSubmit = viewModel::submitPassword, onCancel = viewModel::resetRestore)
@@ -177,7 +177,7 @@ private fun RestoreSection(restore: RestoreState, viewModel: BackupViewModel, on
                 ModeOption(R.string.backup_mode_merge, R.string.backup_mode_merge_hint, mode == RestoreMode.MERGE) { mode = RestoreMode.MERGE }
                 ModeOption(R.string.backup_mode_replace, R.string.backup_mode_replace_hint, mode == RestoreMode.REPLACE) { mode = RestoreMode.REPLACE }
             }
-            PrimaryButton(
+            VCardlyPrimaryButton(
                 stringResource(R.string.backup_restore_button),
                 onClick = { if (mode == RestoreMode.REPLACE) confirmReplace = true else viewModel.restore(mode) },
                 modifier = Modifier.fillMaxWidth(),
@@ -205,7 +205,7 @@ private fun RestoreSection(restore: RestoreState, viewModel: BackupViewModel, on
         }
         is RestoreState.Failed -> {
             Text(stringResource(restore.reason.messageRes()), color = MaterialTheme.colorScheme.error)
-            SecondaryButton(stringResource(R.string.backup_choose_file), onClick = { viewModel.resetRestore(); onChoose() })
+            VCardlySecondaryButton(stringResource(R.string.backup_choose_file), onClick = { viewModel.resetRestore(); onChoose() })
         }
     }
 }

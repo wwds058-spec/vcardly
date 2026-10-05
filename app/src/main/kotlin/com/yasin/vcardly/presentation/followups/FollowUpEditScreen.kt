@@ -55,8 +55,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
-import com.yasin.vcardly.core.designsystem.component.EmptyState
-import com.yasin.vcardly.core.designsystem.component.LoadingState
+import com.yasin.vcardly.core.designsystem.component.VCardlyEmptyState
+import com.yasin.vcardly.core.designsystem.component.VCardlyLoadingState
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextField
@@ -109,8 +109,8 @@ fun FollowUpEditScreen(
             },
         )
         when {
-            state.isLoading -> LoadingState()
-            state.notFound -> EmptyState(Icons.Filled.Warning, stringResource(R.string.followup_not_found_title), stringResource(R.string.followup_not_found_message))
+            state.isLoading -> VCardlyLoadingState()
+            state.notFound -> VCardlyEmptyState(Icons.Filled.Warning, stringResource(R.string.followup_not_found_title), stringResource(R.string.followup_not_found_message))
             else -> Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(MaterialTheme.spacing.md),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),

@@ -1,4 +1,4 @@
-package com.yasin.vcardly.presentation.common
+package com.yasin.vcardly.core.designsystem.component
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

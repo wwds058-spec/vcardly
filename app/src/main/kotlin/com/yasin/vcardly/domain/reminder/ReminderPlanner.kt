@@ -1,7 +1,6 @@
 package com.yasin.vcardly.domain.reminder
 
 import com.yasin.vcardly.domain.model.FollowUp
-import com.yasin.vcardly.domain.model.FollowUpStatus
 import java.util.concurrent.TimeUnit
 
 /**
@@ -27,7 +26,7 @@ object ReminderPlanner {
     fun triggerAt(followUp: FollowUp): Long = followUp.dueAt - TimeUnit.MINUTES.toMillis(followUp.reminderOffsetMinutes.toLong())
 
     fun isEligible(followUp: FollowUp): Boolean =
-        followUp.status == FollowUpStatus.PENDING && followUp.reminderEnabled && followUp.notifiedAt == null
+        followUp.status.isActive && followUp.reminderEnabled && followUp.notifiedAt == null
 
     fun plan(candidates: List<FollowUp>, now: Long): Plan {
         val schedule = mutableListOf<Scheduled>()

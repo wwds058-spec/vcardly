@@ -1,4 +1,4 @@
-package com.yasin.vcardly.presentation.common
+package com.yasin.vcardly.core.designsystem.component
 
 /**
  * Up to two initials from the first and last word of [name]. Code-point aware so Telugu,

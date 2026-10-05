@@ -7,13 +7,29 @@ enum class ContactSource { MANUAL, SCAN, IMPORT }
 
 enum class ContactSort { NAME_ASC, NAME_DESC, COMPANY_ASC, RECENTLY_ADDED, RECENTLY_UPDATED }
 
-enum class FollowUpType { CALL, EMAIL, MEETING, MESSAGE, OTHER }
+/**
+ * Stored by name. [MESSAGE] is kept so follow-ups saved by earlier versions still load; new ones use [WHATSAPP] or
+ * [EMAIL] instead, so it is not offered in the picker (see [FollowUpType.pickable]).
+ */
+enum class FollowUpType {
+    CALL, WHATSAPP, EMAIL, MEETING, QUOTATION, PAYMENT, MESSAGE, OTHER;
+
+    companion object {
+        val pickable: List<FollowUpType> = listOf(CALL, WHATSAPP, EMAIL, MEETING, QUOTATION, PAYMENT, OTHER)
+    }
+}
 
 /**
- * Persisted status. Today / Upcoming / Overdue are derived from [PENDING] + due time,
- * so they can never drift out of sync with the clock.
+ * Persisted status. Today / Upcoming / Overdue are derived from the active statuses + due time, so they can never drift
+ * out of sync with the clock. [RESCHEDULED] is still active (it was moved to a new time); [CANCELLED] is closed without
+ * being done. Older app versions read unknown names as PENDING (see Converters).
  */
-enum class FollowUpStatus { PENDING, COMPLETED }
+enum class FollowUpStatus {
+    PENDING, RESCHEDULED, COMPLETED, CANCELLED;
+
+    /** Still to do: shown in Today / Upcoming / Overdue and gets reminders. */
+    val isActive: Boolean get() = this == PENDING || this == RESCHEDULED
+}
 
 /** Seeded categories. Display names come from string resources, so they localize. */
 enum class SystemCategory(val key: String, val colorArgb: Long) {

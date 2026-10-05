@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
-import com.yasin.vcardly.core.designsystem.component.LoadingState
+import com.yasin.vcardly.core.designsystem.component.VCardlyLoadingState
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
 
@@ -25,7 +25,7 @@ fun ContactQrScreen(onNavigateUp: () -> Unit, viewModel: ContactQrViewModel = hi
     Column(Modifier.fillMaxSize()) {
         VCardlyTopBar(title = stringResource(R.string.share_title), onNavigateUp = onNavigateUp)
         val c = card
-        if (c == null) LoadingState()
+        if (c == null) VCardlyLoadingState()
         else QrSharePanel(
             card = c,
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().padding(MaterialTheme.spacing.md),

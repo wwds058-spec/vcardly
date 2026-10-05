@@ -50,6 +50,10 @@ interface ContactDao {
     )
     fun observeFiltered(query: SupportSQLiteQuery): Flow<List<ContactWithRelations>>
 
+    @Transaction
+    @Query("SELECT * FROM contacts ORDER BY created_at DESC, id DESC LIMIT :limit")
+    fun observeRecent(limit: Int): Flow<List<ContactWithRelations>>
+
     @Query("UPDATE contacts SET is_favorite = :favorite, updated_at = :now WHERE id = :id")
     suspend fun setFavorite(id: Long, favorite: Boolean, now: Long)
 

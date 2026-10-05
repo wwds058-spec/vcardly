@@ -46,6 +46,7 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["useTestStorageService"] = "true"
         if (abiFilter != null) ndk { abiFilters += abiFilter.split(",").map { it.trim() } }
     }
 
@@ -127,6 +128,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.androidx.room.runtime)
@@ -176,5 +178,8 @@ dependencies {
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    // Screenshots written through TestStorage are pulled by AGP into build/outputs/connected_android_test_additional_output.
+    androidTestImplementation(libs.androidx.test.services.storage)
+    androidTestUtil(libs.androidx.test.services)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

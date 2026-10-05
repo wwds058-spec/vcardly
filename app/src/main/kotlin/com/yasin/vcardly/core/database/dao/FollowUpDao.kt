@@ -45,40 +45,40 @@ interface FollowUpDao {
     suspend fun markNotified(id: Long, at: Long)
 
     @Transaction
-    @Query("SELECT * FROM follow_ups WHERE status = 'PENDING' AND due_at < :startOfToday ORDER BY due_at ASC")
+    @Query("SELECT * FROM follow_ups WHERE status IN ('PENDING', 'RESCHEDULED') AND due_at < :startOfToday ORDER BY due_at ASC")
     fun observeOverdue(startOfToday: Long): Flow<List<FollowUpWithContactEntity>>
 
     @Transaction
     @Query(
-        "SELECT * FROM follow_ups WHERE status = 'PENDING' AND due_at >= :startOfToday AND due_at < :startOfTomorrow ORDER BY due_at ASC",
+        "SELECT * FROM follow_ups WHERE status IN ('PENDING', 'RESCHEDULED') AND due_at >= :startOfToday AND due_at < :startOfTomorrow ORDER BY due_at ASC",
     )
     fun observeToday(startOfToday: Long, startOfTomorrow: Long): Flow<List<FollowUpWithContactEntity>>
 
     @Transaction
-    @Query("SELECT * FROM follow_ups WHERE status = 'PENDING' AND due_at >= :startOfTomorrow ORDER BY due_at ASC")
+    @Query("SELECT * FROM follow_ups WHERE status IN ('PENDING', 'RESCHEDULED') AND due_at >= :startOfTomorrow ORDER BY due_at ASC")
     fun observeUpcoming(startOfTomorrow: Long): Flow<List<FollowUpWithContactEntity>>
 
     @Transaction
-    @Query("SELECT * FROM follow_ups WHERE status = 'COMPLETED' ORDER BY completed_at DESC")
+    @Query("SELECT * FROM follow_ups WHERE status IN ('COMPLETED', 'CANCELLED') ORDER BY COALESCE(completed_at, updated_at) DESC")
     fun observeCompleted(): Flow<List<FollowUpWithContactEntity>>
 
     @Query("SELECT * FROM follow_ups WHERE contact_id = :contactId ORDER BY due_at DESC")
     fun observeForContact(contactId: Long): Flow<List<FollowUpEntity>>
 
-    @Query("SELECT COUNT(*) FROM follow_ups WHERE status = 'PENDING' AND due_at < :startOfToday")
+    @Query("SELECT COUNT(*) FROM follow_ups WHERE status IN ('PENDING', 'RESCHEDULED') AND due_at < :startOfToday")
     fun observeOverdueCount(startOfToday: Long): Flow<Int>
 
     @Query(
-        "SELECT COUNT(*) FROM follow_ups WHERE status = 'PENDING' AND due_at >= :startOfToday AND due_at < :startOfTomorrow",
+        "SELECT COUNT(*) FROM follow_ups WHERE status IN ('PENDING', 'RESCHEDULED') AND due_at >= :startOfToday AND due_at < :startOfTomorrow",
     )
     fun observeTodayCount(startOfToday: Long, startOfTomorrow: Long): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM follow_ups WHERE status = 'PENDING' AND due_at >= :startOfTomorrow")
+    @Query("SELECT COUNT(*) FROM follow_ups WHERE status IN ('PENDING', 'RESCHEDULED') AND due_at >= :startOfTomorrow")
     fun observeUpcomingCount(startOfTomorrow: Long): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM follow_ups WHERE status = 'COMPLETED'")
+    @Query("SELECT COUNT(*) FROM follow_ups WHERE status IN ('COMPLETED', 'CANCELLED')")
     fun observeCompletedCount(): Flow<Int>
 
-    @Query("SELECT * FROM follow_ups WHERE status = 'PENDING' AND reminder_enabled = 1")
+    @Query("SELECT * FROM follow_ups WHERE status IN ('PENDING', 'RESCHEDULED') AND reminder_enabled = 1")
     suspend fun getReminderCandidates(): List<FollowUpEntity>
 }

@@ -18,10 +18,10 @@
     <!-- Onboarding -->
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_next">Next</string>
-    <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_get_started">Get Started</string>
     <string name="onboarding_page_indicator">Page %1$d of %2$d</string>
-    <string name="onboarding_1_title">Turn business cards into contacts</string>
-    <string name="onboarding_1_body">Scan a card, review the details, and keep everything organised with categories and tags.</string>
+    <string name="onboarding_1_title">Your smart digital visiting card book.</string>
+    <string name="onboarding_1_body">Scan, save and manage your business contacts with ease.</string>
     <string name="onboarding_2_title">Private by design</string>
     <string name="onboarding_2_body">Your contacts and card images stay on this device. VCardly works fully offline, and you choose when to back up or share.</string>
     <string name="onboarding_3_title">Never miss a follow-up</string>
@@ -86,7 +86,7 @@
     <string name="contacts_filter_favorites">Favorites</string>
     <string name="contacts_add">Add contact</string>
     <string name="contacts_empty_title">No contacts yet</string>
-    <string name="contacts_empty_message">Add a contact to start building your network.</string>
+    <string name="contacts_empty_message">Scan your first visiting card, or add a contact by hand.</string>
     <string name="contacts_no_results_title">No matching contacts</string>
     <string name="contacts_no_results_message">Try a different search or remove some filters.</string>
     <string name="contacts_clear_filters">Clear filters</string>
@@ -494,4 +494,145 @@
     <!-- Accessibility labels -->
     <string name="action_open_contact">Open contact</string>
     <string name="action_open_followup">Edit follow-up</string>
+    <!-- Redesign: Home -->
+    <string name="common_see_all">See all</string>
+    <string name="home_search_placeholder">Search contacts…</string>
+    <string name="home_stat_contacts">Contacts</string>
+    <string name="home_stat_this_month">+%1$s this month</string>
+    <string name="home_stat_due_today">%1$s due today</string>
+    <string name="home_quick_actions">Quick actions</string>
+    <string name="home_upcoming_follow_ups">Upcoming follow-ups</string>
+    <string name="home_recent_contacts">Recent contacts</string>
+    <string name="home_greeting_morning">Good morning,</string>
+    <string name="home_greeting_afternoon">Good afternoon,</string>
+    <string name="home_greeting_evening">Good evening,</string>
+    <string name="home_greeting_name">%1$s 👋</string>
+    <string name="home_greeting_no_name">Welcome 👋</string>
+    <string name="home_subtitle">Your business network at a glance</string>
+    <string name="home_network_title">Your network</string>
+    <string name="home_network_subtitle">Contacts by category</string>
+    <string name="empty_network_title">Your business network starts here.</string>
+    <string name="empty_network_message">Scan your first visiting card. VCardly keeps the details, the original card and your follow-ups together.</string>
+    <string name="empty_network_action">Scan your first card</string>
+    <string name="followup_none_title">No follow-ups scheduled.</string>
+    <string name="followup_none_message">Tap to plan a call, meeting or quotation.</string>
+
+    <!-- Redesign: due times and quick actions -->
+    <string name="due_today_at">Today · %1$s</string>
+    <string name="due_tomorrow_at">Tomorrow · %1$s</string>
+    <string name="due_yesterday_at">Yesterday · %1$s</string>
+    <string name="due_date_at">%1$s · %2$s</string>
+    <string name="due_overdue_prefix">Overdue · %1$s</string>
+    <string name="action_call_name">Call %1$s</string>
+    <string name="action_whatsapp_name">WhatsApp %1$s</string>
+    <string name="action_email_name">Email %1$s</string>
+
+    <!-- Redesign: follow-up types and statuses -->
+    <string name="followup_type_whatsapp">WhatsApp</string>
+    <string name="followup_type_quotation">Quotation</string>
+    <string name="followup_type_payment">Payment</string>
+    <string name="followup_status_rescheduled">Rescheduled</string>
+    <string name="followup_status_cancelled">Cancelled</string>
+    <string name="notif_text_whatsapp">WhatsApp %1$s</string>
+    <string name="notif_text_quotation">Send a quotation to %1$s</string>
+    <string name="notif_text_payment">Payment follow-up with %1$s</string>
+    <!-- Redesign: common -->
+    <string name="common_copied">Copied</string>
+    <string name="common_no_app">No app on this device can do that.</string>
+    <string name="common_more">More</string>
+    <string name="common_more_options">More options</string>
+    <string name="common_copy">Copy</string>
+    <string name="common_copy_item">Copy %1$s</string>
+    <string name="common_close">Close</string>
+    <string name="common_back">Back</string>
+
+    <!-- Redesign: contacts list -->
+    <string name="contacts_filter_all">All</string>
+    <string name="contacts_tags_selected">Tags (%1$d)</string>
+    <string name="contacts_filter_by_tags">Filter by tags</string>
+    <string name="contacts_filter_by_tags_hint">Show contacts that have all the selected tags.</string>
+    <string name="contacts_no_favorites_title">Keep your important contacts close.</string>
+    <string name="contacts_no_favorites_message">Tap the star on any contact to add it to your favorites.</string>
+    <plurals name="contacts_total">
+        <item quantity="one">%1$d contact</item>
+        <item quantity="other">%1$d contacts</item>
+    </plurals>
+
+    <!-- Redesign: contact details -->
+    <string name="detail_tab_details">Details</string>
+    <string name="detail_tab_card_images">Card images</string>
+    <string name="detail_tab_follow_ups_count">Follow-ups (%1$d)</string>
+    <string name="detail_open_whatsapp">Open WhatsApp</string>
+    <string name="detail_open_website">Open website</string>
+    <string name="detail_open_map">Open in maps</string>
+    <string name="detail_no_contact_info">No phone, email or address saved yet.</string>
+    <string name="detail_activity">Activity</string>
+    <string name="detail_no_cards_title">No card images yet</string>
+    <string name="detail_no_cards_message">Add a photo of the front and back so you always have the original card.</string>
+    <string name="detail_add_card_images">Add card images</string>
+    <string name="detail_zoom_item">View %1$s full screen</string>
+    <string name="detail_zoom_image">View full screen</string>
+    <string name="detail_manage_card_images">Replace or remove images</string>
+    <string name="detail_edit_notes">Edit notes</string>
+    <string name="detail_no_notes">No notes yet. Add where you met, what you discussed, or anything to remember.</string>
+    <string name="detail_followups_empty">Plan a call, WhatsApp, meeting or quotation for this contact.</string>
+    <string name="activity_created_scan">Contact created from a scanned card</string>
+    <string name="activity_created_import">Contact imported</string>
+    <string name="activity_created_manual">Contact created</string>
+    <string name="activity_updated">Contact updated</string>
+    <string name="activity_followup_created">Follow-up planned: %1$s</string>
+    <string name="activity_followup_completed">Follow-up completed: %1$s</string>
+    <string name="activity_followup_cancelled">Follow-up cancelled: %1$s</string>
+
+    <!-- Redesign: contact form -->
+    <string name="form_step_basic">Basic</string>
+    <string name="form_step_contact">Contact info</string>
+    <string name="form_step_business">Business</string>
+    <string name="form_step_details">Details</string>
+    <string name="form_step_finish">Finish</string>
+    <string name="form_finish_title">Ready to save</string>
+    <string name="form_finish_message">Check the details below. You can always edit them later.</string>
+    <plurals name="form_finish_count">
+        <item quantity="one">%1$d more detail added</item>
+        <item quantity="other">%1$d more details added</item>
+    </plurals>
+    <string name="field_name">Name</string>
+    <string name="field_designation">Designation</string>
+    <string name="hint_full_name">Enter full name</string>
+    <string name="hint_company">Enter company name</string>
+    <string name="hint_designation">Enter designation</string>
+    <string name="hint_phone">Phone number</string>
+    <string name="hint_email">name@company.com</string>
+    <string name="hint_website">company.com</string>
+    <string name="hint_address">Street, city, state</string>
+    <string name="hint_notes">Where you met, what you discussed, what to remember</string>
+    <string name="hint_tag">For example VIP or Potential client</string>
+    <string name="contact_save_contact">Save Contact</string>
+    <string name="card_front_short">Front</string>
+    <string name="card_back_short">Back</string>
+    <string name="card_add_image">Add %1$s image</string>
+    <string name="card_image_options">Options for %1$s image</string>
+    <string name="card_take_photo">Take photo</string>
+    <string name="card_remove">Remove</string>
+
+    <!-- Redesign: scanner -->
+    <string name="scan_instruction">Place the visiting card inside the frame</string>
+    <string name="scan_capturing">Hold steady…</string>
+    <string name="scan_gallery">Gallery</string>
+    <string name="scan_flash_auto">Auto</string>
+    <string name="scan_flash_on">On</string>
+    <string name="scan_flash_off">Off</string>
+    <string name="scan_processing">Preparing your card…</string>
+    <string name="scan_reading">Reading your card…</string>
+    <string name="scan_review_title">Review scan</string>
+    <string name="scan_success_title">Scanned successfully</string>
+    <plurals name="scan_success_found">
+        <item quantity="one">We found %1$d detail. Please review and edit.</item>
+        <item quantity="other">We found %1$d details. Please review and edit.</item>
+    </plurals>
+    <string name="scan_failed_title">Couldn\'t read this card.</string>
+    <string name="scan_failed_message">The text could not be recognised. Try again in better light, or type the details yourself. The card image is kept either way.</string>
+    <string name="scan_enter_manually">Enter Manually</string>
+    <string name="scan_more_details">More details</string>
+    <string name="scan_rescan">Rescan</string>
 </resources>

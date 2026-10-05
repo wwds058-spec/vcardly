@@ -32,8 +32,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
-import com.yasin.vcardly.core.designsystem.component.PrimaryButton
-import com.yasin.vcardly.core.designsystem.component.SecondaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlySecondaryButton
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
@@ -66,7 +66,7 @@ fun TransferScreen(onNavigateUp: () -> Unit, viewModel: TransferViewModel = hilt
                 is ImportState.Failed -> item {
                     Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
                         Text(stringResource(import.reason.messageRes()), color = MaterialTheme.colorScheme.error)
-                        SecondaryButton(stringResource(R.string.transfer_choose_file), onClick = { openLauncher.launch(arrayOf("*/*")) })
+                        VCardlySecondaryButton(stringResource(R.string.transfer_choose_file), onClick = { openLauncher.launch(arrayOf("*/*")) })
                     }
                 }
                 is ImportState.Done -> item {
@@ -86,7 +86,7 @@ fun TransferScreen(onNavigateUp: () -> Unit, viewModel: TransferViewModel = hilt
                     }
                     item {
                         Column {
-                            PrimaryButton(
+                            VCardlyPrimaryButton(
                                 text = stringResource(R.string.transfer_import_selected, import.selected.size),
                                 onClick = viewModel::importSelected,
                                 enabled = import.selected.isNotEmpty(),
@@ -108,7 +108,7 @@ fun TransferScreen(onNavigateUp: () -> Unit, viewModel: TransferViewModel = hilt
                         ExportState.Failed -> Text(stringResource(R.string.transfer_export_failed), color = MaterialTheme.colorScheme.error)
                         ExportState.Idle -> Unit
                     }
-                    SecondaryButton(
+                    VCardlySecondaryButton(
                         stringResource(R.string.transfer_export_all),
                         onClick = { confirmExport = true },
                         enabled = state.export != ExportState.Working,
@@ -133,7 +133,7 @@ fun TransferScreen(onNavigateUp: () -> Unit, viewModel: TransferViewModel = hilt
 private fun ImportIntro(onChoose: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
         Text(stringResource(R.string.transfer_import_description), style = MaterialTheme.typography.bodyMedium)
-        SecondaryButton(stringResource(R.string.transfer_choose_file), onClick = onChoose)
+        VCardlySecondaryButton(stringResource(R.string.transfer_choose_file), onClick = onChoose)
     }
 }
 

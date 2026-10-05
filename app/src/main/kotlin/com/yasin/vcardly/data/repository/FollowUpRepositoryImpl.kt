@@ -112,6 +112,18 @@ class FollowUpRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun reschedule(id: Long, dueAt: Long) {
+        val current = dao.getById(id) ?: return
+        dao.update(
+            current.copy(status = FollowUpStatus.RESCHEDULED, dueAt = dueAt, completedAt = null, notifiedAt = null, updatedAt = clock.millis()),
+        )
+    }
+
+    override suspend fun cancel(id: Long) {
+        val current = dao.getById(id) ?: return
+        dao.update(current.copy(status = FollowUpStatus.CANCELLED, completedAt = null, updatedAt = clock.millis()))
+    }
+
     override suspend fun delete(id: Long) = dao.deleteById(id)
 
     override suspend fun getReminderCandidates(): List<FollowUp> =

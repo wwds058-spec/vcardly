@@ -48,11 +48,12 @@ object ReportBuilder {
             .sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { it.key.lowercase() })
             .take(MAX_TAGS).map { it.key to it.value }
 
-        val due = followUps.filter { it.dueAt in rangeStart..nowMillis }
+        // Cancelled follow-ups were never going to be done, so they do not count as due.
+        val due = followUps.filter { it.dueAt in rangeStart..nowMillis && it.status != FollowUpStatus.CANCELLED }
         val activity = FollowUpActivity(
             dueSoFar = due.size,
             completed = due.count { it.status == FollowUpStatus.COMPLETED },
-            overdue = due.count { it.status == FollowUpStatus.PENDING },
+            overdue = due.count { it.status.isActive },
             byType = due.groupingBy { it.type }.eachCount().entries.sortedByDescending { it.value }.map { it.key to it.value },
         )
 

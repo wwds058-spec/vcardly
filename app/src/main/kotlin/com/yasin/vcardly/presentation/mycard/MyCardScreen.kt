@@ -33,9 +33,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
-import com.yasin.vcardly.core.designsystem.component.EmptyState
-import com.yasin.vcardly.core.designsystem.component.LoadingState
-import com.yasin.vcardly.core.designsystem.component.PrimaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlyEmptyState
+import com.yasin.vcardly.core.designsystem.component.VCardlyLoadingState
+import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
@@ -59,12 +59,12 @@ fun MyCardScreen(onNavigateUp: () -> Unit, onEdit: () -> Unit, viewModel: MyCard
         )
         val c = card
         when {
-            c == null -> LoadingState()
-            c.isEmpty -> EmptyState(
+            c == null -> VCardlyLoadingState()
+            c.isEmpty -> VCardlyEmptyState(
                 icon = Icons.Filled.Person,
                 title = stringResource(R.string.mycard_empty_title),
                 message = stringResource(R.string.mycard_empty_message),
-                action = { PrimaryButton(stringResource(R.string.mycard_create), onClick = onEdit) },
+                action = { VCardlyPrimaryButton(stringResource(R.string.mycard_create), onClick = onEdit) },
             )
             else -> Column(
                 Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().padding(MaterialTheme.spacing.md),
@@ -112,7 +112,7 @@ fun MyCardEditScreen(onNavigateUp: () -> Unit, viewModel: MyCardEditViewModel = 
             onNavigateUp = requestUp,
             actions = { VCardlyTextButton(stringResource(R.string.common_save), onClick = viewModel::save, enabled = !state.isLoading) },
         )
-        if (state.isLoading) LoadingState() else Column(
+        if (state.isLoading) VCardlyLoadingState() else Column(
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(MaterialTheme.spacing.md),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {

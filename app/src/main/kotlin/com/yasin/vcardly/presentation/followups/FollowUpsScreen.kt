@@ -39,8 +39,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
-import com.yasin.vcardly.core.designsystem.component.EmptyState
-import com.yasin.vcardly.core.designsystem.component.LoadingState
+import com.yasin.vcardly.core.designsystem.component.VCardlyEmptyState
+import com.yasin.vcardly.core.designsystem.component.VCardlyLoadingState
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.domain.model.FollowUpBucket
@@ -75,8 +75,8 @@ fun FollowUpsScreen(
             }
 
             when {
-                state.isLoading -> LoadingState()
-                state.items.isEmpty() -> EmptyState(
+                state.isLoading -> VCardlyLoadingState()
+                state.items.isEmpty() -> VCardlyEmptyState(
                     icon = Icons.Filled.Notifications,
                     title = stringResource(R.string.followup_empty_title),
                     message = stringResource(state.bucket.emptyMessageRes()),

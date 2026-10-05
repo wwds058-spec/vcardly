@@ -29,6 +29,7 @@ mlkitTextRecognition = "16.0.1"
 junit = "4.13.2"
 androidxTestExt = "1.2.1"
 androidxTestRunner = "1.6.2"
+androidxTestServices = "1.5.0"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,9 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+androidx-test-services = { module = "androidx.test.services:test-services", version.ref = "androidxTestServices" }
+androidx-test-services-storage = { module = "androidx.test.services:storage", version.ref = "androidxTestServices" }
 
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }

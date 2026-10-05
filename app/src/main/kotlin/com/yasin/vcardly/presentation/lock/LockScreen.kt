@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yasin.vcardly.R
-import com.yasin.vcardly.core.designsystem.component.PrimaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
 import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.core.security.AuthAvailability
 import com.yasin.vcardly.core.security.AuthGate
@@ -83,6 +83,6 @@ fun LockScreen(gate: AuthGate, onUnlocked: () -> Unit, onDeviceAuthMissing: () -
         if (failed) {
             Text(stringResource(R.string.lock_error), color = MaterialTheme.colorScheme.error, textAlign = TextAlign.Center, modifier = Modifier.padding(bottom = MaterialTheme.spacing.md))
         }
-        PrimaryButton(stringResource(R.string.lock_unlock), onClick = { unlock() })
+        VCardlyPrimaryButton(stringResource(R.string.lock_unlock), onClick = { unlock() })
     }
 }

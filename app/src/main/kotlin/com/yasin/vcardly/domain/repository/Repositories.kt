@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.Flow
 interface ContactRepository {
     fun observeContacts(filter: ContactFilter): Flow<List<ContactDetails>>
     fun observeContact(id: Long): Flow<ContactDetails?>
+    /** The [limit] most recently added contacts, newest first. */
+    fun observeRecent(limit: Int): Flow<List<ContactDetails>>
     suspend fun getContact(id: Long): ContactDetails?
 
     /** Inserts when [Contact.id] is 0, otherwise updates. Replaces the contact's tags atomically. Returns the id. */
@@ -60,6 +62,10 @@ interface FollowUpRepository {
     suspend fun save(followUp: FollowUp): Long
     suspend fun markCompleted(id: Long)
     suspend fun reopen(id: Long)
+    /** Moves an active follow-up to [dueAt] and marks it rescheduled (reminder re-armed). */
+    suspend fun reschedule(id: Long, dueAt: Long)
+    /** Closes a follow-up without doing it. */
+    suspend fun cancel(id: Long)
     suspend fun delete(id: Long)
 
     /** Pending follow-ups with reminders on; used to re-arm alarms after reboot/time change. */

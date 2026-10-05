@@ -36,7 +36,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yasin.vcardly.R
-import com.yasin.vcardly.core.designsystem.component.PrimaryButton
+import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
 import com.yasin.vcardly.core.designsystem.component.SectionHeader
 import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.core.qr.QrEncoder
@@ -87,7 +87,7 @@ fun QrSharePanel(card: ShareCard, modifier: Modifier = Modifier, viewModel: VCar
         }
 
         if (shareFailed) Text(stringResource(R.string.share_failed), color = MaterialTheme.colorScheme.error)
-        PrimaryButton(
+        VCardlyPrimaryButton(
             text = stringResource(R.string.share_as_file),
             onClick = {
                 shareFailed = false

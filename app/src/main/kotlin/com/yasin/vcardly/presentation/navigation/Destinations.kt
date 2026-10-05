@@ -2,14 +2,18 @@ package com.yasin.vcardly.presentation.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.EventAvailable
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.EventAvailable
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.People
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.yasin.vcardly.R
 
-/** Route strings. Later phases add detail routes (contact/{id}, scanner, ...) here. */
+/** Route strings. Top-level tabs are listed in [TopLevelDestination]. */
 object Routes {
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
@@ -48,9 +52,10 @@ enum class TopLevelDestination(
     val route: String,
     @StringRes val labelRes: Int,
     val icon: ImageVector,
+    val selectedIcon: ImageVector,
 ) {
-    HOME(Routes.HOME, R.string.nav_home, Icons.Filled.Home),
-    CONTACTS(Routes.CONTACTS, R.string.nav_contacts, Icons.Filled.Person),
-    FOLLOW_UPS(Routes.FOLLOW_UPS, R.string.nav_follow_ups, Icons.Filled.Notifications),
-    SETTINGS(Routes.SETTINGS, R.string.nav_settings, Icons.Filled.Settings),
+    HOME(Routes.HOME, R.string.nav_home, Icons.Outlined.Home, Icons.Rounded.Home),
+    CONTACTS(Routes.CONTACTS, R.string.nav_contacts, Icons.Outlined.People, Icons.Rounded.People),
+    FOLLOW_UPS(Routes.FOLLOW_UPS, R.string.nav_follow_ups, Icons.Outlined.EventAvailable, Icons.Rounded.EventAvailable),
+    SETTINGS(Routes.SETTINGS, R.string.nav_settings, Icons.Outlined.Settings, Icons.Rounded.Settings),
 }

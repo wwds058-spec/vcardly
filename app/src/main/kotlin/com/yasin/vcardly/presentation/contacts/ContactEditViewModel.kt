@@ -1,5 +1,6 @@
 package com.yasin.vcardly.presentation.contacts
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -67,6 +68,11 @@ data class ContactEditUiState(
     val isFromScan: Boolean = false,
     val ocrFailed: Boolean = false,
     val unmatchedLines: List<String> = emptyList(),
+    /** How many fields text recognition filled in (shown as "We found N details"). */
+    val detectedCount: Int = 0,
+    /** True while an image is being imported or rotated. */
+    val imageBusy: Boolean = false,
+    val imageFailed: Boolean = false,
 )
 
 @HiltViewModel
@@ -92,6 +98,9 @@ class ContactEditViewModel @Inject constructor(
         val saveFailed: Boolean,
         val unmatched: List<String>,
         val ocrFailed: Boolean,
+        val detected: Int = 0,
+        val imageBusy: Boolean = false,
+        val imageFailed: Boolean = false,
     )
 
     private val local = MutableStateFlow(
@@ -127,6 +136,9 @@ class ContactEditViewModel @Inject constructor(
             isFromScan = fromScan,
             ocrFailed = l.ocrFailed,
             unmatchedLines = l.unmatched,
+            detectedCount = l.detected,
+            imageBusy = l.imageBusy,
+            imageFailed = l.imageFailed,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ContactEditUiState())
 
@@ -145,7 +157,10 @@ class ContactEditViewModel @Inject constructor(
         } else if (fromScan) {
             draftStore.peek()?.let { draft ->
                 // initial stays empty so a scanned draft always counts as unsaved work.
-                local.update { it.copy(form = draft.form, unmatched = draft.unmatched, ocrFailed = draft.ocrFailed) }
+                val f = draft.form
+                val detected = listOf(f.fullName, f.jobTitle, f.company, f.phone, f.phoneAlt, f.email, f.emailAlt, f.website, f.address)
+                    .count { it.isNotBlank() }
+                local.update { it.copy(form = draft.form, unmatched = draft.unmatched, ocrFailed = draft.ocrFailed, detected = detected) }
             }
         }
     }
@@ -159,6 +174,66 @@ class ContactEditViewModel @Inject constructor(
     fun toggleTag(id: Long) = update { it.copy(tagIds = if (id in it.tagIds) it.tagIds - id else it.tagIds + id) }
 
     fun removeImage(front: Boolean) = update { if (front) it.copy(frontImage = null) else it.copy(backImage = null) }
+
+    /** Files this form created in the scan cache; deleted when the form closes (saved copies live in permanent storage). */
+    private val ownPending = mutableListOf<File>()
+
+    /** A cache file the camera app writes the photo into (shared through FileProvider for this one capture). */
+    fun newCameraFile(): File = imageStore.newCaptureFile().also { ownPending += it }
+
+    fun onCameraResult(front: Boolean, file: File, success: Boolean) {
+        if (success && file.length() > 0) setImage(front, CardImageRef.Pending(file.path))
+        else file.delete()
+    }
+
+    fun onImagePicked(front: Boolean, uri: Uri) {
+        viewModelScope.launch {
+            local.update { it.copy(imageBusy = true, imageFailed = false) }
+            val file = imageStore.importFromUri(uri)
+            if (file == null) {
+                local.update { it.copy(imageBusy = false, imageFailed = true) }
+            } else {
+                ownPending += file
+                local.update { it.copy(imageBusy = false) }
+                setImage(front, CardImageRef.Pending(file.path))
+            }
+        }
+    }
+
+    /** Rotates an image 90 degrees clockwise into a new cache file; the stored original is untouched until save. */
+    fun rotateImage(front: Boolean) {
+        val ref = (if (front) local.value.form.frontImage else local.value.form.backImage) ?: return
+        if (local.value.imageBusy) return
+        viewModelScope.launch {
+            local.update { it.copy(imageBusy = true, imageFailed = false) }
+            val rotated = imageStore.load(ref, ROTATE_MAX)
+                ?.let { bmp -> kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) { com.yasin.vcardly.core.image.BitmapOps.rotate(bmp, 90) } }
+                ?.let { imageStore.saveToScanCache(it) }
+            if (rotated == null) {
+                local.update { it.copy(imageBusy = false, imageFailed = true) }
+            } else {
+                ownPending += rotated
+                local.update { it.copy(imageBusy = false) }
+                setImage(front, CardImageRef.Pending(rotated.path))
+            }
+        }
+    }
+
+    private fun setImage(front: Boolean, ref: CardImageRef) = update { if (front) it.copy(frontImage = ref) else it.copy(backImage = ref) }
+
+    fun dismissImageError() = local.update { it.copy(imageFailed = false) }
+
+    /** Validates only [fields] (one step of the form). Returns true when they are all valid. */
+    fun validateFields(fields: Set<ContactField>): Boolean {
+        val all = ContactValidator.validate(local.value.form.toContact(original, null, null))
+        val stepErrors = all.filterKeys { it in fields }
+        local.update { it.copy(errors = it.errors - fields + stepErrors) }
+        return stepErrors.isEmpty()
+    }
+
+    override fun onCleared() {
+        ownPending.forEach { it.delete() }
+    }
 
     /** Moves a recognised-but-unclaimed line into the notes field. */
     fun addLineToNotes(line: String) {
@@ -225,6 +300,7 @@ class ContactEditViewModel @Inject constructor(
 
     companion object {
         const val ARG_FROM_SCAN = "fromScan"
+        private const val ROTATE_MAX = 3000
     }
 }
 

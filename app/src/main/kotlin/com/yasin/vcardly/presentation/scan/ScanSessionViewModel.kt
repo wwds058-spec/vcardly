@@ -38,6 +38,8 @@ data class ScanSessionState(
     val frontFile: File? = null,
     val backFile: File? = null,
     val isWorking: Boolean = false,
+    /** True while text recognition runs ("Reading your card..."). */
+    val isReading: Boolean = false,
     val error: ScanError? = null,
 )
 
@@ -143,10 +145,18 @@ class ScanSessionViewModel @Inject constructor(
 
     fun dismissError() = _state.update { it.copy(error = null) }
 
+    /** "Rescan" from the review form: forget both sides and start again from the front. */
+    fun restart() {
+        basePreview = null
+        draftStore.clear()
+        store.clearScanCache()
+        _state.value = ScanSessionState()
+    }
+
     /** Runs OCR on the finished sides, builds an editable draft and moves on to the review form. */
     fun finish() {
         viewModelScope.launch {
-            _state.update { it.copy(isWorking = true) }
+            _state.update { it.copy(isWorking = true, isReading = true) }
             val s = _state.value
             var failed = false
             val lines = mutableListOf<OcrLine>()
@@ -180,7 +190,7 @@ class ScanSessionViewModel @Inject constructor(
                     ocrFailed = failed || nothingFound,
                 ),
             )
-            _state.update { it.copy(isWorking = false) }
+            _state.update { it.copy(isWorking = false, isReading = false) }
             _events.send(ScanEvent.ToReview)
         }
     }
