@@ -16,7 +16,7 @@ Material 3, MVVM, Hilt, Room, DataStore. Architecture: `docs/ARCHITECTURE.md` (t
 | `:app:testDebugUnitTest` (JVM unit tests) | passes (same run) |
 | `:app:lintDebug` | passes, 0 errors (same run) |
 | `:app:connectedDebugAndroidTest` on an API 30 emulator, Pixel 6 profile: Room/repository tests, `ScreenBehaviourTest` (12 UI interaction tests), `ScreenshotTest` (27 screens, light and dark) | passes (same run) |
-| iOS (`ios` job, macos-15, Xcode 16.4, iPhone 16 Pro simulator): XcodeGen, build, unit + repository + screenshot tests (23 screens) | passes (run 37349766126) |
+| iOS (`ios` job, macos-15, Xcode 16.4, iPhone 16 Pro simulator): XcodeGen, build, unit + repository + screenshot tests (26 screens) | passes, 38 tests incl. 9 backup tests; iPhone-written backups verified by `tools/backup_reference.py` (run 37356507598) |
 | Debug APKs | `debug-apk` branch (universal) and `debug-apk-arm64` branch (arm64 only), rebuilt on every push |
 
 Later commits (Reports chart fix, new categories, icon, docs) are verified by the next CI run; check the latest run on the branch.
