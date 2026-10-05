@@ -12,7 +12,11 @@ import com.yasin.vcardly.domain.repository.FollowUpRepository
 import java.time.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
@@ -23,7 +27,7 @@ class FollowUpRepositoryImpl @Inject constructor(
 ) : FollowUpRepository {
     private val dao = db.followUpDao()
 
-    /** Day boundaries in the device's CURRENT zone, evaluated when the flow is created. */
+    /** [start of today, start of tomorrow) in the device's current zone. */
     private fun dayBounds(): Pair<Long, Long> {
         val today = clock.instant().atZone(clock.zone).toLocalDate()
         val start = today.atStartOfDay(clock.zone).toInstant().toEpochMilli()
@@ -31,23 +35,32 @@ class FollowUpRepositoryImpl @Inject constructor(
         return start to next
     }
 
-    override fun observe(bucket: FollowUpBucket): Flow<List<FollowUpWithContact>> {
-        val (start, next) = dayBounds()
-        val source = when (bucket) {
-            FollowUpBucket.OVERDUE -> dao.observeOverdue(start)
-            FollowUpBucket.TODAY -> dao.observeToday(start, next)
-            FollowUpBucket.UPCOMING -> dao.observeUpcoming(next)
-            FollowUpBucket.COMPLETED -> dao.observeCompleted()
+    /** Emits the current day bounds and re-emits just after each midnight so Today/Overdue roll over while the screen is open. */
+    private fun dayBoundsFlow(): Flow<Pair<Long, Long>> = flow {
+        while (true) {
+            val bounds = dayBounds()
+            emit(bounds)
+            delay((bounds.second - clock.millis()).coerceAtLeast(1_000L) + 1_000L)
         }
-        return source.map { rows -> rows.map { it.toDomain() } }
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observe(bucket: FollowUpBucket): Flow<List<FollowUpWithContact>> =
+        dayBoundsFlow().flatMapLatest { (start, next) ->
+            when (bucket) {
+                FollowUpBucket.OVERDUE -> dao.observeOverdue(start)
+                FollowUpBucket.TODAY -> dao.observeToday(start, next)
+                FollowUpBucket.UPCOMING -> dao.observeUpcoming(next)
+                FollowUpBucket.COMPLETED -> dao.observeCompleted()
+            }
+        }.map { rows -> rows.map { it.toDomain() } }
 
     override fun observeForContact(contactId: Long): Flow<List<FollowUp>> =
         dao.observeForContact(contactId).map { rows -> rows.map { it.toDomain() } }
 
-    override fun observeCounts(): Flow<FollowUpCounts> {
-        val (start, next) = dayBounds()
-        return combine(
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observeCounts(): Flow<FollowUpCounts> = dayBoundsFlow().flatMapLatest { (start, next) ->
+        combine(
             dao.observeTodayCount(start, next),
             dao.observeUpcomingCount(next),
             dao.observeOverdueCount(start),
@@ -59,14 +72,28 @@ class FollowUpRepositoryImpl @Inject constructor(
 
     override suspend fun get(id: Long): FollowUp? = dao.getById(id)?.toDomain()
 
+    override suspend fun getWithContact(id: Long): FollowUpWithContact? = dao.getWithContact(id)?.toDomain()
+
+    override suspend fun markNotified(id: Long, at: Long) = dao.markNotified(id, at)
+
     override suspend fun save(followUp: FollowUp): Long {
         val now = clock.millis()
-        return if (followUp.id == 0L) {
-            dao.insert(followUp.toEntity().copy(createdAt = now, updatedAt = now))
-        } else {
-            dao.update(followUp.toEntity().copy(updatedAt = now))
-            followUp.id
+        if (followUp.id == 0L) {
+            return dao.insert(followUp.toEntity().copy(notifiedAt = null, completedAt = null, createdAt = now, updatedAt = now))
         }
+        val existing = dao.getById(followUp.id)
+        // A changed schedule must be able to notify again; unchanged keeps its "already notified" state.
+        val scheduleChanged = existing == null || existing.dueAt != followUp.dueAt ||
+            existing.reminderOffsetMinutes != followUp.reminderOffsetMinutes ||
+            existing.reminderEnabled != followUp.reminderEnabled
+        dao.update(
+            followUp.toEntity().copy(
+                notifiedAt = if (scheduleChanged) null else existing?.notifiedAt,
+                createdAt = existing?.createdAt ?: now,
+                updatedAt = now,
+            ),
+        )
+        return followUp.id
     }
 
     override suspend fun markCompleted(id: Long) {
@@ -78,7 +105,7 @@ class FollowUpRepositoryImpl @Inject constructor(
     override suspend fun reopen(id: Long) {
         val current = dao.getById(id) ?: return
         dao.update(
-            current.copy(status = FollowUpStatus.PENDING, completedAt = null, updatedAt = clock.millis()),
+            current.copy(status = FollowUpStatus.PENDING, completedAt = null, notifiedAt = null, updatedAt = clock.millis()),
         )
     }
 

@@ -49,6 +49,8 @@ interface FollowUpRepository {
     fun observeForContact(contactId: Long): Flow<List<FollowUp>>
     fun observeCounts(): Flow<FollowUpCounts>
     suspend fun get(id: Long): FollowUp?
+    suspend fun getWithContact(id: Long): FollowUpWithContact?
+    suspend fun markNotified(id: Long, at: Long)
     suspend fun save(followUp: FollowUp): Long
     suspend fun markCompleted(id: Long)
     suspend fun reopen(id: Long)

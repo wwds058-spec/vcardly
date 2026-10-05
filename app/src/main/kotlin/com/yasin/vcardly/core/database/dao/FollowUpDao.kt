@@ -28,6 +28,13 @@ interface FollowUpDao {
     suspend fun getById(id: Long): FollowUpEntity?
 
     @Transaction
+    @Query("SELECT * FROM follow_ups WHERE id = :id")
+    suspend fun getWithContact(id: Long): FollowUpWithContactEntity?
+
+    @Query("UPDATE follow_ups SET notified_at = :at WHERE id = :id")
+    suspend fun markNotified(id: Long, at: Long)
+
+    @Transaction
     @Query("SELECT * FROM follow_ups WHERE status = 'PENDING' AND due_at < :startOfToday ORDER BY due_at ASC")
     fun observeOverdue(startOfToday: Long): Flow<List<FollowUpWithContactEntity>>
 

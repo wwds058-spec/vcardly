@@ -18,3 +18,12 @@ fun validationMessageRes(field: ContactField, reason: Reason): Int = when (reaso
         else -> R.string.error_invalid
     }
 }
+
+/** For forms whose fields need no field-specific wording. */
+@StringRes
+fun validationMessageRes(reason: Reason): Int = when (reason) {
+    Reason.REQUIRED -> R.string.error_required
+    Reason.TOO_LONG -> R.string.error_too_long
+    Reason.DUPLICATE -> R.string.error_duplicate
+    Reason.INVALID_FORMAT -> R.string.error_invalid
+}

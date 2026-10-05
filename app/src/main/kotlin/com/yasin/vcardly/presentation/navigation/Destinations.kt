@@ -21,6 +21,10 @@ object Routes {
     const val CONTACT_DETAIL = "contact/{contactId}"
     const val CONTACT_EDIT = "contact/edit/{contactId}?fromScan={fromScan}"
 
+    const val FOLLOWUP_EDIT = "followup/edit/{followUpId}?contactId={contactId}"
+    /** id = 0 creates a new follow-up; [contactId] optionally pre-selects its contact. */
+    fun followUpEdit(id: Long, contactId: Long = 0) = "followup/edit/$id?contactId=$contactId"
+
     const val SCAN_GRAPH = "scan"
     const val SCAN_CAPTURE = "scan/capture"
     const val SCAN_CROP = "scan/crop"

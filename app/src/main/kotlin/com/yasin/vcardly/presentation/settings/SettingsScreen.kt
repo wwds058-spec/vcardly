@@ -16,6 +16,13 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
+import com.yasin.vcardly.core.notifications.ReminderPermissions
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -51,6 +58,8 @@ fun SettingsScreen(onOpenOrganize: () -> Unit, viewModel: SettingsViewModel = hi
                     )
                 }
             }
+
+            ReminderStatusSection()
 
             SectionHeader(stringResource(R.string.settings_data))
             Text(
@@ -97,4 +106,39 @@ private fun ThemeMode.labelRes(): Int = when (this) {
     ThemeMode.SYSTEM -> R.string.theme_system
     ThemeMode.LIGHT -> R.string.theme_light
     ThemeMode.DARK -> R.string.theme_dark
+}
+
+/** Shows whether reminders can actually reach the user, with a one-tap route to fix each blocker. */
+@Composable
+private fun ReminderStatusSection() {
+    val context = LocalContext.current
+    var tick by remember { mutableIntStateOf(0) }
+    // Re-check when returning from the system settings screens.
+    LifecycleResumeEffect(Unit) {
+        tick++
+        onPauseOrDispose { }
+    }
+    val notificationsOk = remember(tick) { ReminderPermissions.notificationsEnabled(context) }
+    val exactOk = remember(tick) { ReminderPermissions.canScheduleExact(context) }
+
+    SectionHeader(stringResource(R.string.settings_reminders))
+    StatusRow(
+        text = stringResource(if (notificationsOk) R.string.settings_notifications_on else R.string.settings_notifications_off),
+        actionText = if (notificationsOk) null else stringResource(R.string.settings_open_notification_settings),
+        onAction = { context.startActivity(ReminderPermissions.notificationSettingsIntent(context)) },
+    )
+    val exactIntent = ReminderPermissions.exactAlarmSettingsIntent(context)
+    StatusRow(
+        text = stringResource(if (exactOk) R.string.settings_exact_on else R.string.settings_exact_off),
+        actionText = if (exactOk || exactIntent == null) null else stringResource(R.string.settings_allow_exact),
+        onAction = { exactIntent?.let(context::startActivity) },
+    )
+}
+
+@Composable
+private fun StatusRow(text: String, actionText: String?, onAction: () -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(vertical = MaterialTheme.spacing.xs)) {
+        Text(text, style = MaterialTheme.typography.bodyLarge)
+        if (actionText != null) VCardlyTextButton(actionText, onClick = onAction)
+    }
 }

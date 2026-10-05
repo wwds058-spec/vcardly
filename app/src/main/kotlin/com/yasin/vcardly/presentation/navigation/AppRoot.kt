@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
@@ -32,7 +33,8 @@ import com.yasin.vcardly.presentation.contacts.ContactsScreen
 import com.yasin.vcardly.presentation.dashboard.DashboardScreen
 import com.yasin.vcardly.presentation.organize.OrganizeScreen
 import com.yasin.vcardly.presentation.onboarding.OnboardingScreen
-import com.yasin.vcardly.presentation.placeholder.ComingSoonScreen
+import com.yasin.vcardly.presentation.followups.FollowUpEditScreen
+import com.yasin.vcardly.presentation.followups.FollowUpsScreen
 import com.yasin.vcardly.presentation.settings.SettingsScreen
 import com.yasin.vcardly.R
 
@@ -41,10 +43,17 @@ import com.yasin.vcardly.R
  * destination is correct on the first frame.
  */
 @Composable
-fun AppRoot(onboardingCompleted: Boolean) {
+fun AppRoot(onboardingCompleted: Boolean, openContactId: Long? = null, onOpenContactHandled: () -> Unit = {}) {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     val currentRoute = backStack?.destination?.route
+    // A tapped reminder notification asks to open its contact.
+    LaunchedEffect(openContactId) {
+        if (openContactId != null) {
+            if (onboardingCompleted) navController.navigate(Routes.contactDetail(openContactId))
+            onOpenContactHandled()
+        }
+    }
     val showBottomBar = TopLevelDestination.entries.any { it.route == currentRoute }
 
     Scaffold(
@@ -98,6 +107,8 @@ fun AppRoot(onboardingCompleted: Boolean) {
                 ContactDetailScreen(
                     onNavigateUp = { navController.popBackStack() },
                     onEdit = { navController.navigate(Routes.contactEdit(it)) },
+                    onAddFollowUp = { navController.navigate(Routes.followUpEdit(0, contactId = it)) },
+                    onOpenFollowUp = { navController.navigate(Routes.followUpEdit(it)) },
                 )
             }
             composable(Routes.CONTACT_EDIT, arguments = contactIdArgs + fromScanArg) { entry ->
@@ -138,7 +149,16 @@ fun AppRoot(onboardingCompleted: Boolean) {
             }
             composable(Routes.ORGANIZE) { OrganizeScreen(onNavigateUp = { navController.popBackStack() }) }
             composable(Routes.FOLLOW_UPS) {
-                ComingSoonScreen(title = stringResource(R.string.nav_follow_ups))
+                FollowUpsScreen(
+                    onAddFollowUp = { navController.navigate(Routes.followUpEdit(0)) },
+                    onOpenFollowUp = { navController.navigate(Routes.followUpEdit(it)) },
+                )
+            }
+            composable(Routes.FOLLOWUP_EDIT, arguments = followUpArgs) {
+                FollowUpEditScreen(
+                    onNavigateUp = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack() },
+                )
             }
             composable(Routes.SETTINGS) {
                 SettingsScreen(onOpenOrganize = { navController.navigate(Routes.ORGANIZE) })
@@ -148,6 +168,13 @@ fun AppRoot(onboardingCompleted: Boolean) {
 }
 
 private val contactIdArgs = listOf(navArgument("contactId") { type = NavType.LongType })
+private val followUpArgs = listOf(
+    navArgument("followUpId") { type = NavType.LongType },
+    navArgument("contactId") {
+        type = NavType.LongType
+        defaultValue = 0L
+    },
+)
 private val fromScanArg = navArgument("fromScan") {
     type = NavType.BoolType
     defaultValue = false

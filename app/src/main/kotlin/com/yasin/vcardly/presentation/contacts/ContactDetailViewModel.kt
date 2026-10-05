@@ -5,7 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yasin.vcardly.core.image.CardImageStore
 import com.yasin.vcardly.domain.model.ContactDetails
+import com.yasin.vcardly.domain.model.FollowUp
 import com.yasin.vcardly.domain.repository.ContactRepository
+import com.yasin.vcardly.domain.repository.FollowUpRepository
+import com.yasin.vcardly.domain.usecase.FollowUpManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,12 +28,20 @@ class ContactDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val contacts: ContactRepository,
     private val imageStore: CardImageStore,
+    followUpRepository: FollowUpRepository,
+    private val followUpManager: FollowUpManager,
 ) : ViewModel() {
     private val contactId: Long = checkNotNull(savedStateHandle[ARG_CONTACT_ID])
 
     val uiState: StateFlow<ContactDetailUiState> = contacts.observeContact(contactId)
         .map { if (it == null) ContactDetailUiState.NotFound else ContactDetailUiState.Content(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ContactDetailUiState.Loading)
+
+    val followUps: StateFlow<List<FollowUp>> = followUpRepository.observeForContact(contactId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    fun completeFollowUp(id: Long) { viewModelScope.launch { followUpManager.complete(id) } }
+    fun reopenFollowUp(id: Long) { viewModelScope.launch { followUpManager.reopen(id) } }
 
     fun toggleFavorite() {
         val current = (uiState.value as? ContactDetailUiState.Content)?.details?.contact ?: return

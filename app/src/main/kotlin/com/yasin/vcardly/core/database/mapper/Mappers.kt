@@ -50,13 +50,13 @@ fun ContactWithRelations.toDomain() = ContactDetails(
 fun FollowUpEntity.toDomain() = FollowUp(
     id = id, contactId = contactId, type = type, status = status, title = title, notes = notes,
     dueAt = dueAt, reminderEnabled = reminderEnabled, reminderOffsetMinutes = reminderOffsetMinutes,
-    completedAt = completedAt, createdAt = createdAt, updatedAt = updatedAt,
+    completedAt = completedAt, notifiedAt = notifiedAt, createdAt = createdAt, updatedAt = updatedAt,
 )
 
 fun FollowUp.toEntity() = FollowUpEntity(
     id = id, contactId = contactId, type = type, status = status, title = title.trim(), notes = notes.trim(),
     dueAt = dueAt, reminderEnabled = reminderEnabled, reminderOffsetMinutes = reminderOffsetMinutes,
-    completedAt = completedAt, createdAt = createdAt, updatedAt = updatedAt,
+    completedAt = completedAt, notifiedAt = notifiedAt, createdAt = createdAt, updatedAt = updatedAt,
 )
 
 fun FollowUpWithContactEntity.toDomain() = FollowUpWithContact(

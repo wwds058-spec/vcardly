@@ -13,6 +13,8 @@ data class FollowUp(
     /** Minutes before [dueAt] the reminder fires (0 = at due time). */
     val reminderOffsetMinutes: Int = 0,
     val completedAt: Long? = null,
+    /** When the reminder notification was actually shown; null = not yet. Reset when the schedule changes. */
+    val notifiedAt: Long? = null,
     val createdAt: Long = 0,
     val updatedAt: Long = 0,
 )
@@ -31,3 +33,8 @@ data class FollowUpCounts(
     val overdue: Int,
     val completed: Int,
 )
+
+/** Reminder lead times offered in the UI, in minutes before the due time. */
+object ReminderOffsets {
+    val options: List<Int> = listOf(0, 15, 60, 1440)
+}

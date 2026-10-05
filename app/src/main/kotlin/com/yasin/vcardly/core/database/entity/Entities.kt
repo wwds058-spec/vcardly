@@ -124,6 +124,7 @@ data class FollowUpEntity(
     @ColumnInfo(name = "reminder_enabled") val reminderEnabled: Boolean = true,
     @ColumnInfo(name = "reminder_offset_minutes") val reminderOffsetMinutes: Int = 0,
     @ColumnInfo(name = "completed_at") val completedAt: Long? = null,
+    @ColumnInfo(name = "notified_at") val notifiedAt: Long? = null,
     @ColumnInfo(name = "created_at") val createdAt: Long,
     @ColumnInfo(name = "updated_at") val updatedAt: Long,
 )

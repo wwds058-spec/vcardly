@@ -19,6 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -47,10 +49,14 @@ import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.ConfirmDialog
 import com.yasin.vcardly.core.designsystem.component.EmptyState
 import com.yasin.vcardly.core.designsystem.component.LoadingState
+import com.yasin.vcardly.core.designsystem.component.SectionHeader
+import com.yasin.vcardly.core.designsystem.component.VCardlyTextButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyTopBar
 import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.core.image.CardImageRef
 import com.yasin.vcardly.domain.model.ContactDetails
+import com.yasin.vcardly.domain.model.FollowUp
+import com.yasin.vcardly.domain.model.FollowUpStatus
 import com.yasin.vcardly.presentation.common.CardImageView
 import com.yasin.vcardly.presentation.common.ContactAvatar
 import com.yasin.vcardly.presentation.common.displayName
@@ -61,11 +67,14 @@ import java.util.Date
 fun ContactDetailScreen(
     onNavigateUp: () -> Unit,
     onEdit: (Long) -> Unit,
+    onAddFollowUp: (contactId: Long) -> Unit,
+    onOpenFollowUp: (Long) -> Unit,
     viewModel: ContactDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var confirmDelete by remember { mutableStateOf(false) }
     val content = state as? ContactDetailUiState.Content
+    val followUps by viewModel.followUps.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize()) {
         VCardlyTopBar(
@@ -99,7 +108,13 @@ fun ContactDetailScreen(
                 title = stringResource(R.string.contact_not_found_title),
                 message = stringResource(R.string.contact_not_found_message),
             )
-            is ContactDetailUiState.Content -> DetailContent(s.details)
+            is ContactDetailUiState.Content -> DetailContent(
+                details = s.details,
+                followUps = followUps,
+                onAddFollowUp = { onAddFollowUp(s.details.contact.id) },
+                onOpenFollowUp = onOpenFollowUp,
+                onToggleFollowUp = { f -> if (f.status == FollowUpStatus.COMPLETED) viewModel.reopenFollowUp(f.id) else viewModel.completeFollowUp(f.id) },
+            )
         }
     }
 
@@ -119,7 +134,13 @@ fun ContactDetailScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DetailContent(details: ContactDetails) {
+private fun DetailContent(
+    details: ContactDetails,
+    followUps: List<FollowUp>,
+    onAddFollowUp: () -> Unit,
+    onOpenFollowUp: (Long) -> Unit,
+    onToggleFollowUp: (FollowUp) -> Unit,
+) {
     val contact = details.contact
     val context = LocalContext.current
     val spacing = MaterialTheme.spacing
@@ -172,6 +193,28 @@ private fun DetailContent(details: ContactDetails) {
         FieldRow(R.string.field_notes, contact.notes)
 
         val formatter = remember { DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT) }
+
+        SectionHeader(stringResource(R.string.dashboard_section_follow_ups))
+        followUps.forEach { f ->
+            val done = f.status == FollowUpStatus.COMPLETED
+            Row(
+                Modifier.fillMaxWidth().heightIn(min = MaterialTheme.spacing.minTouchTarget).clickable { onOpenFollowUp(f.id) },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(f.title, style = MaterialTheme.typography.bodyLarge)
+                    Text(formatter.format(Date(f.dueAt)), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                IconButton(onClick = { onToggleFollowUp(f) }) {
+                    Icon(
+                        if (done) Icons.Filled.Refresh else Icons.Filled.Check,
+                        contentDescription = stringResource(if (done) R.string.followup_reopen_item else R.string.followup_complete_item, f.title),
+                    )
+                }
+            }
+        }
+        VCardlyTextButton(stringResource(R.string.followup_add), onClick = onAddFollowUp)
+
         Text(
             stringResource(R.string.contact_added_on, formatter.format(Date(contact.createdAt))),
             style = MaterialTheme.typography.bodyMedium,

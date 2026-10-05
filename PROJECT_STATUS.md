@@ -12,13 +12,13 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| Pure-Kotlin JVM tests: query builder (6), category breakdown (3), contact validator (7), initials (6), business-card parser (7), crop math (4) | 33/33 pass (the query-builder test caught a real bug, fixed) |
+| Pure-Kotlin JVM tests: query builder (6), category breakdown (3), contact validator (7), initials (6), business-card parser (7), crop math (4), reminder planner (6), due-time (4), follow-up validator (5) | 48/48 pass (the query-builder test caught a real bug, fixed) |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
 
 First action on a machine with Google Maven access: `./gradlew :app:assembleDebug :app:testDebugUnitTest`,
 fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exports it on first build).
-`androidTest/DatabaseTest` and `ContactRepositoryTest` need an emulator/device: `./gradlew :app:connectedDebugAndroidTest`.
+`androidTest/DatabaseTest`, `ContactRepositoryTest` and `FollowUpRepositoryTest` need an emulator/device: `./gradlew :app:connectedDebugAndroidTest`.
 
 ## Phases
 
@@ -28,13 +28,36 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 2 | Onboarding, navigation shell, dashboard (real DB stats), settings/theme | Written, **not build-verified** |
 | 3 | Contacts list (search/filter/sort), categories, tags, favorites, details, add/edit + validation | Written, **not build-verified** |
 | 4 | Image storage, CameraX scanner, crop/rotate, ML Kit OCR + heuristic parsing + review screen | Written, **not build-verified** |
-| 5 | Follow-ups + notifications (boot / time-change safe) | Planned |
+| 5 | Follow-ups + notifications (boot / time-change safe) | Written, **not build-verified** |
 | 6 | Digital card, QR, vCard export/import | Planned |
 | 7 | Reports + PDF/CSV/Excel export | Planned |
 | 8 | Global search, backup/restore (`vcardly-backup-v1`), Drive preparation | Planned |
 | 9 | Biometric lock + auto-lock, privacy screen | Planned |
 | 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 5 contents
+
+- **Follow-ups tab**: Overdue / Today / Upcoming / Completed with live counts, complete / reopen / delete, add (contact picker with
+  search). Buckets are derived from the clock; the flows re-compute after midnight while a screen is open. Contact details show and
+  add that contact's follow-ups. Add/edit form: contact, title, type (call/email/meeting/message/other), date + time pickers
+  (picker-UTC pitfall handled and tested), reminder on/off with lead time (at time / 15 min / 1 h / 1 day), notes, discard guard.
+- **Reminder architecture**: `FollowUpManager` is the only writer (DB + alarm stay consistent). `AlarmReminderScheduler` arms one
+  wall-clock `AlarmManager` alarm per follow-up (exact when the user allows it, otherwise `setAndAllowWhileIdle`). When the alarm fires
+  `ReminderReceiver` re-reads the follow-up (it may be done/edited/deleted) before notifying, then records `notified_at`.
+- **Survives reboot / time changes**: `SystemEventReceiver` handles BOOT_COMPLETED, MY_PACKAGE_REPLACED, TIME_SET, TIMEZONE_CHANGED and
+  exact-alarm permission changes by enqueuing a `RescheduleWorker` (WorkManager). The app also reschedules on every launch (force-stop
+  clears alarms silently) and a 12-hour periodic safety-net worker runs. `ReminderPlanner` (pure, tested) decides: future -> arm;
+  missed within 24 h -> show now; older -> mark handled, no spam (still visible under Overdue); already notified -> skip.
+- **Notifications**: channel created at startup; lock screen shows only a generic "Follow-up reminder" (details marked private); tap opens
+  the contact (deep link, consumed once so rotation doesn't re-open); "Mark done" action. `POST_NOTIFICATIONS` is requested when a
+  reminder is switched on; Settings → Reminders shows notification / exact-alarm status with fix-it buttons.
+- DB: `follow_ups.notified_at` added to schema v1 directly (no release existed yet, so no migration); from the first release every schema
+  change needs a real Migration + committed schema JSON. Changing due time / lead time / reminder flag, or reopening, clears `notified_at`.
+- Assumptions: due times are absolute instants (a zone change keeps the same instant rather than the same wall-clock hour);
+  `SCHEDULE_EXACT_ALARM` is declared but not required (Google Play may ask for a justification in the app-content declaration; if you
+  would rather not declare it, remove it and reminders become inexact);
+  deleting a contact leaves its alarms to lapse harmlessly (the receiver ignores missing follow-ups); no snooze yet.
 
 ## Phase 4 contents
 
