@@ -44,6 +44,12 @@ targets:
         NSCameraUsageDescription: VCardly uses the camera only to photograph visiting cards. Photos stay on this device.
         NSFaceIDUsageDescription: VCardly uses Face ID only to unlock the app. Your biometric data never leaves the device.
         ITSAppUsesNonExemptEncryption: false
+        UTExportedTypeDeclarations:
+          - UTTypeIdentifier: com.yasin.vcardly.backup
+            UTTypeDescription: VCardly backup
+            UTTypeConformsTo: [public.data]
+            UTTypeTagSpecification:
+              public.filename-extension: [vcbackup]
   VCardlyTests:
     type: bundle.unit-test
     platform: iOS

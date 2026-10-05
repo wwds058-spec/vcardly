@@ -13,6 +13,7 @@ final class AppEnvironment {
     @ObservationIgnored let followUps: FollowUpRepository
     @ObservationIgnored let images: CardImageStore
     @ObservationIgnored let reminders: ReminderScheduler
+    @ObservationIgnored let backup: BackupService
     let revision: DataRevision
     let prefs: Preferences
     let lock: AppLock
@@ -29,6 +30,7 @@ final class AppEnvironment {
         lock = AppLock()
         contacts = ContactRepository(context: container.mainContext, revision: revision, images: images)
         followUps = FollowUpRepository(context: container.mainContext, revision: revision, reminders: reminders)
+        backup = BackupService(context: container.mainContext, images: images, prefs: prefs, followUps: followUps, revision: revision)
         contacts.seedSystemCategories()
     }
 }

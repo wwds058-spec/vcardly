@@ -64,6 +64,7 @@ struct PrivacyScreen: View {
         ("text.viewfinder", "privacy.ocr", VC.orange),
         ("square.and.arrow.up", "privacy.sharing", VC.blue),
         ("faceid", "privacy.lock", VC.navy),
+        ("externaldrive.fill", "privacy.backup", VC.orange),
         ("hand.raised.fill", "privacy.control", VC.rose),
     ]
 

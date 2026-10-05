@@ -38,6 +38,20 @@ final class CardImageStore {
         return UIGraphicsImageRenderer(size: size).image { _ in image.draw(in: CGRect(origin: .zero, size: size)) }
     }
 
+    /// Absolute location of a stored photo (for backups), or nil when the path is not one of ours.
+    func fileURL(_ relativePath: String?) -> URL? { resolve(relativePath) }
+
+    /// Copies a verified file (from a restore) into the store under a new random name; returns its relative path.
+    func install(_ file: URL) -> String? {
+        let name = "\(UUID().uuidString).jpg"
+        do {
+            try FileManager.default.copyItem(at: file, to: root.appendingPathComponent(name))
+            return "cards/\(name)"
+        } catch {
+            return nil
+        }
+    }
+
     func delete(_ relativePath: String?) {
         guard let url = resolve(relativePath) else { return }
         try? FileManager.default.removeItem(at: url)
@@ -104,6 +118,7 @@ final class Preferences {
     private(set) var appLockEnabled: Bool
     private(set) var autoLockSeconds: Int
     private(set) var myCard: MyCard
+    private(set) var lastBackupAt: Date?
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -111,6 +126,7 @@ final class Preferences {
         onboardingCompleted = defaults.bool(forKey: "onboardingCompleted")
         appLockEnabled = defaults.bool(forKey: "appLockEnabled")
         autoLockSeconds = defaults.object(forKey: "autoLockSeconds") as? Int ?? 60
+        lastBackupAt = defaults.object(forKey: "lastBackupAt") as? Date
         myCard = defaults.data(forKey: "myCard").flatMap { try? JSONDecoder().decode(MyCard.self, from: $0) } ?? MyCard()
     }
 
@@ -118,5 +134,6 @@ final class Preferences {
     func setOnboardingCompleted(_ v: Bool) { onboardingCompleted = v; defaults.set(v, forKey: "onboardingCompleted") }
     func setAppLockEnabled(_ v: Bool) { appLockEnabled = v; defaults.set(v, forKey: "appLockEnabled") }
     func setAutoLockSeconds(_ v: Int) { autoLockSeconds = v; defaults.set(v, forKey: "autoLockSeconds") }
+    func setLastBackupAt(_ v: Date) { lastBackupAt = v; defaults.set(v, forKey: "lastBackupAt") }
     func setMyCard(_ v: MyCard) { myCard = v; defaults.set(try? JSONEncoder().encode(v), forKey: "myCard") }
 }

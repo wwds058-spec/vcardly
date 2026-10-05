@@ -14,6 +14,7 @@ struct SettingsActions {
     var openMyCard: () -> Void = {}
     var openReports: () -> Void = {}
     var openPrivacy: () -> Void = {}
+    var openBackup: () -> Void = {}
     var openPro: () -> Void = {}
     var setTheme: (ThemeMode) -> Void = { _ in }
     var setAppLock: (Bool) -> Void = { _ in }
@@ -26,6 +27,7 @@ struct SettingsScreen: View {
     let openMyCard: () -> Void
     let openReports: () -> Void
     let openPrivacy: () -> Void
+    let openBackup: () -> Void
     let openPro: () -> Void
     @State private var notificationsAllowed: Bool?
     @State private var lockUnavailable = false
@@ -36,7 +38,7 @@ struct SettingsScreen: View {
             autoLockSeconds: env.prefs.autoLockSeconds, notificationsAllowed: notificationsAllowed,
             version: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
         ), actions: SettingsActions(
-            openMyCard: openMyCard, openReports: openReports, openPrivacy: openPrivacy, openPro: openPro,
+            openMyCard: openMyCard, openReports: openReports, openPrivacy: openPrivacy, openBackup: openBackup, openPro: openPro,
             setTheme: { env.prefs.setThemeMode($0) },
             setAppLock: { on in
                 Task {
@@ -133,7 +135,8 @@ struct SettingsContent: View {
 
                 VCOverline(text: L10n.s("settings.section.data")).padding(.top, 6)
                 VStack(alignment: .leading, spacing: 0) {
-                    VCNavigationRow(symbol: "externaldrive.fill", tone: VC.orange, title: L10n.s("settings.backup"), subtitle: L10n.s("settings.backup_ios_pending"))
+                    VCNavigationRow(symbol: "externaldrive.fill", tone: VC.orange, title: L10n.s("settings.backup"),
+                                    subtitle: L10n.s("settings.backup_hint"), action: actions.openBackup)
                 }
                 .vcCard(padding: 4)
 

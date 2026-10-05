@@ -215,6 +215,13 @@ jobs:
         if: failure()
         run: grep -E "error:" build-log.txt | sort -u | head -80 || true
 
+      # Backups written by the iPhone tests must pass the format's reference reader (the same rules Android enforces).
+      - name: Verify iPhone backups against the reference format
+        run: |
+          python3 -m venv /tmp/venv && /tmp/venv/bin/pip install -q cryptography
+          /tmp/venv/bin/python ../tools/backup_reference.py verify build/backups/ios-plain.vcbackup
+          /tmp/venv/bin/python ../tools/backup_reference.py verify build/backups/ios-encrypted.vcbackup "correct horse"
+
       - name: Publish iOS screenshots to the ios-screenshots branch
         if: always() && github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'
         run: |

@@ -152,6 +152,17 @@ final class ScreenshotTests: XCTestCase {
         try snap("12_settings_dark", dark: true) { SettingsContent(state: s, actions: SettingsActions()) }
     }
 
+    func testBackup() throws {
+        try snap("16_backup") { NavigationStack { BackupContent(state: BackupState(), actions: BackupActions()) } }
+        let manifest = BackupManifest(format: BackupFormat.id, formatVersion: 1, createdAt: Date().addingTimeInterval(-86_400 * 3).millis,
+                                      appVersion: "1.0.0", encrypted: true, counts: BackupCounts(contacts: 128, categories: 10, tags: 6, followUps: 42, images: 97),
+                                      files: [:])
+        let ready = BackupState(lastBackupAt: Date().addingTimeInterval(-86_400 * 3),
+                                restore: .ready(PreparedBackup(manifest: manifest, data: BackupData(), images: [], workDir: FileManager.default.temporaryDirectory)))
+        try snap("16_backup_restore") { NavigationStack { BackupContent(state: ready, actions: BackupActions()) } }
+        try snap("16_backup_restore_dark", dark: true) { NavigationStack { BackupContent(state: ready, actions: BackupActions()) } }
+    }
+
     func testOtherScreens() throws {
         try snap("13_lock") { LockContent(failed: false, unlock: {}) }
         try snap("14_privacy") { NavigationStack { PrivacyScreen() } }
