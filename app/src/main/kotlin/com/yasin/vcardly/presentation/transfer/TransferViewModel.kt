@@ -111,13 +111,27 @@ class TransferViewModel @Inject constructor(
     /** Reads at most [MAX_BYTES]; anything larger is refused rather than loaded into memory. */
     private fun readText(uri: Uri): Read = try {
         context.contentResolver.openInputStream(uri)?.use { input ->
-            val bytes = input.readNBytes(MAX_BYTES + 1)
+            val bytes = readUpTo(input, MAX_BYTES + 1)
             if (bytes.size > MAX_BYTES) Read.Failure(ImportFailure.TOO_LARGE) else Read.Text(String(bytes, Charsets.UTF_8))
         } ?: Read.Failure(ImportFailure.UNREADABLE)
     } catch (_: IOException) {
         Read.Failure(ImportFailure.UNREADABLE)
     } catch (_: SecurityException) {
         Read.Failure(ImportFailure.UNREADABLE)
+    }
+
+    /** InputStream.readNBytes needs API 33; the app supports 26+. Reads at most [limit] bytes. */
+    private fun readUpTo(input: java.io.InputStream, limit: Int): ByteArray {
+        val out = java.io.ByteArrayOutputStream()
+        val buf = ByteArray(16 * 1024)
+        var total = 0
+        while (total < limit) {
+            val n = input.read(buf, 0, minOf(buf.size, limit - total))
+            if (n < 0) break
+            out.write(buf, 0, n)
+            total += n
+        }
+        return out.toByteArray()
     }
 
     // ---------------- export ----------------

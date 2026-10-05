@@ -32,6 +32,13 @@ jobs:
       - name: Lint
         run: ./gradlew :app:lintDebug --stacktrace
 
+      - name: Show lint errors
+        if: failure()
+        run: |
+          f=$(find app/build -name 'lint-results-debug.txt' | head -1)
+          echo "report: $f"
+          grep -A3 " Error: " "$f" | head -150 || true
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
