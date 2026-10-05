@@ -15,6 +15,7 @@ struct SettingsActions {
     var openReports: () -> Void = {}
     var openPrivacy: () -> Void = {}
     var openBackup: () -> Void = {}
+    var openTransfer: () -> Void = {}
     var openPro: () -> Void = {}
     var setTheme: (ThemeMode) -> Void = { _ in }
     var setAppLock: (Bool) -> Void = { _ in }
@@ -28,6 +29,7 @@ struct SettingsScreen: View {
     let openReports: () -> Void
     let openPrivacy: () -> Void
     let openBackup: () -> Void
+    let openTransfer: () -> Void
     let openPro: () -> Void
     @State private var notificationsAllowed: Bool?
     @State private var lockUnavailable = false
@@ -38,7 +40,7 @@ struct SettingsScreen: View {
             autoLockSeconds: env.prefs.autoLockSeconds, notificationsAllowed: notificationsAllowed,
             version: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
         ), actions: SettingsActions(
-            openMyCard: openMyCard, openReports: openReports, openPrivacy: openPrivacy, openBackup: openBackup, openPro: openPro,
+            openMyCard: openMyCard, openReports: openReports, openPrivacy: openPrivacy, openBackup: openBackup, openTransfer: openTransfer, openPro: openPro,
             setTheme: { env.prefs.setThemeMode($0) },
             setAppLock: { on in
                 Task {
@@ -137,6 +139,9 @@ struct SettingsContent: View {
                 VStack(alignment: .leading, spacing: 0) {
                     VCNavigationRow(symbol: "externaldrive.fill", tone: VC.orange, title: L10n.s("settings.backup"),
                                     subtitle: L10n.s("settings.backup_hint"), action: actions.openBackup)
+                    divider
+                    VCNavigationRow(symbol: "arrow.left.arrow.right", tone: VC.blue, title: L10n.s("transfer.title"),
+                                    subtitle: L10n.s("settings.transfer_hint"), action: actions.openTransfer)
                 }
                 .vcCard(padding: 4)
 

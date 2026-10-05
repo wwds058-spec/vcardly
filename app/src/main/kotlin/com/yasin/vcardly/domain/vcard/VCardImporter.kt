@@ -92,15 +92,20 @@ object VCardImporter {
         p.phones.drop(2).forEach { overflow += it }
         p.emails.drop(2).forEach { overflow += it }
 
+        // Fit the free-text fields first so anything cut off also lands in the notes.
+        val jobTitle = fit(p.jobTitle, ContactValidator.MAX_SHORT)
+        val company = fit(p.company, ContactValidator.MAX_SHORT)
+        val address = fit(p.address, ContactValidator.MAX_ADDRESS)
+
         val extra = overflow.distinct().joinToString("\n")
         val notes = listOf(p.notes.trim(), extra).filter { it.isNotEmpty() }.joinToString("\n").take(ContactValidator.MAX_NOTES)
 
         return Contact(
             fullName = name.take(ContactValidator.MAX_NAME),
-            jobTitle = fit(p.jobTitle, ContactValidator.MAX_SHORT),
-            company = fit(p.company, ContactValidator.MAX_SHORT),
+            jobTitle = jobTitle,
+            company = company,
             phone = phone, phoneAlt = phoneAlt, email = email, emailAlt = emailAlt, website = website,
-            address = fit(p.address, ContactValidator.MAX_ADDRESS),
+            address = address,
             notes = notes,
             source = ContactSource.IMPORT,
         )

@@ -64,4 +64,11 @@ class VCardImporterTest {
         val c = VCardImporter.toContact(p("Cara", phones = listOf("garbage"), emails = listOf("x"), website = "%%"))!!
         assertFalse(com.yasin.vcardly.domain.usecase.ContactValidator.validate(c).isNotEmpty())
     }
+
+    @Test fun overlongTitleCompanyAndAddress_keptInNotes() {
+        val longTitle = "t".repeat(150)
+        val c = VCardImporter.toContact(ParsedVCard(fullName = "Kim", jobTitle = longTitle, company = "c".repeat(120), address = "a".repeat(400)))!!
+        assertEquals(100, c.jobTitle.length)
+        assertTrue(c.notes.contains(longTitle) && c.notes.contains("c".repeat(120)) && c.notes.contains("a".repeat(400)))
+    }
 }

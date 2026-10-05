@@ -14,6 +14,7 @@ enum Route: Hashable {
     case pro
     case reports
     case backup
+    case transfer
 }
 
 enum Tab: Int, CaseIterable { case home, contacts, followUps, settings }
@@ -98,7 +99,7 @@ struct MainShell: View {
                 case .followUps:
                     FollowUpsScreen(open: { push(.followUps, .followUp($0, contactId: nil)) }, add: { push(.followUps, .followUp(nil, contactId: nil)) })
                 case .settings:
-                    SettingsScreen(openMyCard: { push(.settings, .myCard) }, openReports: { push(.settings, .reports) }, openPrivacy: { push(.settings, .privacy) }, openBackup: { push(.settings, .backup) }, openPro: { push(.settings, .pro) })
+                    SettingsScreen(openMyCard: { push(.settings, .myCard) }, openReports: { push(.settings, .reports) }, openPrivacy: { push(.settings, .privacy) }, openBackup: { push(.settings, .backup) }, openTransfer: { push(.settings, .transfer) }, openPro: { push(.settings, .pro) })
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
@@ -143,6 +144,8 @@ struct MainShell: View {
             ReportsScreen()
         case .backup:
             BackupScreen()
+        case .transfer:
+            TransferScreen()
         }
     }
 }

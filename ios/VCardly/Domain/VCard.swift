@@ -40,7 +40,8 @@ struct ShareCard: Equatable {
 /// Writes vCard 3.0 with CRLF line ends and 75-octet folding (never splitting a character). Port of Android's VCardWriter.
 enum VCardWriter {
     static func write(fullName: String, jobTitle: String = "", company: String = "", phones: [(String, String)] = [],
-                      emails: [String] = [], website: String = "", address: String = "", notes: String = "") -> String {
+                      emails: [String] = [], website: String = "", address: String = "", notes: String = "",
+                      categories: [String] = [], revision: Date? = nil) -> String {
         var lines = ["BEGIN:VCARD", "VERSION:3.0", "FN:\(text(fullName))", "N:\(structuredName(fullName))"]
         if !company.trimmed.isEmpty { lines.append("ORG:\(text(company))") }
         if !jobTitle.trimmed.isEmpty { lines.append("TITLE:\(text(jobTitle))") }
@@ -50,8 +51,28 @@ enum VCardWriter {
         // ADR = PO box;extended;street;city;region;postal code;country. Free text goes in "street".
         if !address.trimmed.isEmpty { lines.append("ADR;TYPE=WORK:;;\(text(address));;;;") }
         if !notes.trimmed.isEmpty { lines.append("NOTE:\(text(notes))") }
+        let cats = categories.filter { !$0.trimmed.isEmpty }
+        if !cats.isEmpty { lines.append("CATEGORIES:" + cats.map(text).joined(separator: ",")) }
+        if let revision { lines.append("REV:" + revFormat.string(from: revision)) }
         lines.append("END:VCARD")
         return lines.map { fold($0) + "\r\n" }.joined()
+    }
+
+    private static let revFormat: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "UTC")
+        f.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
+        return f
+    }()
+
+    /// A whole contact (every field, including private notes, category and tags) for "Export all contacts".
+    static func write(_ d: ContactDetails, revision: Date? = nil) -> String {
+        let c = d.contact
+        return write(fullName: c.fullName, jobTitle: c.jobTitle, company: c.company,
+                     phones: [(c.phone, "CELL"), (c.phoneAlt, "WORK")].filter { !$0.0.trimmed.isEmpty },
+                     emails: [c.email, c.emailAlt].filter { !$0.trimmed.isEmpty }, website: c.website, address: c.address, notes: c.notes,
+                     categories: (d.category.map { [$0.displayName] } ?? []) + d.tags.map(\.name), revision: revision)
     }
 
     /// Last word = family name, the rest = given names.

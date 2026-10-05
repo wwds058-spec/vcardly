@@ -317,7 +317,7 @@
 "privacy.no_account.title" = "No account";
 "privacy.no_account.body" = "There is no sign-in and no VCardly server. Your contacts are never uploaded. The iPhone app shows no ads.";
 "privacy.permissions.title" = "Permissions and why";
-"privacy.permissions.body" = "Camera: only while you scan a card; photos stay on the device. Notifications: to show your follow-up reminders; they show the task type and contact name, never your notes. Face ID: only to unlock the app; VCardly never sees your biometric data.";
+"privacy.permissions.body" = "Camera: only while you scan a card; photos stay on the device. Notifications: to show your follow-up reminders; they show the task type and contact name, never your notes. Face ID: only to unlock the app; VCardly never sees your biometric data. Contacts: VCardly never asks for your address book; when you import, you pick people in Apple's picker and only they are handed over.";
 "privacy.ocr.title" = "Reading business cards";
 "privacy.ocr.body" = "Text on a card is recognised on the device by Apple's Vision framework. The recognised text is never stored or logged: you review it, and only what you save is kept.";
 "privacy.sharing.title" = "Sharing";
@@ -411,3 +411,36 @@
 "backup.error.corrupt" = "The backup is damaged and cannot be restored. Nothing was changed.";
 "backup.error.too_large" = "That backup is larger than this app can safely restore.";
 "backup.error.io" = "The file could not be read or written.";
+
+/* Import and export (vCard) */
+"settings.transfer_hint" = "vCard files and iPhone Contacts";
+"transfer.title" = "Import & export";
+"transfer.import" = "Import contacts";
+"transfer.import_description" = "From a vCard (.vcf) file, or pick people from your iPhone Contacts. You can review the list before anything is added.";
+"transfer.choose_file" = "Choose vCard file";
+"transfer.from_contacts" = "Pick from iPhone Contacts";
+"transfer.reading" = "Reading contacts…";
+"transfer.preview_hint" = "Contacts you already have are not selected. Untick any you do not want.";
+"transfer.import_selected" = "Import %ld selected";
+"transfer.unnamed" = "Unnamed";
+"transfer.status.duplicate" = "Already in your contacts";
+"transfer.status.unusable" = "No name or details, cannot import";
+"transfer.imported.one" = "Imported %ld contact.";
+"transfer.imported.other" = "Imported %ld contacts.";
+"transfer.skipped_duplicates.one" = "%ld skipped because it already exists.";
+"transfer.skipped_duplicates.other" = "%ld skipped because they already exist.";
+"transfer.skipped_unusable.one" = "%ld skipped because it had no usable details.";
+"transfer.skipped_unusable.other" = "%ld skipped because they had no usable details.";
+"transfer.error.unreadable" = "That file could not be read.";
+"transfer.error.too_large" = "That file is too large (over 5 MB).";
+"transfer.error.no_contacts" = "No contacts were found.";
+"transfer.export" = "Export contacts";
+"transfer.export_description" = "Save all your contacts to a .vcf file that other contact apps, including iPhone Contacts, can open.";
+"transfer.export_privacy" = "The file includes everything, including your private notes. Keep it somewhere safe and do not share it.";
+"transfer.export_all" = "Export all contacts";
+"transfer.export_confirm.title" = "Export all contacts?";
+"transfer.export_confirm.message" = "The file will include everything, including your private notes.";
+"transfer.export_file_name" = "vcardly-contacts.vcf";
+"transfer.export_failed" = "The file could not be written.";
+"transfer.exported.one" = "Exported %ld contact.";
+"transfer.exported.other" = "Exported %ld contacts.";

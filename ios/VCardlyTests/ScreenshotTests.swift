@@ -163,6 +163,16 @@ final class ScreenshotTests: XCTestCase {
         try snap("16_backup_restore_dark", dark: true) { NavigationStack { BackupContent(state: ready, actions: BackupActions()) } }
     }
 
+    func testTransfer() throws {
+        try snap("17_transfer") { NavigationStack { TransferContent(state: TransferState(), actions: TransferActions()) } }
+        let entries = VCardImporter.prepare([
+            ParsedVCard(fullName: "Asha Rao", company: "Acme Technologies"), ParsedVCard(fullName: "Ben Ito", emails: ["ben@globex.example"]),
+            ParsedVCard(fullName: "Carmen Diaz", company: "Brightpath Studio"), ParsedVCard(phones: ["12345"]),
+        ], existing: [Contact(fullName: "Ben Ito", email: "ben@globex.example")])
+        let preview = TransferState(importState: .preview(entries, selected: [0, 2]))
+        try snap("17_transfer_preview") { NavigationStack { TransferContent(state: preview, actions: TransferActions()) } }
+    }
+
     func testOtherScreens() throws {
         try snap("13_lock") { LockContent(failed: false, unlock: {}) }
         try snap("14_privacy") { NavigationStack { PrivacyScreen() } }
