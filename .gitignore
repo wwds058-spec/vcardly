@@ -16,3 +16,6 @@ keystore.properties
 *.keystore
 google-services.json
 secrets.properties
+
+# local copies of build outputs
+dist/
