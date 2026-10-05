@@ -9,9 +9,54 @@
     <string name="common_loading">Loading</string>
     <string name="common_error_title">Something went wrong</string>
 
-    <!-- Phase 1 placeholder screen -->
-    <string name="foundation_title">Your contacts, on your device</string>
-    <string name="foundation_message">VCardly keeps your business cards private and offline. The app is being built phase by phase.</string>
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_contacts">Contacts</string>
+    <string name="nav_follow_ups">Follow-ups</string>
+    <string name="nav_settings">Settings</string>
+    <string name="coming_soon_title">Coming soon</string>
+    <string name="coming_soon_message">This section is not available in this version yet.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_page_indicator">Page %1$d of %2$d</string>
+    <string name="onboarding_1_title">Turn business cards into contacts</string>
+    <string name="onboarding_1_body">Scan a card, review the details, and keep everything organised with categories and tags.</string>
+    <string name="onboarding_2_title">Private by design</string>
+    <string name="onboarding_2_body">Your contacts and card images stay on this device. VCardly works fully offline, and you choose when to back up or share.</string>
+    <string name="onboarding_3_title">Never miss a follow-up</string>
+    <string name="onboarding_3_body">Set reminders for calls, emails and meetings so every connection gets the attention it deserves.</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_empty_title">No contacts yet</string>
+    <string name="dashboard_empty_message">Add your first contact to see your stats here.</string>
+    <string name="dashboard_empty_action">Go to contacts</string>
+    <string name="dashboard_section_contacts">Contacts</string>
+    <string name="dashboard_section_follow_ups">Follow-ups</string>
+    <string name="dashboard_section_categories">By category</string>
+    <string name="dashboard_total">Total</string>
+    <string name="dashboard_favorites">Favorites</string>
+    <string name="dashboard_added_30_days">Added in 30 days</string>
+    <plurals name="dashboard_category_summary">
+        <item quantity="one">%1$s: %2$s contact</item>
+        <item quantity="other">%1$s: %2$s contacts</item>
+    </plurals>
+
+    <!-- Follow-up buckets -->
+    <string name="followup_overdue">Overdue</string>
+    <string name="followup_today">Today</string>
+    <string name="followup_upcoming">Upcoming</string>
+
+    <!-- Settings -->
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version %1$s</string>
+    <string name="settings_offline_note">VCardly stores your data on this device only.</string>
 
     <!-- System categories -->
     <string name="category_client">Client</string>
@@ -20,4 +65,5 @@
     <string name="category_colleague">Colleague</string>
     <string name="category_friend">Friend</string>
     <string name="category_other">Other</string>
+    <string name="category_uncategorised">Uncategorised</string>
 </resources>

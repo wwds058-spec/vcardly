@@ -17,4 +17,8 @@ class MainViewModel @Inject constructor(
     /** null until DataStore has loaded; the splash screen is held until then to avoid a theme flash. */
     val themeMode: StateFlow<ThemeMode?> = preferences.themeMode
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    /** null until loaded; decides the start destination so onboarding never flashes for returning users. */
+    val onboardingCompleted: StateFlow<Boolean?> = preferences.onboardingCompleted
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 }

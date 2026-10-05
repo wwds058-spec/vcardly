@@ -12,7 +12,7 @@ platform jar could not be resolved. What *was* verified:
 | Item | Result |
 |---|---|
 | `ContactQueryBuilder` + domain models compiled with Kotlin 2.0.21 on the JVM | OK |
-| `ContactQueryBuilderTest` (6 tests) | 6/6 pass (it caught a real bug, fixed) |
+| `ContactQueryBuilderTest` (6) + `CategoryBreakdownTest` (3) on the JVM | 9/9 pass (the first caught a real bug, fixed) |
 | Generated search SQL executed against real SQLite with the entity schema | OK |
 | Everything else (Gradle/AGP config, Room/KSP, Hilt, Compose, resources, manifest, androidTest) | **Unverified** |
 
@@ -25,7 +25,7 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | # | Phase | Status |
 |---|---|---|
 | 1 | Gradle, design system, architecture, Room foundation | Written, **not build-verified** |
-| 2 | Onboarding, navigation shell, dashboard (real DB stats), settings/theme | Planned |
+| 2 | Onboarding, navigation shell, dashboard (real DB stats), settings/theme | Written, **not build-verified** |
 | 3 | Contacts list (search/filter/sort), categories, tags, favorites, details, add/edit + validation | Planned |
 | 4 | Image storage, CameraX scanner, crop/rotate, ML Kit OCR + heuristic parsing + review screen | Planned |
 | 5 | Follow-ups + notifications (boot / time-change safe) | Planned |
@@ -35,6 +35,21 @@ fix any real errors, then commit the generated `app/schemas/**/1.json` (Room exp
 | 9 | Biometric lock + auto-lock, privacy screen | Planned |
 | 10 | EntitlementManager, Play Billing, AdMob (test IDs) | Planned |
 | 11 | EN/TE/HI/UR localization + RTL, accessibility pass, release hardening | Planned |
+
+## Phase 2 contents
+
+- **Navigation** (`presentation/navigation`): single `NavHost` in `AppRoot`; bottom bar (Home, Contacts, Follow-ups, Settings)
+  on top-level routes only, tab state saved/restored. Start destination is chosen after DataStore loads (splash held), so
+  onboarding never flashes for returning users and finishing it does not rebuild the graph.
+- **Onboarding**: 3-page pager (scan / private+offline / follow-ups), Skip, Next/Get started, page indicator announced to
+  TalkBack; completion persisted in DataStore.
+- **Dashboard**: live Room stats (total, favorites, added in last 30 days, follow-ups overdue/today/upcoming, per-category
+  breakdown bars via tested `buildCategoryBreakdown`). Loading and empty states; stat cards deep-link to tabs. Numbers use
+  locale-aware `NumberFormat`.
+- **Settings**: Light/Dark/System radio group (DataStore, applies live), version, offline note.
+- **Contacts / Follow-ups tabs**: honest "coming soon" placeholders until Phases 3 and 5.
+- Dashboard "30 days" window and follow-up day buckets are fixed when the screen's ViewModel/flow is created; they refresh on
+  next navigation, not at midnight (revisit in Phase 5).
 
 ## Phase 1 contents
 
