@@ -6,6 +6,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraState
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -50,18 +51,30 @@ class CameraCaptureTest {
         rule.setContent { VCardlyTheme { ScanCaptureScreen(session, onCancel = {}, onCaptured = {}) } }
 
         val provider = ProcessCameraProvider.getInstance(context).get()
-        val back = CameraSelector.DEFAULT_BACK_CAMERA.filter(provider.availableCameraInfos).first()
+        val cameras = provider.availableCameraInfos
+        val back = CameraSelector.DEFAULT_BACK_CAMERA.filter(cameras).first()
+        // Every state the camera goes through, with its error, so a failure says what happened.
+        val history = java.util.Collections.synchronizedList(mutableListOf<String>())
+        instrumentation.runOnMainSync {
+            back.cameraState.observeForever { history += "${it.type}${it.error?.let { e -> " error=${e.code}" } ?: ""}" }
+        }
         fun state(): CameraState.Type? {
             var type: CameraState.Type? = null
             instrumentation.runOnMainSync { type = back.cameraState.value?.type }
             return type
         }
+        fun report() = "cameras=${cameras.size}, states=$history, " +
+            "cameraFailedShown=${rule.onAllNodes(hasText(context.getString(R.string.scan_camera_failed))).fetchSemanticsNodes().isNotEmpty()}"
 
-        rule.waitUntil(20_000) { state() == CameraState.Type.OPEN }
+        try {
+            rule.waitUntil(20_000) { state() == CameraState.Type.OPEN }
+        } catch (e: Throwable) {
+            throw AssertionError("camera never opened: ${report()}", e)
+        }
         // Let every recomposition and effect run; the camera must still be open afterwards.
         Thread.sleep(2_000)
         rule.waitForIdle()
-        assertEquals(CameraState.Type.OPEN, state())
+        assertEquals(report(), CameraState.Type.OPEN, state())
         rule.onNodeWithContentDescription(context.getString(R.string.scan_take_photo)).assertIsEnabled()
     }
 }
