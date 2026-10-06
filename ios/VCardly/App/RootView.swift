@@ -46,10 +46,11 @@ struct MainShell: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Only the selected tab is on screen. Keeping the others alive at zero opacity left their text reachable by
+            // VoiceOver and the accessibility audit. Each tab's navigation path is kept in `paths`, so it comes back as it was.
             ZStack {
                 ForEach(Tab.allCases, id: \.self) { t in
-                    stack(for: t).opacity(tab == t ? 1 : 0).allowsHitTesting(tab == t)
-                        .accessibilityHidden(tab != t)
+                    if tab == t { stack(for: t) }
                 }
             }
             VCTabBar(selected: $tab, onScan: { scanning = true })
@@ -164,7 +165,7 @@ struct VCTabBar: View {
             item(.settings, "gearshape", "gearshape.fill", "nav.settings")
         }
         .padding(.horizontal, 6)
-        .frame(height: 64)
+        .frame(minHeight: 64) // grows with larger text instead of clipping the labels
         .background(alignment: .top) {
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
                 .fill(VC.card)
@@ -196,7 +197,7 @@ struct VCTabBar: View {
                     .font(.system(size: 18, weight: .semibold))
                     .frame(width: 44, height: 28)
                     .background(isOn ? VC.primaryContainer : .clear, in: Capsule())
-                Text(L10n.s(label)).font(VCFont.labelSmall).lineLimit(1)
+                Text(L10n.s(label)).font(VCFont.labelSmall).lineLimit(1).minimumScaleFactor(0.8)
             }
             .foregroundStyle(isOn ? VC.primary : VC.onSurfaceVariant)
             .frame(maxWidth: .infinity)
@@ -204,5 +205,6 @@ struct VCTabBar: View {
         .buttonStyle(.plain)
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
         .accessibilityIdentifier("tab.\(label)")
+        .accessibilityShowsLargeContentViewer() // long-press shows the label large, like the system tab bar
     }
 }

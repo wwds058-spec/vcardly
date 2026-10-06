@@ -86,6 +86,7 @@ struct SettingsScreen: View {
 struct SettingsContent: View {
     let state: SettingsState
     let actions: SettingsActions
+    @Environment(\.dynamicTypeSize) private var typeSize
     static let autoLockOptions = [0, 30, 60, 300, 900]
 
     var body: some View {
@@ -120,16 +121,15 @@ struct SettingsContent: View {
                     .padding(.horizontal, VC.cardPadding).padding(.vertical, 12)
                     if state.appLock {
                         divider
-                        HStack(spacing: 14) {
+                        pickerRow {
                             VCIconBadge(symbol: "timer", tone: VC.navy, size: 40, solid: true)
                             Text(L10n.s("settings.auto_lock")).font(VCFont.titleSmall)
-                            Spacer()
+                        } picker: {
                             Picker(L10n.s("settings.auto_lock"), selection: Binding(get: { state.autoLockSeconds }, set: actions.setAutoLock)) {
                                 ForEach(Self.autoLockOptions, id: \.self) { Text(Self.autoLockLabel($0)).tag($0) }
                             }
                             .tint(VC.primary)
                         }
-                        .padding(.horizontal, VC.cardPadding).padding(.vertical, 10)
                     }
                     divider
                     VCNavigationRow(symbol: "hand.raised.fill", tone: VC.lavender, title: L10n.s("privacy.title"), subtitle: L10n.s("settings.privacy_hint"), action: actions.openPrivacy)
@@ -200,15 +200,34 @@ struct SettingsContent: View {
     }
 
     private var themeRow: some View {
-        HStack(spacing: 14) {
+        pickerRow {
             VCIconBadge(symbol: "moon.fill", tone: VC.lavender, size: 40, solid: true)
             Text(L10n.s("settings.theme")).font(VCFont.titleSmall)
-            Spacer()
+        } picker: {
             Picker(L10n.s("settings.theme"), selection: Binding(get: { state.theme }, set: actions.setTheme)) {
                 ForEach(ThemeMode.allCases, id: \.self) { Text(L10n.s("theme.\($0.rawValue)")).tag($0) }
             }
             .tint(VC.primary)
         }
+    }
+
+    /// Icon + title with a menu picker on the right; at accessibility text sizes the picker moves under the title.
+    private func pickerRow<L: View, P: View>(@ViewBuilder _ label: () -> L, @ViewBuilder picker: () -> P) -> some View {
+        Group {
+            if typeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 14) { label() }
+                    picker().padding(.leading, 54)
+                }
+            } else {
+                HStack(spacing: 14) {
+                    label()
+                    Spacer()
+                    picker()
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, VC.cardPadding).padding(.vertical, 10)
     }
 

@@ -153,6 +153,7 @@ struct ReportsScreen: View {
 /// Stateless reports (used directly by screenshot tests).
 struct ReportsContent: View {
     let state: ReportsState
+    @Environment(\.dynamicTypeSize) private var typeSize
     var exportState: ReportExportState = .idle
     var onExport: (ReportExportFormat) -> Void = { _ in }
 
@@ -162,15 +163,11 @@ struct ReportsContent: View {
                 if state.total == 0 {
                     VCEmptyState(symbol: "chart.bar.fill", title: L10n.s("reports.empty.title"), message: L10n.s("reports.empty.message")).padding(.top, 60)
                 } else {
-                    Grid(horizontalSpacing: 12, verticalSpacing: 12) {
-                        GridRow {
-                            VCStatCard(value: "\(state.total)", label: L10n.s("home.stat.contacts"), symbol: "person.2.fill", tone: VC.blue)
-                            VCStatCard(value: "\(state.favorites)", label: L10n.s("home.stat.favorites"), symbol: "star.fill", tone: VC.rose)
-                        }
-                        GridRow {
-                            VCStatCard(value: "\(state.scanned)", label: L10n.s("reports.scanned"), symbol: "doc.viewfinder", tone: VC.lavender)
-                            VCStatCard(value: "\(state.followUpsByStatus[.completed] ?? 0)", label: L10n.s("reports.followups_done"), symbol: "checkmark.circle.fill", tone: VC.mint)
-                        }
+                    VCAdaptiveGrid {
+                        VCStatCard(value: "\(state.total)", label: L10n.s("home.stat.contacts"), symbol: "person.2.fill", tone: VC.blue)
+                        VCStatCard(value: "\(state.favorites)", label: L10n.s("home.stat.favorites"), symbol: "star.fill", tone: VC.rose)
+                        VCStatCard(value: "\(state.scanned)", label: L10n.s("reports.scanned"), symbol: "doc.viewfinder", tone: VC.lavender)
+                        VCStatCard(value: "\(state.followUpsByStatus[.completed] ?? 0)", label: L10n.s("reports.followups_done"), symbol: "checkmark.circle.fill", tone: VC.mint)
                     }
                     categories
                     growth
@@ -224,7 +221,8 @@ struct ReportsContent: View {
     private var categories: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(L10n.s("reports.by_category")).font(VCFont.titleMedium).accessibilityAddTraits(.isHeader)
-            HStack(spacing: 18) {
+            let layout = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16)) : AnyLayout(HStackLayout(spacing: 18))
+            layout {
                 Chart(state.byCategory) { s in
                     SectorMark(angle: .value(L10n.s("reports.contacts"), s.count), innerRadius: .ratio(0.62), angularInset: 1.5)
                         .cornerRadius(3)
@@ -237,6 +235,7 @@ struct ReportsContent: View {
                         Text("\(state.total)").font(VCFont.headlineSmall)
                         Text(L10n.s("reports.contacts")).font(VCFont.labelSmall).foregroundStyle(VC.onSurfaceVariant)
                     }
+                    .dynamicTypeSize(...DynamicTypeSize.xLarge) // must fit inside the ring; the legend carries the numbers
                 }
                 .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 8) {

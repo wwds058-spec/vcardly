@@ -50,6 +50,7 @@ struct FollowUpCard: View {
     let item: FollowUpWithContact
     var onTap: () -> Void = {}
     var onToggle: (() -> Void)?
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         let f = item.followUp
@@ -62,7 +63,8 @@ struct FollowUpCard: View {
                     .strikethrough(done).lineLimit(2)
                 let who = [item.contactName, item.contactCompany].filter { !$0.isEmpty }.joined(separator: " · ")
                 if !who.isEmpty { Text(who).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).lineLimit(1) }
-                HStack(spacing: 6) {
+                let meta = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4)) : AnyLayout(HStackLayout(spacing: 6))
+                meta {
                     if overdue { Circle().fill(VC.rose.accent).frame(width: 6, height: 6) }
                     Text(overdue ? L10n.s("due.overdue", dueLabel(f.dueAt)) : dueLabel(f.dueAt))
                         .font(VCFont.labelMedium).foregroundStyle(overdue ? VC.rose.content : VC.primary)
@@ -207,7 +209,7 @@ struct BusinessCardArt: View {
             Circle().fill(Color.white.opacity(0.08)).frame(width: 180).offset(x: 200, y: -70)
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 10) {
-                    Text(Initials.of(company.isEmpty ? name : company)).font(VCFont.titleMedium).foregroundStyle(VC.gradientBlue[1])
+                    Text(Initials.of(company.isEmpty ? name : company)).font(.custom("PlusJakartaSans-SemiBold", fixedSize: 16)).foregroundStyle(VC.gradientBlue[1])
                         .frame(width: 40, height: 40).background(Color.white, in: RoundedRectangle(cornerRadius: 12))
                     Text(company.isEmpty ? name : company).font(VCFont.titleMedium).foregroundStyle(.white).lineLimit(1)
                 }

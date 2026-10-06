@@ -298,7 +298,7 @@ private struct QuickActionLabel: View {
             Image(systemName: symbol).font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(enabled ? tone.accent : VC.outline)
                 .frame(width: 54, height: 54).background(enabled ? tone.container : VC.cardHigh, in: Circle())
-            Text(label).font(VCFont.labelMedium).foregroundStyle(enabled ? VC.onSurface : VC.onSurfaceVariant)
+            Text(label).font(VCFont.labelMedium).foregroundStyle(enabled ? VC.onSurface : VC.onSurfaceVariant).lineLimit(1).minimumScaleFactor(0.6)
         }
     }
 }

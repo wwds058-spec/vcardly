@@ -85,15 +85,11 @@ struct HomeContent: View {
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 16)
                 VCSectionHeader(title: L10n.s("home.quick_actions"))
-                Grid(horizontalSpacing: 12, verticalSpacing: 12) {
-                    GridRow {
-                        VCActionTile(title: L10n.s("scan.action"), symbol: "doc.viewfinder", gradient: VC.gradientBlue, action: actions.scan)
-                        VCActionTile(title: L10n.s("contact.add"), symbol: "person.badge.plus", gradient: VC.gradientIndigo, action: actions.addContact)
-                    }
-                    GridRow {
-                        VCActionTile(title: L10n.s("mycard.title"), symbol: "person.text.rectangle", gradient: VC.gradientPurple, action: actions.openMyCard)
-                        VCActionTile(title: L10n.s("followup.add"), symbol: "calendar.badge.plus", gradient: VC.gradientOrange, action: actions.addFollowUp)
-                    }
+                VCAdaptiveGrid {
+                    VCActionTile(title: L10n.s("scan.action"), symbol: "doc.viewfinder", gradient: VC.gradientBlue, action: actions.scan)
+                    VCActionTile(title: L10n.s("contact.add"), symbol: "person.badge.plus", gradient: VC.gradientIndigo, action: actions.addContact)
+                    VCActionTile(title: L10n.s("mycard.title"), symbol: "person.text.rectangle", gradient: VC.gradientPurple, action: actions.openMyCard)
+                    VCActionTile(title: L10n.s("followup.add"), symbol: "calendar.badge.plus", gradient: VC.gradientOrange, action: actions.addFollowUp)
                 }
                 if state.isEmpty {
                     emptyCard
@@ -161,17 +157,13 @@ struct HomeContent: View {
     private var stats: some View {
         let nf = NumberFormatter()
         func n(_ v: Int) -> String { nf.string(from: NSNumber(value: v)) ?? "\(v)" }
-        return Grid(horizontalSpacing: 12, verticalSpacing: 12) {
-            GridRow {
-                VCStatCard(value: n(state.total), label: L10n.s("home.stat.contacts"), symbol: "person.2.fill", tone: VC.blue,
-                           supporting: state.addedThisMonth > 0 ? L10n.s("home.stat.this_month", n(state.addedThisMonth)) : nil, action: actions.openContacts)
-                VCStatCard(value: n(state.favorites), label: L10n.s("home.stat.favorites"), symbol: "star.fill", tone: VC.rose, action: actions.openContacts)
-            }
-            GridRow {
-                VCStatCard(value: n(state.counts.pending), label: L10n.s("nav.followups"), symbol: "calendar.badge.checkmark", tone: VC.mint,
-                           supporting: state.counts.today > 0 ? L10n.s("home.stat.due_today", n(state.counts.today)) : nil, action: actions.openFollowUps)
-                VCStatCard(value: n(state.counts.overdue), label: L10n.s("followup.bucket.overdue"), symbol: "bell.badge.fill", tone: VC.orange, action: actions.openFollowUps)
-            }
+        return VCAdaptiveGrid {
+            VCStatCard(value: n(state.total), label: L10n.s("home.stat.contacts"), symbol: "person.2.fill", tone: VC.blue,
+                       supporting: state.addedThisMonth > 0 ? L10n.s("home.stat.this_month", n(state.addedThisMonth)) : nil, action: actions.openContacts)
+            VCStatCard(value: n(state.favorites), label: L10n.s("home.stat.favorites"), symbol: "star.fill", tone: VC.rose, action: actions.openContacts)
+            VCStatCard(value: n(state.counts.pending), label: L10n.s("nav.followups"), symbol: "calendar.badge.checkmark", tone: VC.mint,
+                       supporting: state.counts.today > 0 ? L10n.s("home.stat.due_today", n(state.counts.today)) : nil, action: actions.openFollowUps)
+            VCStatCard(value: n(state.counts.overdue), label: L10n.s("followup.bucket.overdue"), symbol: "bell.badge.fill", tone: VC.orange, action: actions.openFollowUps)
         }
     }
 

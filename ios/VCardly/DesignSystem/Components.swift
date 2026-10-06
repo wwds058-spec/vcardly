@@ -128,8 +128,8 @@ struct VCStatCard: View {
                     .background(VC.card.opacity(0.85), in: Circle())
                     .accessibilityHidden(true)
             }
-            Text(label).font(VCFont.bodyMedium).foregroundStyle(VC.onSurface).lineLimit(1)
-            if let supporting { Text(supporting).font(VCFont.labelMedium).foregroundStyle(supportingColor).lineLimit(1) }
+            Text(label).font(VCFont.bodyMedium).foregroundStyle(VC.onSurface).lineLimit(2)
+            if let supporting { Text(supporting).font(VCFont.labelMedium).foregroundStyle(supportingColor).lineLimit(2) }
         }
         .padding(VC.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -235,6 +235,18 @@ struct VCSearchLauncher: View {
     }
 }
 
+/// Two columns of cards, one column at accessibility text sizes so labels never truncate.
+struct VCAdaptiveGrid<Content: View>: View {
+    var spacing: CGFloat = 12
+    @ViewBuilder let content: () -> Content
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2),
+                  spacing: spacing, content: content)
+    }
+}
+
 /// Selectable pill chip; exposes the selected state to VoiceOver.
 struct VCChip: View {
     let title: String
@@ -281,7 +293,7 @@ struct VCAvatar: View {
     var body: some View {
         let base = argb ?? 0xFF2456F0
         Text(Initials.of(name))
-            .font(.custom("PlusJakartaSans-SemiBold", size: size * 0.36))
+            .font(.custom("PlusJakartaSans-SemiBold", fixedSize: size * 0.36)) // decorative and hidden from VoiceOver; must fit the circle
             .foregroundStyle(Contrast.readableOnIsWhite(base) ? Color.white : Color.black)
             .frame(width: size, height: size)
             .background(LinearGradient(colors: [Color(argb: base).opacity(0.85), Color(argb: base)], startPoint: .topLeading, endPoint: .bottomTrailing), in: Circle())
@@ -421,8 +433,22 @@ struct VCNavigationRow: View {
 struct VCStepper: View {
     let steps: [String]
     let current: Int
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
+        if typeSize.isAccessibilitySize {
+            // Four labels cannot fit side by side at the largest sizes: show the dots and one readable line.
+            VStack(alignment: .leading, spacing: 6) {
+                dots(labels: false)
+                Text(L10n.s("form.step_of", current + 1, steps.count, steps[current])).font(VCFont.labelLarge).foregroundStyle(VC.primary)
+            }
+            .accessibilityElement(children: .combine)
+        } else {
+            dots(labels: true)
+        }
+    }
+
+    private func dots(labels: Bool) -> some View {
         HStack(alignment: .top, spacing: 0) {
             ForEach(Array(steps.enumerated()), id: \.offset) { i, label in
                 VStack(spacing: 6) {
@@ -433,7 +459,9 @@ struct VCStepper: View {
                         Rectangle().fill(i == steps.count - 1 ? .clear : (i < current ? VC.primary : VC.outlineVariant)).frame(height: 2)
                     }
                     .frame(height: 24)
-                    Text(label).font(VCFont.labelMedium).foregroundStyle(i == current ? VC.primary : VC.onSurfaceVariant).lineLimit(1)
+                    if labels {
+                        Text(label).font(VCFont.labelMedium).foregroundStyle(i == current ? VC.primary : VC.onSurfaceVariant).lineLimit(1)
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityElement(children: .combine)

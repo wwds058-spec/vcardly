@@ -477,3 +477,5 @@
 "report.pdf.added_6_months" = "Added in the last 6 months";
 "report.pdf.none" = "None yet";
 "report.pdf.directory" = "Contact directory";
+
+"form.step_of" = "Step %1$ld of %2$ld: %3$@";
