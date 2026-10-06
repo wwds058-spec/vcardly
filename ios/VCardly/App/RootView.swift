@@ -197,7 +197,7 @@ struct VCTabBar: View {
                     .font(.system(size: 18, weight: .semibold))
                     .frame(width: 44, height: 28)
                     .background(isOn ? VC.primaryContainer : .clear, in: Capsule())
-                Text(L10n.s(label)).font(VCFont.labelSmall).lineLimit(1).minimumScaleFactor(0.8)
+                Text(L10n.s(label)).font(VCFont.labelSmall).vcLineLimit(1).multilineTextAlignment(.center)
             }
             .foregroundStyle(isOn ? VC.primary : VC.onSurfaceVariant)
             .frame(maxWidth: .infinity)

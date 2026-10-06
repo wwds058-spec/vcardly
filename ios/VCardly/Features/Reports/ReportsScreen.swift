@@ -242,7 +242,7 @@ struct ReportsContent: View {
                     ForEach(state.byCategory.prefix(6)) { s in
                         HStack(spacing: 8) {
                             Circle().fill(Color(argb: s.argb)).frame(width: 10, height: 10)
-                            Text(s.name).font(VCFont.bodySmall).lineLimit(1)
+                            Text(s.name).font(VCFont.bodySmall).vcLineLimit(1)
                             Spacer()
                             Text("\(s.count)").font(VCFont.labelLarge)
                         }

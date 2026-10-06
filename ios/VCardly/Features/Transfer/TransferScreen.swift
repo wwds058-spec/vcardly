@@ -212,7 +212,7 @@ struct TransferContent: View {
                     } else if e.status == .unusable {
                         Text(L10n.s("transfer.status.unusable")).font(VCFont.bodySmall).foregroundStyle(VC.rose.content)
                     } else if !detail.isEmpty {
-                        Text(detail).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).lineLimit(1)
+                        Text(detail).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1)
                     }
                 }
                 Spacer(minLength: 0)

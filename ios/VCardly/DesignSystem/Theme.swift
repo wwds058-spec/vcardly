@@ -111,10 +111,26 @@ private struct CardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(padding)
-            .background(color, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
+            // The shadow belongs to the card shape only. Applied to the whole view it also blurred every letter, which
+            // lowered measured text contrast.
+            .background {
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .fill(color)
+                    .shadow(color: scheme == .dark ? .clear : VC.shadow.opacity(0.08), radius: 10, x: 0, y: 4)
+            }
             .overlay {
                 if scheme == .dark { RoundedRectangle(cornerRadius: radius, style: .continuous).stroke(VC.outlineVariant.opacity(0.6), lineWidth: 1) }
             }
-            .shadow(color: scheme == .dark ? .clear : VC.shadow.opacity(0.08), radius: 10, x: 0, y: 4)
     }
+}
+
+/// Truncates to `n` lines only at the default text size and smaller; at larger sizes the text wraps instead of being cut off.
+private struct AdaptiveLineLimit: ViewModifier {
+    let n: Int
+    @Environment(\.dynamicTypeSize) private var typeSize
+    func body(content: Content) -> some View { content.lineLimit(typeSize <= .large ? n : nil) }
+}
+
+extension View {
+    func vcLineLimit(_ n: Int) -> some View { modifier(AdaptiveLineLimit(n: n)) }
 }

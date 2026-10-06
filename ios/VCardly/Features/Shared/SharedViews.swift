@@ -60,9 +60,9 @@ struct FollowUpCard: View {
             VCIconBadge(symbol: f.type.symbol, tone: f.type.tone, size: 46, circle: true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(f.title).font(VCFont.titleSmall).foregroundStyle(f.status.isActive ? VC.onSurface : VC.onSurfaceVariant)
-                    .strikethrough(done).lineLimit(2)
+                    .strikethrough(done).vcLineLimit(2)
                 let who = [item.contactName, item.contactCompany].filter { !$0.isEmpty }.joined(separator: " · ")
-                if !who.isEmpty { Text(who).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).lineLimit(1) }
+                if !who.isEmpty { Text(who).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1) }
                 let meta = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4)) : AnyLayout(HStackLayout(spacing: 6))
                 meta {
                     if overdue { Circle().fill(VC.rose.accent).frame(width: 6, height: 6) }
@@ -110,9 +110,9 @@ struct ContactCard: View {
             HStack(spacing: 14) {
                 VCAvatar(name: c.fullName, argb: details.category?.colorARGB, size: 52)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(c.fullName).font(VCFont.titleMedium).foregroundStyle(VC.onSurface).lineLimit(1)
-                    if !c.company.isEmpty { Text(c.company).font(VCFont.bodyMedium).foregroundStyle(VC.onSurfaceVariant).lineLimit(1) }
-                    if !c.jobTitle.isEmpty { Text(c.jobTitle).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).lineLimit(1) }
+                    Text(c.fullName).font(VCFont.titleMedium).foregroundStyle(VC.onSurface).vcLineLimit(1)
+                    if !c.company.isEmpty { Text(c.company).font(VCFont.bodyMedium).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1) }
+                    if !c.jobTitle.isEmpty { Text(c.jobTitle).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1) }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
@@ -183,9 +183,9 @@ struct ContactMiniCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 VCAvatar(name: details.contact.fullName, argb: details.category?.colorARGB, size: 44)
                     .padding(.bottom, 6)
-                Text(details.contact.fullName).font(VCFont.titleSmall).foregroundStyle(VC.onSurface).lineLimit(1)
+                Text(details.contact.fullName).font(VCFont.titleSmall).foregroundStyle(VC.onSurface).vcLineLimit(1)
                 Text(details.contact.company.isEmpty ? details.contact.jobTitle : details.contact.company)
-                    .font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).lineLimit(1)
+                    .font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1)
             }
             .frame(width: 104, alignment: .leading)
             .vcCard(padding: 14)

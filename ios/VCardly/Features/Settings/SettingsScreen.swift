@@ -188,7 +188,7 @@ struct SettingsContent: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(state.myCard.isEmpty ? L10n.s("mycard.create") : state.myCard.fullName).font(VCFont.titleMedium).foregroundStyle(VC.onSurface)
                     Text(state.myCard.isEmpty ? L10n.s("settings.mycard_hint") : [state.myCard.jobTitle, state.myCard.company].filter { !$0.isEmpty }.joined(separator: " · "))
-                        .font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).lineLimit(1)
+                        .font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1)
                 }
                 Spacer()
                 Image(systemName: "qrcode").font(.system(size: 20)).foregroundStyle(VC.primary)

@@ -479,3 +479,4 @@
 "report.pdf.directory" = "Contact directory";
 
 "form.step_of" = "Step %1$ld of %2$ld: %3$@";
+"search.short" = "Search";

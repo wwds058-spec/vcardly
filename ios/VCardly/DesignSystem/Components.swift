@@ -128,8 +128,8 @@ struct VCStatCard: View {
                     .background(VC.card.opacity(0.85), in: Circle())
                     .accessibilityHidden(true)
             }
-            Text(label).font(VCFont.bodyMedium).foregroundStyle(VC.onSurface).lineLimit(2)
-            if let supporting { Text(supporting).font(VCFont.labelMedium).foregroundStyle(supportingColor).lineLimit(2) }
+            Text(label).font(VCFont.bodyMedium).foregroundStyle(VC.onSurface).vcLineLimit(2)
+            if let supporting { Text(supporting).font(VCFont.labelMedium).foregroundStyle(supportingColor).vcLineLimit(2) }
         }
         .padding(VC.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -159,7 +159,7 @@ struct VCActionTile: View {
                     .frame(width: 34, height: 34)
                     .background(Color.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .accessibilityHidden(true)
-                Text(title).font(VCFont.titleSmall).lineLimit(2).multilineTextAlignment(.leading)
+                Text(title).font(VCFont.titleSmall).vcLineLimit(2).multilineTextAlignment(.leading)
                 Spacer(minLength: 0)
             }
             .foregroundStyle(.white)
@@ -194,11 +194,12 @@ struct VCSectionHeader: View {
 struct VCSearchField: View {
     @Binding var text: String
     let placeholder: String
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: "magnifyingglass").foregroundStyle(VC.onSurfaceVariant).accessibilityHidden(true)
-            TextField(placeholder, text: $text)
+            TextField(typeSize <= .large ? placeholder : L10n.s("search.short"), text: $text)
                 .font(VCFont.bodyLarge)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -278,7 +279,7 @@ struct VCTag: View {
     let title: String
     let tone: Tone
     var body: some View {
-        Text(title).font(VCFont.labelMedium).foregroundStyle(tone.content).lineLimit(1)
+        Text(title).font(VCFont.labelMedium).foregroundStyle(tone.content).vcLineLimit(1)
             .padding(.horizontal, 10).padding(.vertical, 4)
             .background(tone.container, in: Capsule())
     }
@@ -292,9 +293,10 @@ struct VCAvatar: View {
 
     var body: some View {
         let base = argb ?? 0xFF2456F0
-        Text(Initials.of(name))
-            .font(.custom("PlusJakartaSans-SemiBold", fixedSize: size * 0.36)) // decorative and hidden from VoiceOver; must fit the circle
-            .foregroundStyle(Contrast.readableOnIsWhite(base) ? Color.white : Color.black)
+        // Drawn in a Canvas: decorative pixels at a fixed size so they always fit the circle (the name is read elsewhere).
+        let initials = Text(Initials.of(name)).font(.custom("PlusJakartaSans-SemiBold", fixedSize: size * 0.36))
+            .foregroundColor(Contrast.readableOnIsWhite(base) ? .white : .black)
+        Canvas { ctx, s in ctx.draw(initials, at: CGPoint(x: s.width / 2, y: s.height / 2)) }
             .frame(width: size, height: size)
             .background(LinearGradient(colors: [Color(argb: base).opacity(0.85), Color(argb: base)], startPoint: .topLeading, endPoint: .bottomTrailing), in: Circle())
             .accessibilityHidden(true)
@@ -316,7 +318,7 @@ struct VCInfoRow: View {
             VCIconBadge(symbol: symbol, tone: tone, size: 40, circle: true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(label).font(VCFont.labelMedium).foregroundStyle(VC.onSurfaceVariant)
-                Text(value).font(VCFont.bodyLarge).foregroundStyle(VC.onSurface).lineLimit(3)
+                Text(value).font(VCFont.bodyLarge).foregroundStyle(VC.onSurface).vcLineLimit(3)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())

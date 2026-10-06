@@ -136,7 +136,7 @@ struct HomeContent: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(L10n.s(state.greeting.key)).font(VCFont.titleMedium).foregroundStyle(VC.onSurfaceVariant)
                 Text(state.firstName.isEmpty ? L10n.s("home.greeting.no_name") : L10n.s("home.greeting.name", state.firstName))
-                    .font(VCFont.headlineLarge).foregroundStyle(VC.onSurface).lineLimit(1)
+                    .font(VCFont.headlineLarge).foregroundStyle(VC.onSurface).vcLineLimit(1)
                 Text(L10n.s("home.subtitle")).font(VCFont.bodyMedium).foregroundStyle(VC.onSurfaceVariant)
             }
             .accessibilityElement(children: .combine)
