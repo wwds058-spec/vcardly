@@ -91,6 +91,21 @@ and **Excel** (.xlsx with Contacts and Follow-ups sheets; every cell is plain te
 Android. Files are written to a private temporary folder, saved with the Files sheet, then deleted. CI opens the files written
 by the tests with Python's `csv` module and `openpyxl` (`tools/verify_exports.py`).
 
+## Accessibility checks
+
+- **Accessibility audit (UI test)**: `VCardlyUITests/AccessibilityAuditTests` launches the real app with fictional sample data
+  (debug-only `-uiTestSampleData`), visits Home, Contacts, contact details, Follow-ups, Settings, Reports and Backup, and runs
+  Apple's `performAccessibilityAudit`. Contrast, hit regions, element detection/descriptions and traits fail the build; the
+  Dynamic Type and clipped-text heuristics are listed as advisory (they flag text with no line limit). The report is printed
+  in CI and a screenshot of each audited screen is published as `audit_*.png` on the `ios-screenshots` branch. Only content
+  fully visible above the tab bar is judged.
+- **Large text**: `ScreenshotTests.testLargeText` renders the main screens at the AX3 size (`20_ax_*.png`). At accessibility
+  sizes, grids become one column, picker rows and follow-up details stack, the form stepper shows "Step n of 4", and text
+  that is cut to one or two lines at the default size wraps instead.
+- Bugs this found and fixed: inactive tabs stayed on screen invisibly (VoiceOver could reach them); card shadows blurred all
+  text; the tab bar briefly filled half the screen (now guarded by the UI test); avatar initials overflowed at large sizes;
+  small "See all" target.
+
 ## Needs your configuration (never faked)
 
 | What | Status | What you need to do |
