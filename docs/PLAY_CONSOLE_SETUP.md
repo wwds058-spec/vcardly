@@ -47,5 +47,7 @@ strings; every gate asks `EntitlementManager`.
   library; declare in the advertising ID question), SCHEDULE_EXACT_ALARM (see PROJECT_STATUS.md), CAMERA, POST_NOTIFICATIONS,
   USE_BIOMETRIC, RECEIVE_BOOT_COMPLETED.
 - **Target audience**: not directed at children; do not enable "designed for families".
-- The in-app **Privacy** screen already describes ads and purchases; add a public privacy-policy URL to the Play listing that says the
-  same, and keep the two in sync.
+- **Privacy policy**: `site/privacy.html` says the same as the in-app **Privacy** screen. Fill in your name, support email and the
+  date, publish it (GitHub Pages: Settings → Pages → deploy from this branch, `/ (root)`; URL
+  `https://wwds058-spec.github.io/vcardly/site/privacy.html`) and paste that URL into the listing. Keep the two in sync.
+- **Data safety** answers: `store/DATA_SAFETY.md`. **Listing text**: `store/LISTING.md`.

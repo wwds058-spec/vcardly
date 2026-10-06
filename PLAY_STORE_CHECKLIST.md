@@ -19,8 +19,11 @@ already prepared. Details for billing, ads and declarations: `docs/PLAY_CONSOLE_
       consent message, `app-ads.txt` on your website. Without the IDs, release builds simply show no ads.
 
 ## Store listing
-- [ ] **(you)** Privacy-policy URL whose text matches `PRIVACY_AND_SECURITY.md` and the in-app Privacy screen.
-- [ ] **(you)** Data safety form: advertising ID and ad-related data (free plan); contacts and card images are not collected or shared.
+- [ ] **(you)** Publish `site/privacy.html` (fill in your name, support email and date) and use its URL as the privacy policy.
+      With GitHub Pages: repository Settings → Pages → Source "Deploy from a branch" → this branch, folder `/ (root)`. The policy
+      is then at `https://wwds058-spec.github.io/vcardly/site/privacy.html` (`.nojekyll` makes GitHub serve files as they are).
+- [ ] **(you)** Data safety form: answers prepared in `store/DATA_SAFETY.md` (check them against Google's SDK pages linked there).
+- [ ] Listing text prepared in `store/LISTING.md` (name, short and full description, release notes, screenshot captions).
 - [ ] Ads declaration ("contains ads" if AdMob is configured).
 - [ ] Permissions: CAMERA, POST_NOTIFICATIONS, SCHEDULE_EXACT_ALARM (decide whether to keep it; inexact reminders work without it),
       RECEIVE_BOOT_COMPLETED, USE_BIOMETRIC, INTERNET, ACCESS_NETWORK_STATE, AD_ID (merged from the ads library).

@@ -12,12 +12,15 @@ What the app does with data, how it is protected, and the rules the code follows
 | Scan work in progress | `cacheDir/scan`, deleted when the scan ends | No |
 | Restore staging | `cacheDir`, deleted after restore | No |
 | Settings, My card | DataStore `vcardly_preferences` | My card only when the user shares it |
-| Recognised card text (OCR) | Memory only; shown for review, never stored or logged | No |
+| Recognised card text (OCR) | Memory only; shown for review, never stored or logged | No (ML Kit runs on the device; it may send Google anonymous diagnostics such as device model and latency, never the image or text) |
 
 Android auto-backup is off (`allowBackup="false"` plus `data_extraction_rules.xml`), so the system never uploads app data.
 There is no account and no VCardly server.
 
 ## Network
+
+Public versions of this information: `site/privacy.html` (the privacy policy for the Play listing) and `store/DATA_SAFETY.md`
+(Play Console Data safety answers). Change all of them together.
 
 `INTERNET` is used only by Google Mobile Ads (free plan) and Google Play Billing. No contact data is sent: ad requests carry no app
 data, and ads appear only on Home, never next to a person's details. Google Drive backup is prepared behind `CloudBackupProvider` but

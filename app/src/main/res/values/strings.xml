@@ -435,7 +435,7 @@
     <string name="privacy_permissions_title">Permissions and why</string>
     <string name="privacy_permissions_body">Camera: only while you scan a card; photos stay on the device. Notifications: to show your follow-up reminders; on the lock screen they only say "Follow-up reminder". Exact alarms: so reminders arrive on time. Restart: so reminders come back after you restart the phone. Fingerprint and face: only to unlock the app; VCardly never sees your biometric data. Internet: only for ads and Google Play purchases, never for your contacts.</string>
     <string name="privacy_ocr_title">Reading business cards</string>
-    <string name="privacy_ocr_body">Text on a card is recognised on the device. The recognised text is never stored or logged: you review it, and only what you save is kept. You can always edit or delete it.</string>
+    <string name="privacy_ocr_body">Text on a card is recognised on the device by Google\'s ML Kit. The card image and the recognised text never leave the phone and are never stored or logged: you review the text, and only what you save is kept. ML Kit may send Google anonymous diagnostics such as the device model and how long recognition took, never the image or text.</string>
     <string name="privacy_sharing_title">Sharing</string>
     <string name="privacy_sharing_body">Nothing is shared unless you choose to. When you share a QR code or contact file you pick which details go in, and your private notes are never included. Exports and backups are saved to the place you choose.</string>
     <string name="privacy_backup_title">Backups</string>
