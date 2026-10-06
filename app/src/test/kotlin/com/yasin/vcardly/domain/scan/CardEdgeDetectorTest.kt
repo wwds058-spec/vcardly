@@ -62,7 +62,7 @@ class CardEdgeDetectorTest {
     }
 
     private fun assertFinds(scene: Scene, tolerance: Float = 0.03f) {
-        val found = CardEdgeDetector.detect(scene.render())
+        val found = CardEdgeDetector.detect(scene.render())?.bounds
         assertNotNull("no card found", found)
         val t = scene.truth()
         val f = found!!
@@ -88,6 +88,25 @@ class CardEdgeDetectorTest {
     @Test fun ignoresALongTableEdgeBehindTheCard() = assertFinds(
         Scene(extra = { _, y -> if (y > 215) 150 else null }),
     )
+
+    @Test fun tiltedCard_cornersAreFoundForStraightening() {
+        val scene = Scene(degrees = 6f, text = false)
+        val quad = CardEdgeDetector.detect(scene.render())
+        assertNotNull(quad)
+        val rad = Math.toRadians(6.0)
+        val c = cos(rad).toFloat()
+        val s = sin(rad).toFloat()
+        // Card corners, from its own frame back to the photo (clockwise from top-left).
+        val expected = listOf(-1f to -1f, 1f to -1f, 1f to 1f, -1f to 1f).map { (u, v) ->
+            val du = u * scene.cardW / 2
+            val dv = v * scene.cardH / 2
+            NormalizedPoint((scene.cx + c * du - s * dv) / scene.width, (scene.cy + s * du + c * dv) / scene.height)
+        }
+        quad!!.corners.zip(expected).forEach { (got, want) ->
+            assertTrue("corner $got, expected about $want", abs(got.x - want.x) < 0.025f && abs(got.y - want.y) < 0.025f)
+        }
+        assertTrue(CropMath.isValid(quad))
+    }
 
     @Test fun noCard_returnsNull() {
         assertNull(CardEdgeDetector.detect(Scene(cardW = 0f, cardH = 0f).render()))

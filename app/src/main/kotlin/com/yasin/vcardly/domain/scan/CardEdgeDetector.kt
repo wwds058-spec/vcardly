@@ -22,7 +22,8 @@ class GrayImage(val width: Int, val height: Int, val pixels: IntArray) {
  * top/bottom lines with every pair of left/right lines. A combination counts only when the four sides are actually traced
  * along most of their length, the shape has a card's proportions and covers a fair part of the photo. Lines of text on the
  * card are long too, but they never trace a closed rectangle, so they lose. When nothing qualifies the result is null and
- * the caller keeps its default crop; the user can always adjust it.
+ * the caller keeps its default crop; the user can always adjust it. The corners are returned as found, so a card photographed
+ * at an angle can be straightened.
  */
 object CardEdgeDetector {
     private const val MAX_SLOPE = 0.12f // about 7 degrees
@@ -35,14 +36,15 @@ object CardEdgeDetector {
     private const val MIN_SIDE = 0.2f
     private const val MIN_RATIO = 1.15f // long side / short side; printed cards are about 1.5 to 1.8
     private const val MAX_RATIO = 2.4f
-    private const val MARGIN = 0.01f
+    private const val GROW = 1.02f // corners pushed 2% outwards from the centre, so the crop never shaves the card's edge
 
     /** A straight line: across = [offset] + [slope] * (along - centre of the picture). */
     private class Line(val offset: Float, val slope: Float, val count: Int)
 
     private class Edges(val width: Int, val height: Int, val horizontal: BooleanArray, val vertical: BooleanArray)
 
-    fun detect(image: GrayImage): NormalizedRect? {
+    /** The card's four corners, clockwise from top-left, or null when no card outline is clear enough. */
+    fun detect(image: GrayImage): CropQuad? {
         if (image.width < 32 || image.height < 32) return null
         val edges = edges(image)
         val rows = lines(edges, horizontal = true)
@@ -86,12 +88,12 @@ object CardEdgeDetector {
             }
         }
         val quad = best ?: return null
-        return NormalizedRect(
-            left = (quad.minOf { it.first } / w - MARGIN).coerceIn(0f, 1f),
-            top = (quad.minOf { it.second } / h - MARGIN).coerceIn(0f, 1f),
-            right = (quad.maxOf { it.first } / w + MARGIN).coerceIn(0f, 1f),
-            bottom = (quad.maxOf { it.second } / h + MARGIN).coerceIn(0f, 1f),
-        )
+        val cx = quad.sumOf { it.first.toDouble() }.toFloat() / 4
+        val cy = quad.sumOf { it.second.toDouble() }.toFloat() / 4
+        val (tl, tr, br, bl) = quad.map { (x, y) ->
+            NormalizedPoint(((cx + (x - cx) * GROW) / w).coerceIn(0f, 1f), ((cy + (y - cy) * GROW) / h).coerceIn(0f, 1f))
+        }
+        return CropQuad(tl, tr, br, bl)
     }
 
     /** Light 3x3 blur against sensor noise, then Sobel; each strong edge pixel is filed as horizontal or vertical. */

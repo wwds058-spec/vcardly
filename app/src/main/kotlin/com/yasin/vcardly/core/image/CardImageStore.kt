@@ -3,13 +3,16 @@ package com.yasin.vcardly.core.image
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Matrix
+import android.graphics.Paint
 import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import com.yasin.vcardly.core.common.AppDispatchers
 import com.yasin.vcardly.domain.scan.CardEdgeDetector
 import com.yasin.vcardly.domain.scan.GrayImage
-import com.yasin.vcardly.domain.scan.NormalizedRect
+import com.yasin.vcardly.domain.scan.CropMath
+import com.yasin.vcardly.domain.scan.CropQuad
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.IOException
@@ -232,6 +235,22 @@ object BitmapOps {
         })
     }
 
-    /** Where the card is in [bitmap], or null when no clear card outline is found. */
-    fun findCard(bitmap: Bitmap): NormalizedRect? = CardEdgeDetector.detect(gray(bitmap))
+    /** The card's corners in [bitmap], or null when no clear card outline is found. */
+    fun findCard(bitmap: Bitmap): CropQuad? = CardEdgeDetector.detect(gray(bitmap))
+
+    /**
+     * Cuts [quad] out of [bitmap]. An upright rectangle is a plain crop; any other shape (a card photographed at an angle)
+     * is straightened into a rectangle with a perspective transform, sized by [CropMath.outputSize].
+     */
+    fun cropQuad(bitmap: Bitmap, quad: CropQuad): Bitmap {
+        if (quad.isUpright) return crop(bitmap, CropMath.toPixels(quad.bounds, bitmap.width, bitmap.height))
+        val (w, h) = CropMath.outputSize(quad, bitmap.width, bitmap.height)
+        val src = CropMath.toPixels(quad, bitmap.width, bitmap.height)
+        val dst = floatArrayOf(0f, 0f, w.toFloat(), 0f, w.toFloat(), h.toFloat(), 0f, h.toFloat())
+        val matrix = Matrix()
+        if (!matrix.setPolyToPoly(src, 0, dst, 0, 4)) return crop(bitmap, CropMath.toPixels(quad.bounds, bitmap.width, bitmap.height))
+        val out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        Canvas(out).drawBitmap(bitmap, matrix, Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG))
+        return out
+    }
 }

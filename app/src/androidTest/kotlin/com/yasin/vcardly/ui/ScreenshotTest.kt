@@ -68,6 +68,14 @@ import com.yasin.vcardly.presentation.settings.SettingsUiState
 import com.yasin.vcardly.presentation.settings.SettingsActions
 import java.time.Instant
 import java.time.ZoneId
+import android.graphics.Bitmap
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.yasin.vcardly.domain.scan.CropQuad
+import com.yasin.vcardly.domain.scan.NormalizedPoint
+import com.yasin.vcardly.presentation.scan.CropArea
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -304,6 +312,23 @@ class ScreenshotTest {
             ImportCandidate(3, ImportStatus.UNUSABLE, null, emptyList()),
         )
         TransferContent(TransferUiState(import = ImportState.Preview(entries, setOf(0, 2)), export = ExportState.Done(5)), TransferActions())
+    }
+
+    // Four-corner crop on a card photographed at an angle (a drawn stand-in photo; the selection is what is checked).
+    @Test fun scanCropQuad() = shoot("18_scan_crop_quad", audit = false) {
+        val photo = remember {
+            Bitmap.createBitmap(800, 600, Bitmap.Config.ARGB_8888).also { bmp ->
+                val canvas = android.graphics.Canvas(bmp)
+                canvas.drawColor(android.graphics.Color.rgb(92, 74, 60))
+                val card = android.graphics.Path().apply { moveTo(250f, 140f); lineTo(600f, 170f); lineTo(650f, 450f); lineTo(170f, 420f); close() }
+                canvas.drawPath(card, android.graphics.Paint().apply { color = android.graphics.Color.rgb(240, 238, 230); isAntiAlias = true })
+            }
+        }
+        val quad = CropQuad(
+            NormalizedPoint(250f / 800, 140f / 600), NormalizedPoint(600f / 800, 170f / 600),
+            NormalizedPoint(650f / 800, 450f / 600), NormalizedPoint(170f / 800, 420f / 600),
+        )
+        Box(Modifier.fillMaxSize().background(Color(0xFF070D22)).padding(20.dp)) { CropArea(photo, quad, onQuadChange = {}, enabled = true) }
     }
 
     // Android's largest font size (2x). Checked visually; text must wrap or grow, never overlap or vanish.

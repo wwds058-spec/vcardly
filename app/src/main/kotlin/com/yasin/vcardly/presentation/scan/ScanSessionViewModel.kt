@@ -10,8 +10,7 @@ import com.yasin.vcardly.core.image.CardImageRef
 import com.yasin.vcardly.core.image.CardImageStore
 import com.yasin.vcardly.core.ocr.OcrEngine
 import com.yasin.vcardly.domain.scan.BusinessCardParser
-import com.yasin.vcardly.domain.scan.CropMath
-import com.yasin.vcardly.domain.scan.NormalizedRect
+import com.yasin.vcardly.domain.scan.CropQuad
 import com.yasin.vcardly.domain.scan.OcrLine
 import com.yasin.vcardly.presentation.contacts.ContactForm
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,8 +34,8 @@ data class ScanSessionState(
     val rawFile: File? = null,
     val preview: Bitmap? = null,
     val rotation: Int = 0,
-    /** Where the card was found in [preview], or null (the crop then starts from its default inset). */
-    val detected: NormalizedRect? = null,
+    /** The card's corners found in [preview], or null (the crop then starts from its default inset). */
+    val detected: CropQuad? = null,
     val frontFile: File? = null,
     val backFile: File? = null,
     val isWorking: Boolean = false,
@@ -111,8 +110,11 @@ class ScanSessionViewModel @Inject constructor(
         }
     }
 
-    /** Applies rotation + crop at high resolution to the original capture and keeps the result for this side. */
-    fun confirmCrop(rect: NormalizedRect) {
+    /**
+     * Applies rotation + crop at high resolution to the original capture and keeps the result for this side. A selection
+     * that is not an upright rectangle is straightened.
+     */
+    fun confirmCrop(quad: CropQuad) {
         val s = _state.value
         val raw = s.rawFile ?: return
         if (s.isWorking) return
@@ -121,7 +123,7 @@ class ScanSessionViewModel @Inject constructor(
             val result = store.decodeUpright(raw, FULL_MAX)?.let { full ->
                 withContext(dispatchers.default) {
                     val rotated = BitmapOps.rotate(full, s.rotation)
-                    BitmapOps.crop(rotated, CropMath.toPixels(rect, rotated.width, rotated.height))
+                    BitmapOps.cropQuad(rotated, quad)
                 }
             }?.let { store.saveToScanCache(it) }
             if (result == null) {

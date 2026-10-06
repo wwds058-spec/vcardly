@@ -161,8 +161,9 @@
     <string name="scan_error_unreadable">That image could not be read. Try another photo.</string>
     <string name="scan_error_crop">The card could not be cropped. Please try again.</string>
     <string name="scan_crop_title">Crop card</string>
-    <string name="scan_crop_hint">Drag the corners to fit the card, or drag inside to move the selection.</string>
-    <string name="scan_crop_hint_found">The card\'s edges were found. Drag the corners if the selection needs adjusting.</string>
+    <string name="scan_crop_hint">Drag each corner onto a corner of the card, or drag inside to move the selection. A card photographed at an angle is straightened.</string>
+    <string name="scan_crop_hint_found">The card\'s corners were found and it will be straightened. Drag any corner that is off.</string>
+    <string name="scan_use_detected">Card edges</string>
     <string name="scan_rotate_left">Rotate left</string>
     <string name="scan_rotate_right">Rotate right</string>
     <string name="scan_use_full_image">Whole image</string>

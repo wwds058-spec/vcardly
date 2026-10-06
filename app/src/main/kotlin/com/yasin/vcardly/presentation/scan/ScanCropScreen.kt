@@ -43,7 +43,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.lerp
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -65,7 +68,7 @@ import com.yasin.vcardly.core.designsystem.theme.Brand
 import com.yasin.vcardly.core.designsystem.theme.vcColors
 import com.yasin.vcardly.domain.scan.CropHandle
 import com.yasin.vcardly.domain.scan.CropMath
-import com.yasin.vcardly.domain.scan.NormalizedRect
+import com.yasin.vcardly.domain.scan.CropQuad
 
 /** Crop and rotate one captured side, then hand over to OCR. Navigates via the session's events. */
 @Composable
@@ -75,11 +78,11 @@ fun ScanCropScreen(
     onReview: () -> Unit,
 ) {
     val state by session.state.collectAsStateWithLifecycle()
-    var rect by remember { mutableStateOf(state.detected ?: NormalizedRect.Default) }
+    var quad by remember { mutableStateOf(state.detected ?: CropQuad.Default) }
     var askBack by remember { mutableStateOf(false) }
 
     // A new rotation or a new image invalidates the previous selection; start on the card when it was found.
-    LaunchedEffect(state.rotation, state.rawFile, state.detected) { rect = state.detected ?: NormalizedRect.Default }
+    LaunchedEffect(state.rotation, state.rawFile, state.detected) { quad = state.detected ?: CropQuad.Default }
 
     LaunchedEffect(session) {
         session.events.collect { event ->
@@ -110,14 +113,17 @@ fun ScanCropScreen(
 
             Box(Modifier.weight(1f).fillMaxWidth().padding(20.dp), contentAlignment = Alignment.Center) {
                 val preview = state.preview
-                if (preview != null) CropArea(preview, rect, onRectChange = { rect = it }, enabled = !state.isWorking)
+                if (preview != null) CropArea(preview, quad, onQuadChange = { quad = it }, enabled = !state.isWorking)
             }
 
             Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                 ScanControl(Icons.AutoMirrored.Rounded.RotateLeft, stringResource(R.string.scan_rotate_left), { session.rotate(clockwise = false) }, enabled = !state.isWorking)
                 ScanControl(Icons.AutoMirrored.Rounded.RotateRight, stringResource(R.string.scan_rotate_right), { session.rotate(clockwise = true) }, enabled = !state.isWorking)
                 // Keyboard / TalkBack users cannot drag handles, so offer a whole-image action.
-                ScanControl(Icons.Rounded.CropFree, stringResource(R.string.scan_use_full_image), { rect = NormalizedRect.Full }, enabled = !state.isWorking)
+                ScanControl(Icons.Rounded.CropFree, stringResource(R.string.scan_use_full_image), { quad = CropQuad.Full }, enabled = !state.isWorking)
+                state.detected?.let { found ->
+                    ScanControl(Icons.Rounded.DocumentScanner, stringResource(R.string.scan_use_detected), { quad = found }, enabled = !state.isWorking)
+                }
             }
             Row(
                 Modifier.fillMaxWidth().padding(20.dp),
@@ -127,7 +133,7 @@ fun ScanCropScreen(
                 VCardlyTextButton(stringResource(R.string.scan_retake), onClick = session::retake, enabled = !state.isWorking, color = Color.White, modifier = Modifier.weight(1f))
                 VCardlyPrimaryButton(
                     stringResource(R.string.scan_use_crop),
-                    onClick = { session.confirmCrop(rect) },
+                    onClick = { session.confirmCrop(quad) },
                     enabled = !state.isWorking && state.preview != null,
                     leadingIcon = Icons.Rounded.Check,
                     containerColor = Brand.Blue,
@@ -172,13 +178,13 @@ private fun ProcessingOverlay(message: String) {
 }
 
 @Composable
-private fun CropArea(bitmap: Bitmap, rect: NormalizedRect, onRectChange: (NormalizedRect) -> Unit, enabled: Boolean) {
+internal fun CropArea(bitmap: Bitmap, quad: CropQuad, onQuadChange: (CropQuad) -> Unit, enabled: Boolean) {
     val image = remember(bitmap) { bitmap.asImageBitmap() }
     val ratio = bitmap.width.toFloat() / bitmap.height
     val handleRadius = with(LocalDensity.current) { 28.dp.toPx() }
     val scrim = Color.Black.copy(alpha = 0.6f)
     val accent = Brand.BlueBright
-    val currentRect by rememberUpdatedState(rect)
+    val currentQuad by rememberUpdatedState(quad)
     val currentEnabled by rememberUpdatedState(enabled)
 
     BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -193,32 +199,33 @@ private fun CropArea(bitmap: Bitmap, rect: NormalizedRect, onRectChange: (Normal
                 Modifier.fillMaxSize().pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = { o ->
-                            active = if (currentEnabled) CropMath.hitTest(currentRect, o.x, o.y, size.width.toFloat(), size.height.toFloat(), handleRadius) else null
+                            active = if (currentEnabled) CropMath.hitTest(currentQuad, o.x, o.y, size.width.toFloat(), size.height.toFloat(), handleRadius) else null
                         },
                         onDragEnd = { active = null },
                         onDragCancel = { active = null },
                     ) { change, drag ->
                         change.consume()
-                        active?.let { onRectChange(CropMath.drag(currentRect, it, drag.x / size.width, drag.y / size.height)) }
+                        active?.let { onQuadChange(CropMath.drag(currentQuad, it, drag.x / size.width, drag.y / size.height)) }
                     }
                 },
             ) {
-                val l = rect.left * size.width; val t = rect.top * size.height
-                val r = rect.right * size.width; val b = rect.bottom * size.height
+                val (tl, tr, br, bl) = quad.corners.map { Offset(it.x * size.width, it.y * size.height) }
+                val outline = Path().apply { moveTo(tl.x, tl.y); lineTo(tr.x, tr.y); lineTo(br.x, br.y); lineTo(bl.x, bl.y); close() }
                 // Dim everything outside the selection.
-                drawRect(scrim, Offset.Zero, Size(size.width, t))
-                drawRect(scrim, Offset(0f, b), Size(size.width, size.height - b))
-                drawRect(scrim, Offset(0f, t), Size(l, b - t))
-                drawRect(scrim, Offset(r, t), Size(size.width - r, b - t))
-                drawRect(Color.White, Offset(l, t), Size(r - l, b - t), style = Stroke(width = 2.dp.toPx()))
-                // Rule-of-thirds guides help line the card up.
-                for (i in 1..2) {
-                    val x = l + (r - l) * i / 3f
-                    val y = t + (b - t) * i / 3f
-                    drawLine(Color.White.copy(alpha = 0.35f), Offset(x, t), Offset(x, b), strokeWidth = 1.dp.toPx())
-                    drawLine(Color.White.copy(alpha = 0.35f), Offset(l, y), Offset(r, y), strokeWidth = 1.dp.toPx())
+                val outside = Path().apply {
+                    fillType = PathFillType.EvenOdd
+                    addRect(Rect(Offset.Zero, size))
+                    addPath(outline)
                 }
-                listOf(Offset(l, t), Offset(r, t), Offset(l, b), Offset(r, b)).forEach {
+                drawPath(outside, scrim)
+                drawPath(outline, Color.White, style = Stroke(width = 2.dp.toPx()))
+                // Thirds guides follow the selection's shape, so they show how the card will be straightened.
+                for (i in 1..2) {
+                    val f = i / 3f
+                    drawLine(Color.White.copy(alpha = 0.35f), lerp(tl, tr, f), lerp(bl, br, f), strokeWidth = 1.dp.toPx())
+                    drawLine(Color.White.copy(alpha = 0.35f), lerp(tl, bl, f), lerp(tr, br, f), strokeWidth = 1.dp.toPx())
+                }
+                listOf(tl, tr, br, bl).forEach {
                     drawCircle(Color.White, radius = 12.dp.toPx(), center = it)
                     drawCircle(accent, radius = 8.dp.toPx(), center = it)
                 }

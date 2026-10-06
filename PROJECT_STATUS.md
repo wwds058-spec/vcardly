@@ -89,13 +89,17 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
   on the card instead of a fixed inset. `domain/scan/CardEdgeDetector` is plain Kotlin on a 320 px grayscale copy: Sobel
   edges, straight-line candidates up to about 7 degrees of tilt, and the best four lines that trace a card-shaped rectangle
   along at least 60% of every side. No clear card means the old default crop; the user can always drag the corners or pick
-  "Whole image". Axis-aligned crop only (a tilted card gets its bounding box; no perspective correction). Tested on synthetic
-  photos (contrast, tilt, uneven light, a table edge, text without a card); **not yet tried on real card photos**.
+  "Whole image" or "Card edges". Tested on synthetic photos (contrast, tilt, uneven light, a table edge, text without a
+  card); **not yet tried on real card photos**.
+- **Android perspective correction**: the crop is four free corners (`CropQuad`, `CropMath`: convex, no side under 10%,
+  tested). A card photographed at an angle is straightened into a rectangle with `Matrix.setPolyToPoly` at full
+  resolution, sized by the longer of each pair of opposite sides; an upright rectangle stays a plain crop. Screenshot
+  `18_scan_crop_quad`.
 
 ## In progress
 
-- Nothing half-done is committed. Possible next steps: perspective correction for cards photographed at an angle (needs a
-  four-corner crop UI); trying the edge detection on real card photos. iPhone work is paused by the owner until later.
+- Nothing half-done is committed. Next: trying edge detection and straightening on real card photos (a device is needed).
+  iPhone work is paused by the owner until later.
 
 ## Blocked
 
