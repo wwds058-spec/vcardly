@@ -71,6 +71,19 @@ import java.time.ZoneId
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import com.yasin.vcardly.domain.model.Category
+import com.yasin.vcardly.domain.model.Contact
+import com.yasin.vcardly.domain.model.TagWithCount
+import com.yasin.vcardly.domain.vcard.ImportCandidate
+import com.yasin.vcardly.domain.vcard.ImportStatus
+import com.yasin.vcardly.presentation.organize.OrganizeActions
+import com.yasin.vcardly.presentation.organize.OrganizeContent
+import com.yasin.vcardly.presentation.organize.OrganizeUiState
+import com.yasin.vcardly.presentation.transfer.ExportState
+import com.yasin.vcardly.presentation.transfer.ImportState
+import com.yasin.vcardly.presentation.transfer.TransferActions
+import com.yasin.vcardly.presentation.transfer.TransferContent
+import com.yasin.vcardly.presentation.transfer.TransferUiState
 
 /**
  * Renders the redesigned screens with fictional sample data in light and dark themes on a real emulator and saves
@@ -242,4 +255,34 @@ class ScreenshotTest {
     }
 
     @Test fun backupDark() = shoot("15b_backup_dark", dark = true) { BackupContent(BackupUiState(), 8, BackupActions()) }
+
+    @Test fun organize() = shoot("16_organize") {
+        val investors = Category(9, "Investors", 0xFF00897BL, null)
+        OrganizeContent(
+            OrganizeUiState(
+                categories = SampleData.categories + investors,
+                tags = listOf(TagWithCount(SampleData.vip, 2), TagWithCount(SampleData.potential, 1)),
+                categoryCounts = mapOf(1L to 2, 2L to 1, 3L to 1, 9L to 0, null to 1),
+                loaded = true,
+            ),
+            OrganizeActions(),
+        )
+    }
+
+    @Test fun organizeDark() = shoot("16b_organize_dark", dark = true) {
+        OrganizeContent(OrganizeUiState(categories = SampleData.categories, categoryCounts = mapOf(1L to 2), loaded = true), OrganizeActions())
+    }
+
+    @Test fun transfer() = shoot("17_transfer") { TransferContent(TransferUiState(), TransferActions()) }
+
+    @Test fun transferPreview() = shoot("17b_transfer_preview") {
+        val entries = listOf(
+            ImportCandidate(0, ImportStatus.NEW, Contact(fullName = "Kavya Iyer", company = "Bright Labs"), emptyList()),
+            ImportCandidate(1, ImportStatus.DUPLICATE, Contact(fullName = "Priya Sharma", email = "priya@globalsol.example"), emptyList()),
+            ImportCandidate(2, ImportStatus.NEW, Contact(fullName = "Daniel Okafor", email = "daniel@okafor.example"), emptyList()),
+            ImportCandidate(3, ImportStatus.UNUSABLE, null, emptyList()),
+        )
+        TransferContent(TransferUiState(import = ImportState.Preview(entries, setOf(0, 2)), export = ExportState.Done(5)), TransferActions())
+    }
 }
+

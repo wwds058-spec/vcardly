@@ -6,6 +6,7 @@ import com.yasin.vcardly.domain.model.Category
 import com.yasin.vcardly.domain.model.CategoryPalette
 import com.yasin.vcardly.domain.model.TagWithCount
 import com.yasin.vcardly.domain.repository.CategoryRepository
+import com.yasin.vcardly.domain.repository.ContactRepository
 import com.yasin.vcardly.domain.repository.TagRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,6 +19,9 @@ import kotlinx.coroutines.launch
 data class OrganizeUiState(
     val categories: List<Category> = emptyList(),
     val tags: List<TagWithCount> = emptyList(),
+    /** Contacts per category id (null = no category). */
+    val categoryCounts: Map<Long?, Int> = emptyMap(),
+    val loaded: Boolean = false,
 )
 
 enum class NameError { BLANK, TOO_LONG, DUPLICATE }
@@ -26,12 +30,14 @@ enum class NameError { BLANK, TOO_LONG, DUPLICATE }
 class OrganizeViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val tagRepository: TagRepository,
+    contactRepository: ContactRepository,
 ) : ViewModel() {
 
     val uiState: StateFlow<OrganizeUiState> = combine(
         categoryRepository.observeAll(),
         tagRepository.observeAll(),
-    ) { cats, tags -> OrganizeUiState(cats, tags) }
+        contactRepository.observeStats(addedSince = 0),
+    ) { cats, tags, stats -> OrganizeUiState(cats, tags, stats.byCategory.associate { it.categoryId to it.count }, loaded = true) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), OrganizeUiState())
 
     /** Creates (id = 0) or renames a custom category. Returns an error or null on success via [onResult]. */

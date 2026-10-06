@@ -136,6 +136,9 @@
     <string name="organize_delete_category_message">Contacts in this category will become uncategorised. No contacts are deleted.</string>
     <string name="organize_delete_tag_message">The tag will be removed from all contacts. No contacts are deleted.</string>
     <string name="organize_name_label">Name</string>
+    <string name="organize_intro">Group contacts with categories and label them with tags. Deleting one never deletes contacts.</string>
+    <string name="organize_count_built_in">%1$s · Built in</string>
+    <string name="organize_built_in_hint">Built-in categories can\'t be renamed or deleted. Add your own for anything else.</string>
     <string name="organize_no_tags">No tags yet. Add them when editing a contact.</string>
     <plurals name="organize_contact_count">
         <item quantity="one">%1$d contact</item>
@@ -272,6 +275,9 @@
     <string name="transfer_export_confirm_title">Export all contacts?</string>
     <string name="transfer_export_confirm_message">The file will include everything, including your private notes. Keep it somewhere safe and do not share it.</string>
     <string name="transfer_export_failed">The file could not be written.</string>
+    <string name="transfer_export_privacy">The file includes everything, including your private notes. Keep it somewhere safe and do not share it.</string>
+    <string name="transfer_reading">Reading contacts…</string>
+    <string name="transfer_importing">Adding contacts…</string>
     <plurals name="transfer_exported">
         <item quantity="one">%1$d contact exported.</item>
         <item quantity="other">%1$d contacts exported.</item>
