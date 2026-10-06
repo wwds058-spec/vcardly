@@ -112,6 +112,8 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
+          # The action's default options plus an emulated back camera, so CameraCaptureTest can open a real camera.
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back emulated
           script: ./gradlew :app:connectedDebugAndroidTest --stacktrace
 
       - name: Accessibility check reports
