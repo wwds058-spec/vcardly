@@ -24,6 +24,8 @@ final class AccessibilityAuditTests: XCTestCase {
     }
 
     private func audit(_ screen: String) throws {
+        // Let push and appear animations finish: mid-transition frames mix two screens and skew contrast measurements.
+        sleep(2)
         try app.performAccessibilityAudit { issue in
             let el = issue.element
             let line = "[\(screen)] \(issue.auditType): \(issue.compactDescription) | element: \(el?.elementType.rawValue ?? 0) "

@@ -194,8 +194,8 @@ struct VCTabBar: View {
         return Button { selected = tab } label: {
             VStack(spacing: 2) {
                 Image(systemName: isOn ? selectedIcon : icon)
-                    .font(.system(size: 18, weight: .semibold))
-                    .frame(width: 44, height: 28)
+                    .font(.system(.body, weight: .semibold)) // scales with the text size, like the label
+                    .frame(minWidth: 44, minHeight: 28)
                     .background(isOn ? VC.primaryContainer : .clear, in: Capsule())
                 Text(L10n.s(label)).font(VCFont.labelSmall).vcLineLimit(1).multilineTextAlignment(.center)
             }
