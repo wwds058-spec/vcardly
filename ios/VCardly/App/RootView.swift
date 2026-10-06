@@ -205,6 +205,5 @@ struct VCTabBar: View {
         .buttonStyle(.plain)
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
         .accessibilityIdentifier("tab.\(label)")
-        .accessibilityShowsLargeContentViewer() // long-press shows the label large, like the system tab bar
     }
 }

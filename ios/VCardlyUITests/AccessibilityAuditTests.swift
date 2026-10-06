@@ -26,6 +26,10 @@ final class AccessibilityAuditTests: XCTestCase {
     private func audit(_ screen: String) throws {
         // Let push and appear animations finish: mid-transition frames mix two screens and skew contrast measurements.
         sleep(2)
+        // Keep what the audit saw, so a finding can be checked against the real pixels (published with the screenshots).
+        let shot = Self.report.deletingLastPathComponent().appendingPathComponent("screenshots/audit_\(screen.replacingOccurrences(of: " ", with: "_")).png")
+        try? FileManager.default.createDirectory(at: shot.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try? XCUIScreen.main.screenshot().pngRepresentation.write(to: shot)
         try app.performAccessibilityAudit { issue in
             let el = issue.element
             let line = "[\(screen)] \(issue.auditType): \(issue.compactDescription) | element: \(el?.elementType.rawValue ?? 0) "
