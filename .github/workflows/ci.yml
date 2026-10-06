@@ -114,6 +114,10 @@ jobs:
           disable-animations: true
           script: ./gradlew :app:connectedDebugAndroidTest --stacktrace
 
+      - name: Accessibility check reports
+        if: always()
+        run: find app/build/outputs -path '*accessibility*' -name '*.txt' -exec sh -c 'cat "$1"' _ {} \; 2>/dev/null | sort | uniq || echo "no reports"
+
       # Screens rendered by ScreenshotTest (fictional sample data), published so the design can be reviewed.
       - name: Publish UI screenshots to the ui-screenshots branch
         if: always() && github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'

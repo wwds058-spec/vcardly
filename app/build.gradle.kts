@@ -178,6 +178,8 @@ dependencies {
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    // Google's Accessibility Test Framework: the checks behind Android's Accessibility Scanner (test only).
+    androidTestImplementation(libs.accessibility.test.framework)
     // Screenshots written through TestStorage are pulled by AGP into build/outputs/connected_android_test_additional_output.
     androidTestImplementation(libs.androidx.test.services.storage)
     androidTestUtil(libs.androidx.test.services)

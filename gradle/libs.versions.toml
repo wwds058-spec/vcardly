@@ -30,8 +30,10 @@ junit = "4.13.2"
 androidxTestExt = "1.2.1"
 androidxTestRunner = "1.6.2"
 androidxTestServices = "1.5.0"
+accessibilityTestFramework = "4.1.1"
 
 [libraries]
+accessibility-test-framework = { module = "com.google.android.apps.common.testing.accessibility.framework:accessibility-test-framework", version.ref = "accessibilityTestFramework" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }

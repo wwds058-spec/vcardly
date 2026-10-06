@@ -84,6 +84,10 @@ import com.yasin.vcardly.presentation.transfer.ImportState
 import com.yasin.vcardly.presentation.transfer.TransferActions
 import com.yasin.vcardly.presentation.transfer.TransferContent
 import com.yasin.vcardly.presentation.transfer.TransferUiState
+import org.junit.Assert.assertTrue
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.runtime.CompositionLocalProvider
 
 /**
  * Renders the redesigned screens with fictional sample data in light and dark themes on a real emulator and saves
@@ -94,17 +98,34 @@ import com.yasin.vcardly.presentation.transfer.TransferUiState
 class ScreenshotTest {
     @get:Rule val rule = createComposeRule()
 
-    /** [frozen]: for screens with an endless animation, which never let the UI go idle; the clock is stepped manually. */
-    private fun shoot(name: String, dark: Boolean = false, frozen: Boolean = false, content: @Composable () -> Unit) {
+    /**
+     * [frozen]: for screens with an endless animation, which never let the UI go idle; the clock is stepped manually.
+     * [fontScale]: 2f is Android's largest font size. [audit]: also run the accessibility checks ([A11yAudit]) and fail on errors.
+     */
+    private fun shoot(
+        name: String,
+        dark: Boolean = false,
+        frozen: Boolean = false,
+        fontScale: Float = 1f,
+        audit: Boolean = !frozen && fontScale == 1f,
+        content: @Composable () -> Unit,
+    ) {
         if (frozen) rule.mainClock.autoAdvance = false
         rule.setContent {
-            VCardlyTheme(if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
-                Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { content() }
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale * density.fontScale)) {
+                VCardlyTheme(if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
+                    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { content() }
+                }
             }
         }
         if (frozen) rule.mainClock.advanceTimeBy(800) else rule.waitForIdle()
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
         TestStorage().openOutputFile("screenshots/$name.png").use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
+        if (audit) {
+            val errors = A11yAudit.check(name)
+            assertTrue("Accessibility errors:\n" + errors.joinToString("\n"), errors.isEmpty())
+        }
     }
 
     /** Top-level screens are shown with the real bottom bar under them, as in the app. */
@@ -284,5 +305,36 @@ class ScreenshotTest {
         )
         TransferContent(TransferUiState(import = ImportState.Preview(entries, setOf(0, 2)), export = ExportState.Done(5)), TransferActions())
     }
+
+    // Android's largest font size (2x). Checked visually; text must wrap or grow, never overlap or vanish.
+    @Test fun largeHome() = shoot("30_large_home", fontScale = 2f) { WithBottomBar(TopLevelDestination.HOME) { DashboardContent(home, DashboardActions()) } }
+
+    @Test fun largeContacts() = shoot("30_large_contacts", fontScale = 2f) {
+        WithBottomBar(TopLevelDestination.CONTACTS) {
+            ContactsContent(ContactsUiState(isLoading = false, contacts = SampleData.contacts, categories = SampleData.categories, tags = SampleData.tags), ContactsActions())
+        }
+    }
+
+    @Test fun largeContactDetail() = shoot("30_large_contact_details", fontScale = 2f) {
+        ContactDetailContent(ContactDetailUiState.Content(SampleData.rajesh), SampleData.riyaFollowUps, ContactDetailActions())
+    }
+
+    @Test fun largeAddContact() = shoot("30_large_add_contact", fontScale = 2f) {
+        ContactEditContent(ContactEditUiState(isLoading = false, categories = SampleData.categories, tags = SampleData.tags), ContactEditActions())
+    }
+
+    @Test fun largeFollowUps() = shoot("30_large_follow_ups", fontScale = 2f) {
+        WithBottomBar(TopLevelDestination.FOLLOW_UPS) {
+            FollowUpsContent(FollowUpsUiState(isLoading = false, bucket = FollowUpBucket.TODAY, counts = SampleData.counts, items = SampleData.followUps.take(2)), FollowUpsActions())
+        }
+    }
+
+    @Test fun largeSettings() = shoot("30_large_settings", fontScale = 2f) { WithBottomBar(TopLevelDestination.SETTINGS) { SettingsContent(settings, SettingsActions()) } }
+
+    @Test fun largeMyCard() = shoot("30_large_my_card", fontScale = 2f) {
+        MyCardContent(SampleData.myCard, onNavigateUp = {}, onEdit = {}, sharePanel = { QrSharePanelContent(it, null, {}, {}) })
+    }
+
+    @Test fun largeReports() = shoot("30_large_reports", fontScale = 2f) { ReportsContent(ReportsUiState(report = sampleReport()), isPro = false, actions = ReportsActions()) }
 }
 
