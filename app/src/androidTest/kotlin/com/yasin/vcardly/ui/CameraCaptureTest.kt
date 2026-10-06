@@ -82,9 +82,15 @@ class CameraCaptureTest {
             }
             return outcome
         }
+        // The screen logs why the camera could not start (debug builds); read that line back.
+        fun scanLog(): String {
+            val pfd = instrumentation.uiAutomation.executeShellCommand("logcat -d -v brief Scan:E *:S")
+            val text = android.os.ParcelFileDescriptor.AutoCloseInputStream(pfd).bufferedReader().use { it.readText() }
+            return text.lines().filter { it.isNotBlank() && !it.startsWith("-----") }.take(12).joinToString(" | ")
+        }
         fun report() = "cameras=${cameras.size}, states=$history, " +
             "cameraFailedShown=${rule.onAllNodes(hasText(context.getString(R.string.scan_camera_failed))).fetchSemanticsNodes().isNotEmpty()}, " +
-            "directBind=${directBind()}"
+            "directBind=${directBind()}, log=${scanLog()}"
 
         try {
             rule.waitUntil(20_000) { state() == CameraState.Type.OPEN }
