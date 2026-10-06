@@ -47,7 +47,10 @@ final class AccessibilityAuditTests: XCTestCase {
     private func back() { app.navigationBars.buttons.element(boundBy: 0).tap() }
 
     func testMainScreensPassAccessibilityAudit() throws {
-        XCTAssertTrue(app.descendants(matching: .any)["tab.nav.home"].waitForExistence(timeout: 10))
+        let homeTab = app.descendants(matching: .any)["tab.nav.home"]
+        XCTAssertTrue(homeTab.waitForExistence(timeout: 10))
+        // Regression guard: the tab bar sits at the bottom and never takes over the screen.
+        XCTAssertGreaterThan(homeTab.frame.minY, app.frame.height * 0.8, "tab bar must stay at the bottom of the screen")
         try audit("Home")
 
         tap(app.descendants(matching: .any)["tab.nav.contacts"])

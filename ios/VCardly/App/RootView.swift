@@ -53,6 +53,8 @@ struct MainShell: View {
                     if tab == t { stack(for: t) }
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .layoutPriority(1)
             VCTabBar(selected: $tab, onScan: { scanning = true })
         }
         .ignoresSafeArea(.keyboard)
@@ -165,7 +167,8 @@ struct VCTabBar: View {
             item(.settings, "gearshape", "gearshape.fill", "nav.settings")
         }
         .padding(.horizontal, 6)
-        .frame(minHeight: 64) // grows with larger text instead of clipping the labels
+        .frame(minHeight: 64) // grows with larger text instead of clipping the labels...
+        .fixedSize(horizontal: false, vertical: true) // ...but never beyond its content (minHeight alone let it fill half the screen)
         .background(alignment: .top) {
             UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
                 .fill(VC.card)
