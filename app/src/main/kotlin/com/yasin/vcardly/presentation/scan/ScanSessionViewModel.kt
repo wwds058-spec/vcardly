@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 enum class ScanSide { FRONT, BACK }
-enum class ScanError { IMPORT_FAILED, IMAGE_UNREADABLE, CROP_FAILED }
+enum class ScanError { IMPORT_FAILED, IMAGE_UNREADABLE, CROP_FAILED, CAPTURE_FAILED }
 
 data class ScanSessionState(
     val side: ScanSide = ScanSide.FRONT,
@@ -77,6 +77,9 @@ class ScanSessionViewModel @Inject constructor(
     fun onCaptured(file: File) {
         viewModelScope.launch { prepareCrop(file) }
     }
+
+    /** The camera could not take the photo; say so instead of silently doing nothing. */
+    fun onCaptureFailed() = _state.update { it.copy(error = ScanError.CAPTURE_FAILED) }
 
     fun onPicked(uri: Uri) {
         viewModelScope.launch {

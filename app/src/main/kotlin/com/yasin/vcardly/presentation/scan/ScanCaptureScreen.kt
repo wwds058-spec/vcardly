@@ -146,7 +146,13 @@ private fun CameraContent(
         }
     }
     LaunchedEffect(flash, hasFlash) { if (hasFlash) imageCapture.flashMode = flash.mode }
-    DisposableEffect(provider) { onDispose { provider?.unbindAll() } }
+    // Release the camera when this screen leaves. The provider is captured when the effect starts: reading the state in
+    // onDispose would see the *new* value when the key changes from null to the provider, and unbind the camera the
+    // moment it was bound (a black preview and a shutter that never works).
+    DisposableEffect(provider) {
+        val bound = provider
+        onDispose { bound?.unbindAll() }
+    }
 
     val busy = capturing || state.isWorking
     Box(Modifier.fillMaxSize().background(Color.Black)) {
@@ -200,6 +206,7 @@ private fun CameraContent(
                                 override fun onError(exception: ImageCaptureException) {
                                     capturing = false
                                     file.delete()
+                                    session.onCaptureFailed()
                                 }
                             },
                         )
@@ -259,4 +266,5 @@ internal fun ScanError.messageRes(): Int = when (this) {
     ScanError.IMPORT_FAILED -> R.string.scan_error_import
     ScanError.IMAGE_UNREADABLE -> R.string.scan_error_unreadable
     ScanError.CROP_FAILED -> R.string.scan_error_crop
+    ScanError.CAPTURE_FAILED -> R.string.scan_error_capture
 }
