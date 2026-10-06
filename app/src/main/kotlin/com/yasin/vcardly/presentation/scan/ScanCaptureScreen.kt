@@ -60,6 +60,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.common.AppLog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.yasin.vcardly.core.designsystem.component.EmptyIllustration
 import com.yasin.vcardly.core.designsystem.component.VCardlyIconButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
@@ -136,11 +138,14 @@ private fun CameraContent(
     LaunchedEffect(lifecycleOwner) {
         try {
             val p = ProcessCameraProvider.getInstance(context).await()
-            val preview = Preview.Builder().build().also { it.setSurfaceProvider(previewView.surfaceProvider) }
-            p.unbindAll()
-            val camera = p.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageCapture)
-            hasFlash = camera.cameraInfo.hasFlashUnit()
-            provider = p
+            // await() can resume on CameraX's own thread; the preview surface and binding must be set up on the main thread.
+            withContext(Dispatchers.Main.immediate) {
+                val preview = Preview.Builder().build().also { it.setSurfaceProvider(previewView.surfaceProvider) }
+                p.unbindAll()
+                val camera = p.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageCapture)
+                hasFlash = camera.cameraInfo.hasFlashUnit()
+                provider = p
+            }
         } catch (e: Exception) {
             if (e is kotlinx.coroutines.CancellationException) throw e
             AppLog.e("Scan", "camera could not be started", e) // the exception only, never image or contact data
