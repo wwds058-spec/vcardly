@@ -59,6 +59,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yasin.vcardly.R
+import com.yasin.vcardly.core.common.AppLog
 import com.yasin.vcardly.core.designsystem.component.EmptyIllustration
 import com.yasin.vcardly.core.designsystem.component.VCardlyIconButton
 import com.yasin.vcardly.core.designsystem.component.VCardlyPrimaryButton
@@ -142,6 +143,7 @@ private fun CameraContent(
             provider = p
         } catch (e: Exception) {
             if (e is kotlinx.coroutines.CancellationException) throw e
+            AppLog.e("Scan", "camera could not be started", e) // the exception only, never image or contact data
             cameraFailed = true
         }
     }
@@ -204,6 +206,7 @@ private fun CameraContent(
                                 }
 
                                 override fun onError(exception: ImageCaptureException) {
+                                    AppLog.e("Scan", "photo failed, imageCaptureError=${exception.imageCaptureError}", exception)
                                     capturing = false
                                     file.delete()
                                     session.onCaptureFailed()

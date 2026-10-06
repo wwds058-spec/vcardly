@@ -7,7 +7,10 @@ import androidx.camera.core.CameraState
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.activity.ComponentActivity
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.Preview
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -33,7 +36,7 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class CameraCaptureTest {
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val context = instrumentation.targetContext
@@ -63,8 +66,25 @@ class CameraCaptureTest {
             instrumentation.runOnMainSync { type = back.cameraState.value?.type }
             return type
         }
+        // The same binding the screen does, run directly, to surface the error the screen turns into a message.
+        fun directBind(): String {
+            var outcome = "bound"
+            instrumentation.runOnMainSync {
+                outcome = try {
+                    provider.unbindAll()
+                    val preview = Preview.Builder().build()
+                    val capture = ImageCapture.Builder().setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY).build()
+                    provider.bindToLifecycle(rule.activity, CameraSelector.DEFAULT_BACK_CAMERA, preview, capture)
+                    "bound"
+                } catch (e: Throwable) {
+                    generateSequence(e) { it.cause }.joinToString(" <- ") { it.toString() }
+                }
+            }
+            return outcome
+        }
         fun report() = "cameras=${cameras.size}, states=$history, " +
-            "cameraFailedShown=${rule.onAllNodes(hasText(context.getString(R.string.scan_camera_failed))).fetchSemanticsNodes().isNotEmpty()}"
+            "cameraFailedShown=${rule.onAllNodes(hasText(context.getString(R.string.scan_camera_failed))).fetchSemanticsNodes().isNotEmpty()}, " +
+            "directBind=${directBind()}"
 
         try {
             rule.waitUntil(20_000) { state() == CameraState.Type.OPEN }
