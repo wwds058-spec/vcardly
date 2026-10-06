@@ -222,6 +222,12 @@ jobs:
           /tmp/venv/bin/python ../tools/backup_reference.py verify build/backups/ios-plain.vcbackup
           /tmp/venv/bin/python ../tools/backup_reference.py verify build/backups/ios-encrypted.vcbackup "correct horse"
 
+      # CSV, Excel and PDF files written by the iPhone tests must open with standard tools.
+      - name: Verify iPhone exports open in standard tools
+        run: |
+          /tmp/venv/bin/pip install -q openpyxl
+          /tmp/venv/bin/python ../tools/verify_exports.py build/exports
+
       - name: Publish iOS screenshots to the ios-screenshots branch
         if: always() && github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'
         run: |

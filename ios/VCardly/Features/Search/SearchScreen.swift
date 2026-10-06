@@ -107,8 +107,6 @@ struct ProScreen: View {
                 .background(LinearGradient(colors: VC.gradientPurple, startPoint: .topLeading, endPoint: .bottomTrailing), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
 
                 VStack(spacing: 0) {
-                    feature("doc.richtext.fill", "pro.feature_pdf", VC.rose)
-                    feature("tablecells.fill", "pro.feature_excel", VC.mint)
                     feature("infinity", "pro.feature_scans", VC.blue)
                     feature("nosign", "pro.feature_no_ads", VC.orange)
                 }

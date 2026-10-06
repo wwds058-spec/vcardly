@@ -1,5 +1,6 @@
 import Charts
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct CategorySlice: Identifiable, Equatable {
     let name: String
@@ -14,6 +15,12 @@ struct MonthCount: Identifiable, Equatable {
     var id: Date { month }
 }
 
+struct TagCount: Identifiable, Equatable {
+    let name: String
+    let count: Int
+    var id: String { name }
+}
+
 /// Figures derived from stored contacts and follow-ups only.
 struct ReportsState: Equatable {
     var total = 0
@@ -22,6 +29,7 @@ struct ReportsState: Equatable {
     var byCategory: [CategorySlice] = []
     var growth: [MonthCount] = []
     var followUpsByStatus: [FollowUpStatus: Int] = [:]
+    var topTags: [TagCount] = []
 
     static func build(contacts: [ContactDetails], followUps: [FollowUpWithContact], now: Date = Date(), calendar: Calendar = .current) -> ReportsState {
         var s = ReportsState()
@@ -42,25 +50,111 @@ struct ReportsState: Equatable {
             return MonthCount(month: start, count: contacts.filter { $0.contact.createdAt >= start && $0.contact.createdAt < end }.count)
         }
         for f in followUps { s.followUpsByStatus[f.followUp.status, default: 0] += 1 }
+        var tagCounts: [String: Int] = [:]
+        for d in contacts { for t in d.tags { tagCounts[t.name, default: 0] += 1 } }
+        s.topTags = tagCounts.map { TagCount(name: $0.key, count: $0.value) }
+            .sorted { $0.count != $1.count ? $0.count > $1.count : $0.name.lowercased() < $1.name.lowercased() }
+            .prefix(8).map { $0 }
         return s
+    }
+}
+
+enum ReportExportFormat: CaseIterable {
+    case pdf, csv, xlsx
+
+    var contentType: UTType {
+        switch self {
+        case .pdf: .pdf
+        case .csv: .commaSeparatedText
+        case .xlsx: UTType(filenameExtension: "xlsx") ?? .data
+        }
+    }
+    var fileNameKey: String {
+        switch self {
+        case .pdf: "export.file.pdf"
+        case .csv: "export.file.csv"
+        case .xlsx: "export.file.xlsx"
+        }
+    }
+    /// Android sells PDF and Excel as Pro; see ProFeatures.
+    var needsPro: Bool { self != .csv && ProFeatures.exportsRequirePro }
+}
+
+enum ReportExportState: Equatable { case idle, working, done, failed }
+
+/// A file already written to a private temporary folder, handed to the system "Save to Files" sheet.
+struct ExportFileDocument: FileDocument {
+    static var readableContentTypes: [UTType] { [.data] }
+    let url: URL
+    init(url: URL) { self.url = url }
+    init(configuration: ReadConfiguration) throws { throw CocoaError(.featureUnsupported) }
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper { try FileWrapper(url: url, options: []) }
+}
+
+enum ReportExporter {
+    /// Writes the chosen format into `dir` and returns the file. Runs off the main thread.
+    static func write(_ format: ReportExportFormat, report: ReportsState, contacts: [ContactDetails], followUps: [FollowUpWithContact],
+                      dir: URL) throws -> URL {
+        let url = dir.appendingPathComponent(L10n.s(format.fileNameKey))
+        switch format {
+        case .csv: try Data(CsvWriter.write(ExportTables.contacts(contacts)).utf8).write(to: url, options: [.atomic, .completeFileProtection])
+        case .xlsx: try XlsxWriter.write([ExportTables.contacts(contacts), ExportTables.followUps(followUps)], to: url)
+        case .pdf: try PdfRenderer.render(ReportPdfContent.build(report, contacts: contacts), to: url)
+        }
+        return url
     }
 }
 
 struct ReportsScreen: View {
     @Environment(AppEnvironment.self) private var env
     @State private var state = ReportsState()
+    @State private var exportState: ReportExportState = .idle
+    @State private var file: (url: URL, dir: URL, type: UTType)?
 
     var body: some View {
-        ReportsContent(state: state)
+        ReportsContent(state: state, exportState: exportState, onExport: export)
             .navigationTitle(L10n.s("reports.title"))
             .navigationBarTitleDisplayMode(.inline)
             .task(id: env.revision.value) { state = .build(contacts: env.contacts.contacts(), followUps: env.followUps.all()) }
+            .fileExporter(isPresented: Binding(get: { file != nil }, set: { if !$0 { finish(nil) } }),
+                          document: file.map { ExportFileDocument(url: $0.url) }, contentType: file?.type ?? .data,
+                          defaultFilename: file?.url.lastPathComponent) { result in
+                if case .success = result { finish(.done) } else { finish(.idle) }
+            }
+    }
+
+    private func export(_ format: ReportExportFormat) {
+        let contacts = env.contacts.contacts()
+        let followUps = env.followUps.all()
+        let report = state
+        exportState = .working
+        Task {
+            do {
+                let dir = FileManager.default.temporaryDirectory.appendingPathComponent("export-\(UUID().uuidString)", isDirectory: true)
+                try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+                let url = try await Task.detached(priority: .userInitiated) {
+                    try ReportExporter.write(format, report: report, contacts: contacts, followUps: followUps, dir: dir)
+                }.value
+                file = (url, dir, format.contentType)
+            } catch {
+                exportState = .failed
+            }
+        }
+    }
+
+    /// Deletes the temporary copy once the user has saved it (or cancelled).
+    private func finish(_ next: ReportExportState?) {
+        if let f = file { try? FileManager.default.removeItem(at: f.dir) }
+        file = nil
+        if let next { exportState = next } else if exportState == .working { exportState = .idle }
     }
 }
 
 /// Stateless reports (used directly by screenshot tests).
 struct ReportsContent: View {
     let state: ReportsState
+    var exportState: ReportExportState = .idle
+    var onExport: (ReportExportFormat) -> Void = { _ in }
 
     var body: some View {
         ScrollView {
@@ -81,11 +175,50 @@ struct ReportsContent: View {
                     categories
                     growth
                     followUps
+                    exportSection
                 }
             }
             .padding(VC.screen)
         }
         .background(VC.background)
+    }
+
+    private var exportSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L10n.s("export.title")).font(VCFont.titleMedium).accessibilityAddTraits(.isHeader)
+            HStack(spacing: 10) {
+                exportTile(.pdf, "doc.richtext.fill", VC.rose, "export.tile.pdf")
+                exportTile(.csv, "tablecells", VC.blue, "export.tile.csv")
+                exportTile(.xlsx, "tablecells.fill", VC.mint, "export.tile.xlsx")
+            }
+            .disabled(exportState == .working)
+            switch exportState {
+            case .working:
+                HStack(spacing: 10) { ProgressView(); Text(L10n.s("export.working")).font(VCFont.bodySmall) }
+            case .done:
+                VCNotice(text: L10n.s("export.done"), tone: VC.mint, symbol: "checkmark.circle.fill")
+            case .failed:
+                VCNotice(text: L10n.s("export.failed"), tone: VC.rose, symbol: "xmark.octagon.fill")
+            case .idle:
+                EmptyView()
+            }
+            Text(L10n.s("export.privacy_note")).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant)
+        }
+        .vcCard()
+    }
+
+    private func exportTile(_ f: ReportExportFormat, _ symbol: String, _ tone: Tone, _ key: String) -> some View {
+        Button { onExport(f) } label: {
+            VStack(spacing: 8) {
+                Image(systemName: f.needsPro ? "lock.fill" : symbol).font(.system(size: 20, weight: .semibold)).foregroundStyle(tone.accent)
+                    .frame(width: 44, height: 44).background(tone.container, in: Circle())
+                Text(f.needsPro ? L10n.s("export.pro_label", L10n.s(key)) : L10n.s(key)).font(VCFont.labelLarge).foregroundStyle(VC.onSurface)
+            }
+            .frame(maxWidth: .infinity).padding(.vertical, 12)
+            .background(VC.cardHigh, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        }
+        .buttonStyle(PressScaleStyle())
+        .accessibilityLabel(L10n.s("export.tile_label", L10n.s(key)))
     }
 
     private var categories: some View {

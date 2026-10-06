@@ -332,9 +332,7 @@
 /* Pro */
 "pro.title" = "VCardly Pro";
 "pro.hero_title" = "Unlock VCardly Pro";
-"pro.intro" = "Unlock the full toolkit. Your own data is never locked away: reminders, app lock and sharing are free for everyone.";
-"pro.feature_pdf" = "PDF reports";
-"pro.feature_excel" = "Excel export of contacts and follow-ups";
+"pro.intro" = "Unlock the full toolkit. Your own data is never locked away: backups, exports, reminders, app lock and sharing are free for everyone.";
 "pro.feature_scans" = "Unlimited card scans";
 "pro.feature_no_ads" = "No ads, ever";
 "pro.not_configured_ios" = "Purchases are not set up in this version yet. Nothing can be bought, and nothing is charged.";
@@ -444,3 +442,38 @@
 "transfer.export_failed" = "The file could not be written.";
 "transfer.exported.one" = "Exported %ld contact.";
 "transfer.exported.other" = "Exported %ld contacts.";
+
+/* Report exports (PDF, CSV, Excel) */
+"export.title" = "Export";
+"export.tile.pdf" = "PDF";
+"export.tile.csv" = "CSV";
+"export.tile.xlsx" = "Excel";
+"export.tile_label" = "Export %@";
+"export.pro_label" = "%@ · Pro";
+"export.working" = "Creating your file…";
+"export.done" = "File saved.";
+"export.failed" = "The file could not be created, so nothing was exported. Please try again.";
+"export.privacy_note" = "Exports contain your contacts' personal details and private notes. Choose where to save them; nothing is uploaded.";
+"export.file.pdf" = "vcardly-report.pdf";
+"export.file.csv" = "vcardly-contacts.csv";
+"export.file.xlsx" = "vcardly-workbook.xlsx";
+"export.sheet.contacts" = "Contacts";
+"export.sheet.followups" = "Follow-ups";
+"export.col.favorite" = "Favorite";
+"export.col.source" = "Source";
+"export.col.added" = "Added";
+"export.col.status" = "Status";
+"export.col.due" = "Due";
+"export.col.completed" = "Completed";
+"common.yes" = "Yes";
+"common.no" = "No";
+"source.manual" = "Typed in";
+"source.scan" = "Scanned card";
+"source.import" = "Imported";
+"reports.top_tags" = "Top tags";
+"report.pdf.title" = "VCardly report";
+"report.pdf.generated" = "Generated %@";
+"report.pdf.summary" = "Summary";
+"report.pdf.added_6_months" = "Added in the last 6 months";
+"report.pdf.none" = "None yet";
+"report.pdf.directory" = "Contact directory";
