@@ -91,6 +91,11 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
   along at least 60% of every side. No clear card means the old default crop; the user can always drag the corners or pick
   "Whole image" or "Card edges". Tested on synthetic photos (contrast, tilt, uneven light, a table edge, text without a
   card); **not yet tried on real card photos**.
+- **Android camera fixes (reported by the owner: "camera not working")**: the capture screen released the camera right
+  after binding it (its cleanup read the provider state at dispose time), and the binding could run off the main thread
+  after `await()` ("Not in application's main thread", shown as "The camera could not be started"). Both fixed; a failed
+  photo now shows a message. `CameraCaptureTest` opens the real screen on the CI emulator (now started with
+  `-camera-back emulated`) and checks the camera stays open; it failed before each fix and passes after (run 37429798155).
 - **Android perspective correction**: the crop is four free corners (`CropQuad`, `CropMath`: convex, no side under 10%,
   tested). A card photographed at an angle is straightened into a rectangle with `Matrix.setPolyToPoly` at full
   resolution, sized by the longer of each pair of opposite sides; an upright rectangle stays a plain crop. Screenshot
