@@ -105,6 +105,9 @@ by the tests with Python's `csv` module and `openpyxl` (`tools/verify_exports.py
 - Bugs this found and fixed: inactive tabs stayed on screen invisibly (VoiceOver could reach them); card shadows blurred all
   text; the tab bar briefly filled half the screen (now guarded by the UI test); avatar initials overflowed at large sizes;
   small "See all" target.
+- When CI's simulator moved to iOS 26, its stricter audit flagged visible text VoiceOver could not reach on Reports (the donut's
+  centre total, hidden from VoiceOver, and the growth chart's axis labels). Each chart is now one VoiceOver element that reads
+  its contents ("96 contacts"; "Contacts added per month: January 3, February 5, ...").
 
 ## Needs your configuration (never faked)
 

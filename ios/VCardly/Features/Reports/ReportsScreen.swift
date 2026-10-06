@@ -237,7 +237,10 @@ struct ReportsContent: View {
                     }
                     .dynamicTypeSize(...DynamicTypeSize.xLarge) // must fit inside the ring; the legend carries the numbers
                 }
-                .accessibilityHidden(true)
+                // One element for the ring and its centre text (iOS 26's audit flags visible text VoiceOver cannot reach);
+                // the legend rows below read each category.
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(state.total) \(L10n.s("reports.contacts"))")
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(state.byCategory.prefix(6)) { s in
                         HStack(spacing: 8) {
@@ -265,6 +268,10 @@ struct ReportsContent: View {
             .chartXAxis { AxisMarks(values: .stride(by: .month)) { _ in AxisValueLabel(format: .dateTime.month(.abbreviated), centered: true) } }
             .chartYAxis { AxisMarks(position: .leading) { _ in AxisGridLine().foregroundStyle(VC.outlineVariant); AxisValueLabel() } }
             .frame(height: 170)
+            // Read as one element ("Jan 3, Feb 5, ..."), so the axis labels are covered for VoiceOver too.
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(L10n.s("reports.growth"))
+            .accessibilityValue(state.growth.map { "\($0.month.formatted(.dateTime.month(.wide))) \($0.count)" }.joined(separator: ", "))
         }
         .vcCard()
     }
