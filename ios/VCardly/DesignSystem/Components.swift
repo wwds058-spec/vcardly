@@ -183,7 +183,12 @@ struct VCSectionHeader: View {
             Text(title).font(VCFont.titleMedium).foregroundStyle(VC.onSurface).accessibilityAddTraits(.isHeader)
             Spacer()
             if let actionTitle, let action {
-                Button(actionTitle, action: action).font(VCFont.labelLarge).foregroundStyle(VC.primary)
+                Button(action: action) {
+                    Text(actionTitle).font(VCFont.labelLarge).foregroundStyle(VC.primary)
+                        .padding(.horizontal, 8)
+                        .frame(minWidth: 44, minHeight: 44) // comfortable touch target
+                        .contentShape(Rectangle())
+                }
             }
         }
         .frame(minHeight: 36)

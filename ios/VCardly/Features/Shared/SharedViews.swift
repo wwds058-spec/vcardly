@@ -68,6 +68,7 @@ struct FollowUpCard: View {
                     if overdue { Circle().fill(VC.rose.accent).frame(width: 6, height: 6) }
                     Text(overdue ? L10n.s("due.overdue", dueLabel(f.dueAt)) : dueLabel(f.dueAt))
                         .font(VCFont.labelMedium).foregroundStyle(overdue ? VC.rose.content : VC.primary)
+                        .fixedSize(horizontal: false, vertical: true) // wrap rather than truncate the time
                     if f.status == .rescheduled || f.status == .cancelled {
                         VCTag(title: f.status.label, tone: f.status == .cancelled ? VC.rose : VC.orange)
                     }
