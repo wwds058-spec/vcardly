@@ -108,13 +108,16 @@ struct ContactCard: View {
         let email = c.email.isEmpty ? c.emailAlt : c.email
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 14) {
-                VCAvatar(name: c.fullName, argb: details.category?.colorARGB, size: 52)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(c.fullName).font(VCFont.titleMedium).foregroundStyle(VC.onSurface).vcLineLimit(1)
-                    if !c.company.isEmpty { Text(c.company).font(VCFont.bodyMedium).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1) }
-                    if !c.jobTitle.isEmpty { Text(c.jobTitle).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1) }
+                // Avatar and text form one tappable element; the avatar's initials are drawn pixels, so they must sit inside it.
+                HStack(spacing: 14) {
+                    VCAvatar(name: c.fullName, argb: details.category?.colorARGB, size: 52)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(c.fullName).font(VCFont.titleMedium).foregroundStyle(VC.onSurface).vcLineLimit(1)
+                        if !c.company.isEmpty { Text(c.company).font(VCFont.bodyMedium).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1) }
+                        if !c.jobTitle.isEmpty { Text(c.jobTitle).font(VCFont.bodySmall).foregroundStyle(VC.onSurfaceVariant).vcLineLimit(1) }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
                 .onTapGesture(perform: onTap)
                 .accessibilityElement(children: .combine)

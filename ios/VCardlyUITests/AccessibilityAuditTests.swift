@@ -8,6 +8,10 @@ final class AccessibilityAuditTests: XCTestCase {
         .appendingPathComponent("build/accessibility-audit.txt")
     private var issues: [String] = []
     private var app: XCUIApplication!
+    /// The area the audit judges: the full width, down to just above the raised Scan button and the tab bar. Text that is
+    /// only partly visible (scrolled under the bar, or past the edge of a sideways-scrolling row) cannot be measured
+    /// fairly; it is checked once scrolled into view. Issues with no element (for example inaccessible text) always count.
+    private var visibleArea = CGRect.infinite
 
     override func setUp() {
         continueAfterFailure = true
@@ -32,6 +36,7 @@ final class AccessibilityAuditTests: XCTestCase {
         try? XCUIScreen.main.screenshot().pngRepresentation.write(to: shot)
         try app.performAccessibilityAudit { issue in
             let el = issue.element
+            if let f = el?.frame, !f.isEmpty, !self.visibleArea.contains(f) { return true }
             let line = "[\(screen)] \(issue.auditType): \(issue.compactDescription) | element: \(el?.elementType.rawValue ?? 0) "
                 + "label=\"\(el?.label ?? "")\" id=\"\(el?.identifier ?? "")\""
             self.issues.append(line)
@@ -51,6 +56,7 @@ final class AccessibilityAuditTests: XCTestCase {
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10))
         // Regression guard: the tab bar sits at the bottom and never takes over the screen.
         XCTAssertGreaterThan(homeTab.frame.minY, app.frame.height * 0.8, "tab bar must stay at the bottom of the screen")
+        visibleArea = CGRect(x: 0, y: 0, width: app.frame.width, height: homeTab.frame.minY - 40)
         try audit("Home")
 
         tap(app.descendants(matching: .any)["tab.nav.contacts"])

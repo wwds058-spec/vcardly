@@ -69,6 +69,7 @@ struct ContactDetailContent: View {
     @State private var copied = false
 
     private var c: Contact { details.contact }
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         ScrollView {
@@ -155,7 +156,7 @@ struct ContactDetailContent: View {
     private var quickActions: some View {
         let phone = c.phone.isEmpty ? c.phoneAlt : c.phone
         let email = c.email.isEmpty ? c.emailAlt : c.email
-        return HStack {
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8, alignment: .top), count: typeSize.isAccessibilitySize ? 2 : 4), spacing: 14) {
             QuickAction(symbol: "phone.fill", label: L10n.s("action.call"), tone: VC.blue, enabled: !phone.isEmpty) { ExternalActions.call(phone) }
             QuickAction(symbol: "message.fill", label: L10n.s("followup.type.whatsapp"), tone: VC.mint, enabled: whatsAppDigits(phone) != nil) { ExternalActions.whatsApp(phone) }
             QuickAction(symbol: "envelope.fill", label: L10n.s("field.email"), tone: VC.lavender, enabled: !email.isEmpty) { ExternalActions.email(email) }
@@ -298,7 +299,7 @@ private struct QuickActionLabel: View {
             Image(systemName: symbol).font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(enabled ? tone.accent : VC.outline)
                 .frame(width: 54, height: 54).background(enabled ? tone.container : VC.cardHigh, in: Circle())
-            Text(label).font(VCFont.labelMedium).foregroundStyle(enabled ? VC.onSurface : VC.onSurfaceVariant).lineLimit(1).minimumScaleFactor(0.6)
+            Text(label).font(VCFont.labelMedium).foregroundStyle(enabled ? VC.onSurface : VC.onSurfaceVariant).multilineTextAlignment(.center)
         }
     }
 }
