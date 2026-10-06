@@ -19,7 +19,8 @@ Material 3, MVVM, Hilt, Room, DataStore. Architecture: `docs/ARCHITECTURE.md` (t
 | iOS (`ios` job, macos-15, Xcode 16.4, iPhone 16 Pro simulator): XcodeGen, build, unit + repository + screenshot tests (26 screens) | passes, 53 unit/screenshot tests + accessibility audit UI test (no blocking issues); iPhone-written backups verified by `tools/backup_reference.py`, exports opened with `csv`/`openpyxl` (run 37406964193) |
 | Debug APKs | `debug-apk` branch (universal) and `debug-apk-arm64` branch (arm64 only), rebuilt on every push |
 
-Later commits (Reports chart fix, new categories, icon, docs) are verified by the next CI run; check the latest run on the branch.
+Run 37410962605 (commit `8376bf5`) passed every job: build, unit tests (including `CardEdgeDetectorTest`), lint, the instrumented
+tests with Accessibility Test Framework checks on every screenshot screen (no errors) and the 2x-font screenshots, iOS and both APKs.
 
 **Never verified (needs a person with a phone):** the real camera and OCR on real cards, reminders after a reboot, the biometric
 prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on a device, the launcher icon on different launchers.
