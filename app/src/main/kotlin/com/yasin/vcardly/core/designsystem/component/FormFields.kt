@@ -1,9 +1,7 @@
 package com.yasin.vcardly.core.designsystem.component
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,8 +25,10 @@ import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.theme.CardShape
 
 /**
- * Text field with its label above the input (large, readable, like a modern form) and the error message both shown and
- * exposed to screen readers. [required] adds a visual asterisk; the label text itself still names the field.
+ * Outlined text field whose label is Material's own label slot (it rests inside the field and floats above it while
+ * typing). TalkBack names the field from that label and still reads what was typed; a contentDescription would replace
+ * the typed text for screen readers, which is why none is set. [required] adds an asterisk; the error message is shown
+ * and exposed to screen readers.
  */
 @Composable
 fun VCardlyTextField(
@@ -47,50 +47,45 @@ fun VCardlyTextField(
     trailing: (@Composable () -> Unit)? = null,
     visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
 ) {
-    Column(modifier) {
-        Text(
-            buildAnnotatedString {
-                append(label)
-                if (required) withStyle(SpanStyle(color = MaterialTheme.colorScheme.error)) { append(" *") }
-            },
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp),
-        )
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            placeholder = placeholder?.let { { Text(it, style = MaterialTheme.typography.bodyLarge) } },
-            leadingIcon = leadingIcon?.let { { androidx.compose.material3.Icon(it, contentDescription = null) } },
-            trailingIcon = trailing,
-            isError = errorText != null,
-            supportingText = errorText?.let { { Text(it) } },
-            singleLine = singleLine,
-            minLines = if (singleLine) 1 else minLines,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            visualTransformation = visualTransformation,
-            textStyle = MaterialTheme.typography.bodyLarge,
-            shape = RoundedCornerShape(16.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                errorContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
-                focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 56.dp)
-                .semantics {
-                    // The visual label sits outside the field, so name the field for TalkBack here.
-                    contentDescription = label
-                    if (errorText != null) error(errorText)
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = {
+            Text(
+                buildAnnotatedString {
+                    append(label)
+                    if (required) withStyle(SpanStyle(color = MaterialTheme.colorScheme.error)) { append(" *") }
                 },
-        )
-    }
+            )
+        },
+        placeholder = placeholder?.let { { Text(it, style = MaterialTheme.typography.bodyLarge) } },
+        leadingIcon = leadingIcon?.let { { androidx.compose.material3.Icon(it, contentDescription = null) } },
+        trailingIcon = trailing,
+        isError = errorText != null,
+        supportingText = errorText?.let { { Text(it) } },
+        singleLine = singleLine,
+        minLines = if (singleLine) 1 else minLines,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        visualTransformation = visualTransformation,
+        textStyle = MaterialTheme.typography.bodyLarge,
+        shape = RoundedCornerShape(16.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            errorContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            // Full-strength hint colour: 4.5:1 or better on the field background.
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .semantics { if (errorText != null) error(errorText) },
+    )
 }
 
 @Composable

@@ -11,6 +11,8 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -98,7 +100,8 @@ class ScreenBehaviourTest {
                 )
             }
         }
-        rule.onNodeWithContentDescription(s(R.string.home_search_placeholder)).performTextInput("raj")
+        // The search field is found by its placeholder (its hint), the way TalkBack announces it.
+        rule.onNode(hasSetTextAction() and hasText(s(R.string.home_search_placeholder))).performTextInput("raj")
         assertEquals("raj", query)
         rule.onNodeWithText(s(R.string.contacts_filter_favorites)).performClick()
         assertEquals(1, favoritesOnly)
