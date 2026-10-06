@@ -22,7 +22,9 @@ Material 3, MVVM, Hilt, Room, DataStore. Architecture: `docs/ARCHITECTURE.md` (t
 Run 37410962605 (commit `8376bf5`) passed every job: build, unit tests (including `CardEdgeDetectorTest`), lint, the instrumented
 tests with Accessibility Test Framework checks on every screenshot screen (no errors) and the 2x-font screenshots, iOS and both APKs.
 
-**Never verified (needs a person with a phone):** the real camera and OCR on real cards, reminders after a reboot, the biometric
+**Verified on a real phone by the owner:** the scan camera works (after the camera fixes in commit `e68b845`).
+
+**Never verified (needs a person with a phone):** OCR, card-edge detection and straightening on real cards, reminders after a reboot, the biometric
 prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on a device, the launcher icon on different launchers.
 
 ## Completed
