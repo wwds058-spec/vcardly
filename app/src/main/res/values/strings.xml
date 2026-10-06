@@ -162,6 +162,7 @@
     <string name="scan_error_crop">The card could not be cropped. Please try again.</string>
     <string name="scan_crop_title">Crop card</string>
     <string name="scan_crop_hint">Drag the corners to fit the card, or drag inside to move the selection.</string>
+    <string name="scan_crop_hint_found">The card\'s edges were found. Drag the corners if the selection needs adjusting.</string>
     <string name="scan_rotate_left">Rotate left</string>
     <string name="scan_rotate_right">Rotate right</string>
     <string name="scan_use_full_image">Whole image</string>

@@ -75,11 +75,11 @@ fun ScanCropScreen(
     onReview: () -> Unit,
 ) {
     val state by session.state.collectAsStateWithLifecycle()
-    var rect by remember { mutableStateOf(NormalizedRect.Default) }
+    var rect by remember { mutableStateOf(state.detected ?: NormalizedRect.Default) }
     var askBack by remember { mutableStateOf(false) }
 
-    // A new rotation or a new image invalidates the previous selection.
-    LaunchedEffect(state.rotation, state.rawFile) { rect = NormalizedRect.Default }
+    // A new rotation or a new image invalidates the previous selection; start on the card when it was found.
+    LaunchedEffect(state.rotation, state.rawFile, state.detected) { rect = state.detected ?: NormalizedRect.Default }
 
     LaunchedEffect(session) {
         session.events.collect { event ->
@@ -99,7 +99,7 @@ fun ScanCropScreen(
                 Text(stringResource(R.string.scan_crop_title), style = MaterialTheme.typography.titleLarge, color = Color.White, modifier = Modifier.padding(start = 8.dp).weight(1f))
             }
             Text(
-                stringResource(R.string.scan_crop_hint),
+                stringResource(if (state.detected != null) R.string.scan_crop_hint_found else R.string.scan_crop_hint),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.75f),
                 modifier = Modifier.padding(horizontal = 20.dp),

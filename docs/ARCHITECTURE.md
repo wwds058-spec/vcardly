@@ -77,6 +77,9 @@ settings ─► organize, backup, transfer, privacy, pro
   OCR review is `contact/edit/0?fromScan=true` above the graph; its "Rescan" calls
   `ScanSessionViewModel.restart()` and pops back to capture. After saving, `popUpTo(SCAN_GRAPH)`
   removes the whole flow.
+- **Card-edge detection:** `CardEdgeDetector` (pure Kotlin, `domain/scan`) runs on a 320 px grayscale copy of the preview
+  (`BitmapOps.gray`) after each capture and rotation, on the default dispatcher. It returns a `NormalizedRect` for the crop
+  screen to start from, or null when no card-shaped outline is traced (the crop then uses its default inset).
 - **Transitions:** tab switches cross-fade; pushed screens fade in with a small upward slide.
 - **Reminder notification taps** arrive as `openContactId` and are routed to the contact details once
   onboarding is done.
@@ -90,7 +93,10 @@ settings ─► organize, backup, transfer, privacy, pro
 - **Strings:** all user-facing text comes from `stringResource`; no hardcoded strings. English only,
   though RTL support stays enabled.
 - **Accessibility:** bottom-bar icons are decorative because the labels are always shown. Other icons
-  carry content descriptions.
+  carry content descriptions. Text fields are named by Material's label slot (never a content description, which would hide
+  the typed text from TalkBack). From a 1.5x font (`isLargeText()`), layouts adapt instead of cutting text: top-bar actions
+  move under the title, the stepper says "Step n of m", one-line card text wraps, chart legends stack. Fixed-size slots
+  (bottom-bar labels, the drawn business card) cap their growth with `cappedScale` or a capped `LocalDensity`.
 - **App lock:** a `LockScreen` sits above the nav host, driven by `AppLockManager` with a monotonic
   clock for auto-lock.
 - **Ads and Pro:** `AdBanner` appears on Home only. It is gated by `EntitlementManager`, so it never
@@ -286,5 +292,6 @@ survive reboots and clock changes.
 | Query builder, validators, parser, planners, vCard, backup archive, crypto, restore planner (JVM) | `app/src/test` |
 | Room DAOs and repositories on a real SQLite database (emulator) | `app/src/androidTest`: `DatabaseTest`, `ContactRepositoryTest`, `FollowUpRepositoryTest` |
 | UI interactions on the stateless screen content | `app/src/androidTest/.../ui/ScreenBehaviourTest` |
-| Screenshots of every redesigned screen, light and dark, published by CI to the `ui-screenshots` branch | `app/src/androidTest/.../ui/ScreenshotTest` |
+| Screenshots of every redesigned screen, light and dark, plus eight screens at 2x font, published by CI to the `ui-screenshots` branch | `app/src/androidTest/.../ui/ScreenshotTest` |
+| Accessibility Test Framework checks on every screenshot screen (errors fail; reports in the CI log) | `app/src/androidTest/.../ui/A11yAudit` |
 | Theme contrast, WhatsApp number handling | `ThemeContrastTest`, `WhatsAppDigitsTest` (JVM) |

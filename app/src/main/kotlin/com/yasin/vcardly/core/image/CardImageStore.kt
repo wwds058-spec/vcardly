@@ -7,12 +7,18 @@ import android.graphics.Matrix
 import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import com.yasin.vcardly.core.common.AppDispatchers
+import com.yasin.vcardly.domain.scan.CardEdgeDetector
+import com.yasin.vcardly.domain.scan.GrayImage
+import com.yasin.vcardly.domain.scan.NormalizedRect
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlinx.coroutines.withContext
 
 /** Where a card image lives. Stored = permanent, app-private, relative path; Pending = scan cache file not yet saved. */
@@ -210,4 +216,22 @@ object BitmapOps {
 
     /** [box] is x, y, width, height in pixels (see CropMath.toPixels). */
     fun crop(bitmap: Bitmap, box: IntArray): Bitmap = Bitmap.createBitmap(bitmap, box[0], box[1], box[2], box[3])
+
+    /** A small grayscale copy (longest side at most [maxSide]) for [CardEdgeDetector]. */
+    fun gray(bitmap: Bitmap, maxSide: Int = 320): GrayImage {
+        val scale = min(1f, maxSide.toFloat() / max(bitmap.width, bitmap.height))
+        val w = max(1, (bitmap.width * scale).roundToInt())
+        val h = max(1, (bitmap.height * scale).roundToInt())
+        val small = if (scale < 1f) Bitmap.createScaledBitmap(bitmap, w, h, true) else bitmap
+        val argb = IntArray(w * h)
+        small.getPixels(argb, 0, w, 0, 0, w, h)
+        if (small !== bitmap) small.recycle()
+        return GrayImage(w, h, IntArray(w * h) { i ->
+            val c = argb[i]
+            ((c shr 16 and 0xFF) * 299 + (c shr 8 and 0xFF) * 587 + (c and 0xFF) * 114) / 1000
+        })
+    }
+
+    /** Where the card is in [bitmap], or null when no clear card outline is found. */
+    fun findCard(bitmap: Bitmap): NormalizedRect? = CardEdgeDetector.detect(gray(bitmap))
 }

@@ -75,11 +75,26 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
   PDF and Excel are free on iPhone until purchases exist (owner's decision, `ProFeatures.exportsRequirePro`).
 - **iOS accessibility pass**: Apple accessibility audit UI test on seven screens (blocking on contrast, hit regions,
   labels and traits) and AX3 large-text screenshots; fixes listed in `docs/IOS.md` ("Accessibility checks").
+- **Android Organize and Transfer redesign**: categories with their colour, contact counts and built-in marker; tags; a clearer
+  import preview and export card. Same stateless `XxxContent` pattern, with screenshots and behaviour tests.
+- **Android accessibility checks**: every screenshot screen is also checked with Google's Accessibility Test Framework (the
+  engine of Accessibility Scanner: touch targets, contrast measured on the real screenshot, labels, duplicate descriptions).
+  Errors fail CI; warnings are listed in the CI log. Eight main screens are also rendered at 2x font (`30_large_*.png`).
+  Fixed: text fields hid the typed text from TalkBack (the label was a content description; it is now Material's label
+  slot); at very large fonts, top-bar titles were squeezed by their actions, the form stepper labels were cut to a few
+  letters, stat and list cards cut their text, and the category donut legend overlapped its percentages
+  (`core/designsystem/theme/TextScale.kt`, from 1.5x).
+- **Android card-edge detection in the scanner**: after a capture (or a picked photo, and after each rotation) the crop starts
+  on the card instead of a fixed inset. `domain/scan/CardEdgeDetector` is plain Kotlin on a 320 px grayscale copy: Sobel
+  edges, straight-line candidates up to about 7 degrees of tilt, and the best four lines that trace a card-shaped rectangle
+  along at least 60% of every side. No clear card means the old default crop; the user can always drag the corners or pick
+  "Whole image". Axis-aligned crop only (a tilted card gets its bounding box; no perspective correction). Tested on synthetic
+  photos (contrast, tilt, uneven light, a table edge, text without a card); **not yet tried on real card photos**.
 
 ## In progress
 
-- Nothing half-done is committed. Next candidates, in order: Organize and Transfer screens still use the generic new components but
-  were not individually redesigned; the scanner has no automatic card-edge detection (the frame is a guide; crop is manual).
+- Nothing half-done is committed. Possible next steps: perspective correction for cards photographed at an angle (needs a
+  four-corner crop UI); trying the edge detection on real card photos. iPhone work is paused by the owner until later.
 
 ## Blocked
 

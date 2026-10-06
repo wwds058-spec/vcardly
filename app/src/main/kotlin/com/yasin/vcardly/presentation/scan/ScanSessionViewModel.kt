@@ -35,6 +35,8 @@ data class ScanSessionState(
     val rawFile: File? = null,
     val preview: Bitmap? = null,
     val rotation: Int = 0,
+    /** Where the card was found in [preview], or null (the crop then starts from its default inset). */
+    val detected: NormalizedRect? = null,
     val frontFile: File? = null,
     val backFile: File? = null,
     val isWorking: Boolean = false,
@@ -93,7 +95,8 @@ class ScanSessionViewModel @Inject constructor(
             return
         }
         basePreview = bitmap
-        _state.update { it.copy(rawFile = file, preview = bitmap, rotation = 0, isWorking = false, error = null) }
+        val detected = withContext(dispatchers.default) { BitmapOps.findCard(bitmap) }
+        _state.update { it.copy(rawFile = file, preview = bitmap, rotation = 0, detected = detected, isWorking = false, error = null) }
         _events.send(ScanEvent.ToCrop)
     }
 
@@ -101,8 +104,10 @@ class ScanSessionViewModel @Inject constructor(
         val base = basePreview ?: return
         val rotation = (_state.value.rotation + if (clockwise) 90 else 270) % 360
         viewModelScope.launch {
-            val rotated = withContext(dispatchers.default) { BitmapOps.rotate(base, rotation) }
-            _state.update { it.copy(preview = rotated, rotation = rotation) }
+            val (rotated, detected) = withContext(dispatchers.default) {
+                BitmapOps.rotate(base, rotation).let { it to BitmapOps.findCard(it) }
+            }
+            _state.update { it.copy(preview = rotated, rotation = rotation, detected = detected) }
         }
     }
 
@@ -132,13 +137,13 @@ class ScanSessionViewModel @Inject constructor(
     }
 
     fun addBackSide() {
-        _state.update { it.copy(side = ScanSide.BACK, rawFile = null, preview = null, rotation = 0) }
+        _state.update { it.copy(side = ScanSide.BACK, rawFile = null, preview = null, rotation = 0, detected = null) }
         basePreview = null
         viewModelScope.launch { _events.send(ScanEvent.BackToCapture) }
     }
 
     fun retake() {
-        _state.update { it.copy(rawFile = null, preview = null, rotation = 0) }
+        _state.update { it.copy(rawFile = null, preview = null, rotation = 0, detected = null) }
         basePreview = null
         viewModelScope.launch { _events.send(ScanEvent.BackToCapture) }
     }
