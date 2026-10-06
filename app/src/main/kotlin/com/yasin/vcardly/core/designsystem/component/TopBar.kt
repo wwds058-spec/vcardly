@@ -1,5 +1,6 @@
 package com.yasin.vcardly.core.designsystem.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -25,11 +26,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.yasin.vcardly.R
+import com.yasin.vcardly.core.designsystem.theme.isLargeText
 import com.yasin.vcardly.core.designsystem.theme.spacing
 
 /**
  * Detail-screen top bar: a round back button, a start-aligned title and optional actions. The back arrow is
- * auto-mirrored in RTL locales. Applies the status-bar inset itself.
+ * auto-mirrored in RTL locales. Applies the status-bar inset itself. With a very large font the actions move to their
+ * own row under the title, so neither gets squeezed.
  */
 @Composable
 fun VCardlyTopBar(
@@ -39,32 +42,34 @@ fun VCardlyTopBar(
     containerColor: Color = Color.Transparent,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    Row(
-        modifier
-            .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.statusBars)
-            .heightIn(min = 64.dp)
-            .padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (onNavigateUp != null) {
-            VCardlyIconButton(
-                icon = Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = stringResource(R.string.common_navigate_up),
-                onClick = onNavigateUp,
-                containerColor = containerColor,
+    val large = isLargeText()
+    Column(modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars).padding(horizontal = 8.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 64.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (onNavigateUp != null) {
+                VCardlyIconButton(
+                    icon = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(R.string.common_navigate_up),
+                    onClick = onNavigateUp,
+                    containerColor = containerColor,
+                )
+            } else {
+                Spacer(Modifier.width(12.dp))
+            }
+            Text(
+                title,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = if (large) 2 else 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f).padding(start = 4.dp).semantics { heading() },
             )
-        } else {
-            Spacer(Modifier.width(12.dp))
+            if (!large) Row(verticalAlignment = Alignment.CenterVertically, content = actions)
         }
-        Text(
-            title,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f).padding(start = 4.dp).semantics { heading() },
-        )
-        Row(verticalAlignment = Alignment.CenterVertically, content = actions)
+        if (large) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically, content = actions)
     }
 }
 

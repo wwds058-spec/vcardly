@@ -37,7 +37,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import com.yasin.vcardly.core.designsystem.theme.StatValueStyle
+import com.yasin.vcardly.core.designsystem.theme.isLargeText
 import com.yasin.vcardly.domain.report.MonthCount
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
@@ -64,7 +66,8 @@ fun DonutChart(segments: List<Segment>, centerLabel: String, modifier: Modifier 
     val gapColor = MaterialTheme.colorScheme.surfaceContainer
     val summary = segments.joinToString(", ") { "${it.label} ${percent.format(it.value.toDouble() / total)}" }
 
-    Row(modifier.fillMaxWidth().semantics(mergeDescendants = true) { contentDescription = summary }, verticalAlignment = Alignment.CenterVertically) {
+    val large = isLargeText()
+    val donut: @Composable () -> Unit = {
         Box(Modifier.size(size).clearAndSetSemantics { }, contentAlignment = Alignment.Center) {
             Canvas(Modifier.size(size)) {
                 val stroke = this.size.width * 0.16f
@@ -84,14 +87,36 @@ fun DonutChart(segments: List<Segment>, centerLabel: String, modifier: Modifier 
                 Text(centerLabel, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
-        Column(Modifier.padding(start = 20.dp).weight(1f).clearAndSetSemantics { }, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    }
+    val legend: @Composable (Modifier) -> Unit = { legendModifier ->
+        Column(legendModifier.clearAndSetSemantics { }, verticalArrangement = Arrangement.spacedBy(10.dp)) {
             segments.forEach { s ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(10.dp).clip(CircleShape).background(s.color))
-                    Text(s.label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface, maxLines = 1, modifier = Modifier.padding(start = 8.dp).weight(1f))
+                    Text(
+                        s.label,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = if (large) Int.MAX_VALUE else 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(start = 8.dp, end = 8.dp).weight(1f),
+                    )
                     Text(percent.format(s.value.toDouble() / total), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
             }
+        }
+    }
+    val semanticsModifier = modifier.fillMaxWidth().semantics(mergeDescendants = true) { contentDescription = summary }
+    // With a very large font the legend needs the full width, so it goes under the donut.
+    if (large) {
+        Column(semanticsModifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            donut()
+            legend(Modifier.fillMaxWidth())
+        }
+    } else {
+        Row(semanticsModifier, verticalAlignment = Alignment.CenterVertically) {
+            donut()
+            legend(Modifier.padding(start = 20.dp).weight(1f))
         }
     }
 }

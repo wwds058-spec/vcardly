@@ -43,6 +43,7 @@ import com.yasin.vcardly.core.designsystem.theme.OverlineStyle
 import com.yasin.vcardly.core.designsystem.theme.StatValueStyle
 import com.yasin.vcardly.core.designsystem.theme.TileShape
 import com.yasin.vcardly.core.designsystem.theme.Tone
+import com.yasin.vcardly.core.designsystem.theme.isLargeText
 import com.yasin.vcardly.core.designsystem.theme.spacing
 import com.yasin.vcardly.core.designsystem.theme.vcColors
 
@@ -164,9 +165,10 @@ fun VCardlyStatCard(
             IconBadge(icon, tone.copy(container = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = if (MaterialTheme.vcColors.isDark) 0.35f else 0.9f)), size = 36.dp, iconSize = 18.dp, circle = true)
         }
         Spacer(Modifier.size(6.dp))
-        Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        val lines = if (isLargeText()) Int.MAX_VALUE else 1
+        Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface, maxLines = lines, overflow = TextOverflow.Ellipsis)
         if (supporting != null) {
-            Text(supporting, style = MaterialTheme.typography.labelMedium, color = supportingColor, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(supporting, style = MaterialTheme.typography.labelMedium, color = supportingColor, maxLines = lines, overflow = TextOverflow.Ellipsis)
         }
     }
 }

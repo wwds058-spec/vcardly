@@ -24,10 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.theme.Tone
+import com.yasin.vcardly.core.designsystem.theme.isLargeText
 
 /**
  * One piece of information: a tinted icon, a small label and the value, with an optional tap action (call, open
@@ -93,42 +97,58 @@ fun VCardlyTimeline(entries: List<TimelineEntry>, modifier: Modifier = Modifier)
     }
 }
 
-/** Progress stepper for multi-step forms: dots and labels, the current step highlighted. */
+/**
+ * Progress stepper for multi-step forms: dots and labels, the current step highlighted. With a very large font the labels
+ * would be cut to a few letters, so the dots stand alone and one line underneath says "Step 2 of 5: Contact".
+ */
 @Composable
 fun VCardlyStepper(steps: List<String>, current: Int, modifier: Modifier = Modifier, onStepClick: ((Int) -> Unit)? = null) {
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-        steps.forEachIndexed { index, label ->
-            val done = index < current
-            val active = index == current
-            Column(
-                Modifier
-                    .weight(1f)
-                    .then(if (onStepClick != null && index <= current) Modifier.clickable { onStepClick(index) } else Modifier)
-                    .semantics(mergeDescendants = true) {},
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Row(Modifier.fillMaxWidth().height(24.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.weight(1f).height(2.dp).background(if (index == 0) androidx.compose.ui.graphics.Color.Transparent else if (done || active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant))
-                    Box(
-                        Modifier
-                            .size(if (active) 20.dp else 14.dp)
-                            .clip(CircleShape)
-                            .background(if (done || active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        if (active) Box(Modifier.size(8.dp).clip(CircleShape).background(MaterialTheme.colorScheme.onPrimary))
+    val large = isLargeText()
+    Column(modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+            steps.forEachIndexed { index, label ->
+                val done = index < current
+                val active = index == current
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .then(if (onStepClick != null && index <= current) Modifier.clickable { onStepClick(index) } else Modifier)
+                        .semantics(mergeDescendants = true) { if (large) contentDescription = label },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Row(Modifier.fillMaxWidth().height(24.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Box(Modifier.weight(1f).height(2.dp).background(if (index == 0) androidx.compose.ui.graphics.Color.Transparent else if (done || active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant))
+                        Box(
+                            Modifier
+                                .size(if (active) 20.dp else 14.dp)
+                                .clip(CircleShape)
+                                .background(if (done || active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            if (active) Box(Modifier.size(8.dp).clip(CircleShape).background(MaterialTheme.colorScheme.onPrimary))
+                        }
+                        Box(Modifier.weight(1f).height(2.dp).background(if (index == steps.lastIndex) androidx.compose.ui.graphics.Color.Transparent else if (done) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant))
                     }
-                    Box(Modifier.weight(1f).height(2.dp).background(if (index == steps.lastIndex) androidx.compose.ui.graphics.Color.Transparent else if (done) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant))
+                    if (!large) {
+                        Text(
+                            label,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(top = 6.dp),
+                        )
+                    }
                 }
-                Text(
-                    label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 6.dp),
-                )
             }
+        }
+        if (large) {
+            Text(
+                stringResource(R.string.stepper_position, current + 1, steps.size, steps[current]),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(top = 8.dp),
+            )
         }
     }
 }

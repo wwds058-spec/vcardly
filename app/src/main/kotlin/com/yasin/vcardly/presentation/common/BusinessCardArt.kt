@@ -34,10 +34,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.yasin.vcardly.core.designsystem.component.initialsOf
 import com.yasin.vcardly.core.designsystem.theme.vcColors
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 
 /**
  * A visiting card drawn from a contact's own details, shown when no photo of the real card exists. Decorative: the
- * same details are listed (and read by TalkBack) right below it.
+ * same details are listed (and read by TalkBack) right below it. Like a photo it keeps its shape, so its text follows the
+ * user's font size only up to 1.3x; with larger fonts the full details are in the list below.
  */
 @Composable
 fun BusinessCardArt(
@@ -52,6 +56,8 @@ fun BusinessCardArt(
 ) {
     val colors = MaterialTheme.vcColors
     val gradient = accentArgb?.let { listOf(Color(it).copy(alpha = 0.9f), colors.gradientBlue.last(), colors.gradientPurple.last()) } ?: colors.cardHero
+    val density = LocalDensity.current
+    CompositionLocalProvider(LocalDensity provides Density(density.density, density.fontScale.coerceAtMost(1.3f))) {
     Box(
         modifier
             .aspectRatio(1.7f)
@@ -87,6 +93,7 @@ fun BusinessCardArt(
                 ArtLine(Icons.Rounded.Language, website)
             }
         }
+    }
     }
 }
 

@@ -4,6 +4,7 @@
 
     <!-- Common -->
     <string name="common_navigate_up">Navigate up</string>
+    <string name="stepper_position">Step %1$d of %2$d: %3$s</string>
     <string name="common_cancel">Cancel</string>
     <string name="common_retry">Try again</string>
     <string name="common_loading">Loading</string>

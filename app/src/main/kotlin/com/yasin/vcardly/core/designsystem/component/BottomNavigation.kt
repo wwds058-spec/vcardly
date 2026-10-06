@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.yasin.vcardly.core.designsystem.theme.cappedScale
 import com.yasin.vcardly.core.designsystem.theme.vcColors
 
 /** One tab of the bottom bar. */
@@ -100,7 +101,7 @@ private fun NavTab(item: BottomNavItem, selected: Boolean, onSelect: (BottomNavI
         ) {
             Icon(if (selected) item.selectedIcon else item.icon, contentDescription = null, tint = color, modifier = Modifier.size(22.dp))
         }
-        Text(item.label, style = MaterialTheme.typography.labelSmall, color = color, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 2.dp))
+        Text(item.label, style = MaterialTheme.typography.labelSmall.cappedScale(1.2f), color = color, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 2.dp))
     }
 }
 

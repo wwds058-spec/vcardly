@@ -35,6 +35,7 @@ import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.IconBadge
 import com.yasin.vcardly.core.designsystem.component.VCardlyCard
 import com.yasin.vcardly.core.designsystem.component.VCardlyTag
+import com.yasin.vcardly.core.designsystem.theme.isLargeText
 import com.yasin.vcardly.core.designsystem.theme.vcColors
 import com.yasin.vcardly.domain.model.FollowUpStatus
 import com.yasin.vcardly.domain.model.FollowUpWithContact
@@ -84,14 +85,14 @@ fun VCardlyFollowUpCard(
                 Text(
                     f.title,
                     style = MaterialTheme.typography.titleSmall,
-                    maxLines = 2,
+                    maxLines = if (isLargeText()) Int.MAX_VALUE else 2,
                     overflow = TextOverflow.Ellipsis,
                     textDecoration = if (f.status == FollowUpStatus.COMPLETED) TextDecoration.LineThrough else null,
                     color = if (closed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                 )
                 val who = listOf(item.contactName, item.contactCompany).filter { it.isNotBlank() }.joinToString(" · ")
                 if (who.isNotEmpty()) {
-                    Text(who, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(who, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = if (isLargeText()) Int.MAX_VALUE else 1, overflow = TextOverflow.Ellipsis)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
                     if (isOverdue && !closed) {

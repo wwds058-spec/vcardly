@@ -35,6 +35,7 @@ import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.VCardlyAvatar
 import com.yasin.vcardly.core.designsystem.component.VCardlyCard
 import com.yasin.vcardly.core.designsystem.component.VCardlyIconButton
+import com.yasin.vcardly.core.designsystem.theme.isLargeText
 import com.yasin.vcardly.core.designsystem.theme.vcColors
 import com.yasin.vcardly.domain.model.ContactDetails
 
@@ -74,12 +75,12 @@ fun VCardlyContactCard(
         Row(verticalAlignment = Alignment.CenterVertically) {
             VCardlyAvatar(contact.fullName, details.category?.colorArgb, size = 52.dp)
             Column(Modifier.weight(1f).padding(start = 14.dp).semantics(mergeDescendants = true) {}) {
-                Text(contact.fullName, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(contact.fullName, style = MaterialTheme.typography.titleMedium, maxLines = if (isLargeText()) Int.MAX_VALUE else 1, overflow = TextOverflow.Ellipsis)
                 if (contact.company.isNotBlank()) {
-                    Text(contact.company, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(contact.company, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = if (isLargeText()) Int.MAX_VALUE else 1, overflow = TextOverflow.Ellipsis)
                 }
                 if (contact.jobTitle.isNotBlank()) {
-                    Text(contact.jobTitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(contact.jobTitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = if (isLargeText()) Int.MAX_VALUE else 1, overflow = TextOverflow.Ellipsis)
                 }
             }
             FavoriteButton(contact.isFavorite, contact.fullName, onToggleFavorite)
