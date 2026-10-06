@@ -53,6 +53,9 @@ class ScreenBehaviourTest {
     private val res = InstrumentationRegistry.getInstrumentation().targetContext.resources
     private fun s(id: Int, vararg args: Any) = res.getString(id, *args)
 
+    // A form field, found by its label (Material's label slot is merged into the field; required ones end in " *").
+    private fun field(label: Int) = rule.onNode(hasSetTextAction() and hasText(s(label), substring = true))
+
     @Test fun onboarding_skipAndGetStartedFinish() {
         var finished = 0
         rule.setContent { VCardlyTheme { OnboardingContent(onFinish = { finished++ }) } }
@@ -157,10 +160,10 @@ class ScreenBehaviourTest {
         }
         rule.onNodeWithText(s(R.string.onboarding_next)).performClick()
         // Still on the first step: the name field is shown.
-        rule.onNodeWithText(s(R.string.hint_full_name)).assertIsDisplayed()
+        field(R.string.field_full_name).assertIsDisplayed()
         valid = true
         rule.onNodeWithText(s(R.string.onboarding_next)).performClick()
-        rule.onNodeWithText(s(R.string.hint_website)).assertIsDisplayed()
+        field(R.string.field_website).assertIsDisplayed()
         assertEquals(2, steps)
     }
 
@@ -195,7 +198,7 @@ class ScreenBehaviourTest {
         rule.setContent { VCardlyTheme { ContactEditContent(ContactEditUiState(isLoading = false, isFromScan = true, ocrFailed = true), ContactEditActions(onRescan = {})) } }
         rule.onNodeWithText(s(R.string.scan_failed_title)).assertIsDisplayed()
         rule.onNodeWithText(s(R.string.scan_enter_manually)).performClick()
-        rule.onNodeWithText(s(R.string.hint_full_name)).assertIsDisplayed()
+        field(R.string.field_name).assertIsDisplayed()
     }
 
     @Test fun followUps_tabsAndComplete() {
