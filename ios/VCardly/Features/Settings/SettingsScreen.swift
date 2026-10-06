@@ -97,6 +97,7 @@ struct SettingsContent: View {
                 VCOverline(text: L10n.s("settings.section.general")).padding(.top, 6)
                 VStack(spacing: 0) {
                     VCNavigationRow(symbol: "chart.bar.fill", tone: VC.blue, title: L10n.s("reports.title"), subtitle: L10n.s("settings.reports_hint"), action: actions.openReports)
+                        .accessibilityIdentifier("settings.reports")
                     divider
                     themeRow
                     divider
@@ -139,6 +140,7 @@ struct SettingsContent: View {
                 VStack(alignment: .leading, spacing: 0) {
                     VCNavigationRow(symbol: "externaldrive.fill", tone: VC.orange, title: L10n.s("settings.backup"),
                                     subtitle: L10n.s("settings.backup_hint"), action: actions.openBackup)
+                        .accessibilityIdentifier("settings.backup")
                     divider
                     VCNavigationRow(symbol: "arrow.left.arrow.right", tone: VC.blue, title: L10n.s("transfer.title"),
                                     subtitle: L10n.s("settings.transfer_hint"), action: actions.openTransfer)

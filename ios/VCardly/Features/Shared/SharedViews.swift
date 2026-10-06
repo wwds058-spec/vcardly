@@ -117,6 +117,7 @@ struct ContactCard: View {
                 .onTapGesture(perform: onTap)
                 .accessibilityElement(children: .combine)
                 .accessibilityAddTraits(.isButton)
+                .accessibilityIdentifier("contact.card")
                 FavoriteButton(isFavorite: c.isFavorite, name: c.fullName, action: onToggleFavorite)
             }
             if showActions && (!phone.isEmpty || !email.isEmpty) {

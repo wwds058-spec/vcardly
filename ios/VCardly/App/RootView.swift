@@ -203,5 +203,6 @@ struct VCTabBar: View {
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
+        .accessibilityIdentifier("tab.\(label)")
     }
 }

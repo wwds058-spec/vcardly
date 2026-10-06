@@ -9,12 +9,12 @@ final class ScreenshotTests: XCTestCase {
     private static let outDir: URL = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
         .appendingPathComponent("build/screenshots", isDirectory: true)
 
-    private func snap<V: View>(_ name: String, dark: Bool = false, @ViewBuilder _ view: () -> V) throws {
+    private func snap<V: View>(_ name: String, dark: Bool = false, textSize: DynamicTypeSize = .large, @ViewBuilder _ view: () -> V) throws {
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
         let window = UIWindow(windowScene: scene)
         window.frame = CGRect(x: 0, y: 0, width: 393, height: 852)
         window.overrideUserInterfaceStyle = dark ? .dark : .light
-        let host = UIHostingController(rootView: view().environment(\.colorScheme, dark ? .dark : .light))
+        let host = UIHostingController(rootView: view().environment(\.colorScheme, dark ? .dark : .light).environment(\.dynamicTypeSize, textSize))
         window.rootViewController = host
         window.makeKeyAndVisible()
         host.view.setNeedsLayout()
@@ -171,6 +171,24 @@ final class ScreenshotTests: XCTestCase {
         ], existing: [Contact(fullName: "Ben Ito", email: "ben@globex.example")])
         let preview = TransferState(importState: .preview(entries, selected: [0, 2]))
         try snap("17_transfer_preview") { NavigationStack { TransferContent(state: preview, actions: TransferActions()) } }
+    }
+
+    /// The largest accessibility text size (AX5 is the maximum; AX3 is a common real-world setting).
+    func testLargeText() throws {
+        let ax = DynamicTypeSize.accessibility3
+        try snap("20_ax_home", textSize: ax) { HomeContent(state: homeState, actions: HomeActions()) }
+        let contacts = ContactsState(contacts: contacts, categories: [business, customer, supplier], tags: [Tag(name: "VIP")], loaded: true)
+        try snap("20_ax_contacts", textSize: ax) { ContactsContent(state: contacts, actions: ContactsActions()) }
+        try snap("20_ax_contact_detail", textSize: ax) {
+            NavigationStack { ContactDetailContent(details: self.contacts[0], followUps: followUps.prefix(1).map(\.followUp), actions: ContactDetailActions()) }
+        }
+        let fs = FollowUpsState(bucket: .today, items: followUps, counts: FollowUpCounts(today: 3, upcoming: 8, overdue: 2, completed: 40), loaded: true)
+        try snap("20_ax_followups", textSize: ax) { FollowUpsContent(state: fs, actions: FollowUpsActions()) }
+        try snap("20_ax_add_contact", textSize: ax) { NavigationStack { ContactEditContent(state: .constant(ContactEditState()), actions: ContactEditActions()) } }
+        let settings = SettingsState(myCard: myCard, theme: .system, appLock: true, autoLockSeconds: 60, notificationsAllowed: true, version: "0.1.0")
+        try snap("20_ax_settings", textSize: ax) { SettingsContent(state: settings, actions: SettingsActions()) }
+        try snap("20_ax_my_card", textSize: ax) { NavigationStack { MyCardContent(card: myCard, edit: {}) } }
+        try snap("20_ax_reports", textSize: ax) { NavigationStack { ReportsContent(state: reports) } }
     }
 
     func testOtherScreens() throws {

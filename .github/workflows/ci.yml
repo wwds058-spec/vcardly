@@ -211,6 +211,10 @@ jobs:
             CODE_SIGNING_ALLOWED=NO | tee build-log.txt | grep -E "error:|warning: .*VCardly/|Test Case|Executed|BUILD|\*\*" || true
           grep -q "\*\* TEST SUCCEEDED \*\*" build-log.txt
 
+      - name: Accessibility audit report
+        if: always()
+        run: cat build/accessibility-audit.txt 2>/dev/null || echo "no audit report"
+
       - name: Show compiler errors
         if: failure()
         run: grep -E "error:" build-log.txt | sort -u | head -80 || true

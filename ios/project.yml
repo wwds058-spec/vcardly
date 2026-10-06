@@ -63,12 +63,26 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/VCardly.app/VCardly
         BUNDLE_LOADER: $(TEST_HOST)
+  VCardlyUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: VCardlyUITests
+    dependencies:
+      - target: VCardly
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yasin.vcardly.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: VCardly
 schemes:
   VCardly:
     build:
       targets:
         VCardly: all
         VCardlyTests: [test]
+        VCardlyUITests: [test]
     test:
       targets:
         - VCardlyTests
+        - VCardlyUITests
