@@ -83,6 +83,14 @@ Settings → Import & export, the counterpart of Android's Transfer screen, usin
   file) and cards with no usable details are not selected; values the form would reject are kept in the notes, never dropped.
 - **Export all contacts** to one .vcf (every field, including private notes, category and tags as CATEGORIES), after a warning.
 
+## Report exports
+
+Reports → Export: **PDF** (summary, new contacts per month, follow-ups by status, categories, top tags and a contact directory,
+drawn on A4 with `UIGraphicsPDFRenderer`), **CSV** (contacts; RFC 4180, UTF-8 BOM, formula injection neutralised like Android)
+and **Excel** (.xlsx with Contacts and Follow-ups sheets; every cell is plain text, header bold and frozen). Same columns as
+Android. Files are written to a private temporary folder, saved with the Files sheet, then deleted. CI opens the files written
+by the tests with Python's `csv` module and `openpyxl` (`tools/verify_exports.py`).
+
 ## Needs your configuration (never faked)
 
 | What | Status | What you need to do |
@@ -94,8 +102,10 @@ Settings → Import & export, the counterpart of Android's Transfer screen, usin
 ## Differences from Android (by design or not yet built)
 
 - **No ads on iPhone** (AdMob is not included).
-- **Excel/PDF/CSV report export, Google Drive**: not built for iOS yet. (Backup/restore and vCard import/export are built;
-  files are saved with the Files sheet, so iCloud Drive works without any setup.)
+- **Google Drive** (direct): not built. Backups and exports are saved with the Files sheet, so iCloud Drive, Google Drive's
+  Files provider or any other location works without setup.
+- **PDF and Excel exports are free on iPhone** for now (on Android they need Pro), because purchases are not set up on iOS.
+  `ProFeatures.exportsRequirePro` locks them like Android once StoreKit purchases exist.
 - **Free-plan scan quota**: not enforced on iOS (no purchases exist yet).
 - Scanning uses Apple's document camera instead of a custom camera screen; on devices without it (and in the simulator) the user
   picks a photo instead.
