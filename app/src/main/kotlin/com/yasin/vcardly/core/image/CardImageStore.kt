@@ -220,8 +220,8 @@ object BitmapOps {
     /** [box] is x, y, width, height in pixels (see CropMath.toPixels). */
     fun crop(bitmap: Bitmap, box: IntArray): Bitmap = Bitmap.createBitmap(bitmap, box[0], box[1], box[2], box[3])
 
-    /** A small grayscale copy (longest side at most [maxSide]) for [CardEdgeDetector]. */
-    fun gray(bitmap: Bitmap, maxSide: Int = 320): GrayImage {
+    /** Red, green and blue of a small copy of [bitmap] (longest side at most [maxSide]) for [CardEdgeDetector]. */
+    fun channels(bitmap: Bitmap, maxSide: Int = 320): List<GrayImage> {
         val scale = min(1f, maxSide.toFloat() / max(bitmap.width, bitmap.height))
         val w = max(1, (bitmap.width * scale).roundToInt())
         val h = max(1, (bitmap.height * scale).roundToInt())
@@ -229,14 +229,11 @@ object BitmapOps {
         val argb = IntArray(w * h)
         small.getPixels(argb, 0, w, 0, 0, w, h)
         if (small !== bitmap) small.recycle()
-        return GrayImage(w, h, IntArray(w * h) { i ->
-            val c = argb[i]
-            ((c shr 16 and 0xFF) * 299 + (c shr 8 and 0xFF) * 587 + (c and 0xFF) * 114) / 1000
-        })
+        return listOf(16, 8, 0).map { shift -> GrayImage(w, h, IntArray(w * h) { i -> argb[i] shr shift and 0xFF }) }
     }
 
     /** The card's corners in [bitmap], or null when no clear card outline is found. */
-    fun findCard(bitmap: Bitmap): CropQuad? = CardEdgeDetector.detect(gray(bitmap))
+    fun findCard(bitmap: Bitmap): CropQuad? = CardEdgeDetector.detect(channels(bitmap))
 
     /**
      * Cuts [quad] out of [bitmap]. An upright rectangle is a plain crop; any other shape (a card photographed at an angle)

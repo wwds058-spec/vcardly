@@ -88,11 +88,18 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
   letters, stat and list cards cut their text, and the category donut legend overlapped its percentages
   (`core/designsystem/theme/TextScale.kt`, from 1.5x).
 - **Android card-edge detection in the scanner**: after a capture (or a picked photo, and after each rotation) the crop starts
-  on the card instead of a fixed inset. `domain/scan/CardEdgeDetector` is plain Kotlin on a 320 px grayscale copy: Sobel
-  edges, straight-line candidates up to about 7 degrees of tilt, and the best four lines that trace a card-shaped rectangle
-  along at least 60% of every side. No clear card means the old default crop; the user can always drag the corners or pick
-  "Whole image" or "Card edges". Tested on synthetic photos (contrast, tilt, uneven light, a table edge, text without a
-  card); **not yet tried on real card photos**.
+  on the card instead of a fixed inset. `domain/scan/CardEdgeDetector` is plain Kotlin on a 320 px copy (red, green and blue,
+  so colour-only edges count): Sobel edges with a threshold from the photo's median gradient (strict, then looser), straight
+  lines up to about 23 degrees of tilt, opposite sides allowed to converge (perspective), and the best convex four-sided
+  shape whose sides are traced along at least 55% of their middle 80% (rounded corners ignored) with one consistent
+  brightness direction (rejects tile and grid patterns). No clear card means the old default crop; the user can always
+  drag the corners or pick "Whole image" or "Card edges". 21 synthetic-photo tests (perspective, 15 degree tilt, rounded
+  corners with shadow, colour-only edge, wood grain, tiled floor with and without a card, low contrast, text without a
+  card).
+  - **First real-phone report (owner): edges were not detected.** Cause found: the first version set its edge threshold
+    from the 90th-percentile gradient, which on a text-heavy card lands among the edges themselves, so card outlines were
+    only partly traced; it also accepted only 7 degrees of tilt and no perspective. Rewritten as above; needs another try
+    on real cards.
 - **Android camera fixes (reported by the owner: "camera not working")**: the capture screen released the camera right
   after binding it (its cleanup read the provider state at dispose time), and the binding could run off the main thread
   after `await()` ("Not in application's main thread", shown as "The camera could not be started"). Both fixed; a failed

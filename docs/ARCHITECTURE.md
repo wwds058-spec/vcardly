@@ -77,8 +77,8 @@ settings ─► organize, backup, transfer, privacy, pro
   OCR review is `contact/edit/0?fromScan=true` above the graph; its "Rescan" calls
   `ScanSessionViewModel.restart()` and pops back to capture. After saving, `popUpTo(SCAN_GRAPH)`
   removes the whole flow.
-- **Card-edge detection:** `CardEdgeDetector` (pure Kotlin, `domain/scan`) runs on a 320 px grayscale copy of the preview
-  (`BitmapOps.gray`) after each capture and rotation, on the default dispatcher. It returns the card's four corners
+- **Card-edge detection:** `CardEdgeDetector` (pure Kotlin, `domain/scan`) runs on a 320 px red/green/blue copy of the preview
+  (`BitmapOps.channels`) after each capture and rotation, on the default dispatcher. It returns the card's four corners
   (`CropQuad`) for the crop screen to start from, or null when no card-shaped outline is traced (the crop then uses its
   default inset). `BitmapOps.cropQuad` straightens a non-rectangular selection with a perspective transform
   (`Matrix.setPolyToPoly`) on the full-resolution image.
