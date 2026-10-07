@@ -100,7 +100,9 @@ class CameraCaptureTest {
         // Let every recomposition and effect run; the camera must still be open afterwards.
         Thread.sleep(2_000)
         rule.waitForIdle()
-        assertEquals(report(), CameraState.Type.OPEN, state())
+        // Read the state before building the report: the report re-binds the camera to show any binding error.
+        val settled = state()
+        if (settled != CameraState.Type.OPEN) assertEquals(report(), CameraState.Type.OPEN, settled)
         rule.onNodeWithContentDescription(context.getString(R.string.scan_take_photo)).assertIsEnabled()
     }
 }
