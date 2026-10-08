@@ -85,6 +85,72 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: ignore
 
+  # Builds the R8-minified release APK the Play Store gets, signs it with a throw-away key (the real upload key never leaves the
+  # owner's machine), smoke-tests it on an emulator and publishes it to the release-test-apk branch for testing on a phone.
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build release APK (R8 minify and resource shrinking)
+        run: ./gradlew :app:assembleRelease --stacktrace
+
+      - name: Sign with a throw-away test key
+        run: |
+          set -e
+          unsigned=$(ls app/build/outputs/apk/release/*.apk | head -1)
+          bt=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          keytool -genkeypair -keystore /tmp/test.jks -storepass testtest -keypass testtest -alias test \
+            -keyalg RSA -keysize 2048 -validity 30 -dname "CN=VCardly release test" > /dev/null
+          "$bt/apksigner" sign --ks /tmp/test.jks --ks-pass pass:testtest --out /tmp/vcardly-release-test.apk "$unsigned"
+          "$bt/apksigner" verify /tmp/vcardly-release-test.apk
+          ls -la /tmp/vcardly-release-test.apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Smoke-test the release build on an emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back emulated
+          script: tools/release_smoke.sh /tmp/vcardly-release-test.apk
+
+      - name: Publish the release test APK to the release-test-apk branch
+        if: github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'
+        run: |
+          set -e
+          mkdir /tmp/rel && cp /tmp/vcardly-release-test.apk /tmp/rel/
+          cd /tmp/rel
+          sha256sum vcardly-release-test.apk > vcardly-release-test.apk.sha256
+          printf 'Release build (R8 minified, as the Play Store gets it) of commit %s, signed with a throw-away test key, so it cannot update a debug or Play install: uninstall those first. Ads are off unless AdMob IDs are configured.\n' "$GITHUB_SHA" > README.txt
+          git init -q -b release-test-apk
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -q -m "Release test APK from $GITHUB_SHA"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" release-test-apk
+
+      - name: Upload R8 mapping (to read crash stack traces)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-mapping
+          path: app/build/outputs/mapping/release/mapping.txt
+          if-no-files-found: ignore
+
   # Runs the instrumented tests (Room DAOs, repositories) on a real emulator.
   instrumented:
     runs-on: ubuntu-latest
