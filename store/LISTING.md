@@ -71,7 +71,7 @@ your phone, share your own digital card by QR code, and back up with encryption.
 |---|---|---|
 | App icon | 512 × 512 PNG | **done**: `store/graphics/icon-512.png` (same V mark and gradient as the launcher icon) |
 | Feature graphic | 1024 × 500 PNG/JPG | **done**: `store/graphics/feature-graphic.png` (source `feature-graphic.html`, re-render with a headless browser after edits) |
-| Phone screenshots | 2–8, 1080 × 1920 to 1080 × 2400 | take on a real phone with fictional contacts; the CI `ui-screenshots` branch shows which screens look best (Home, scan crop, contact details, follow-ups, My card QR, reports) |
+| Phone screenshots | 2–8, at most 2:1 | **done**: six 1080 × 1920 images in `store/graphics/screenshots/` (caption over a real app screen rendered by CI with fictional data; regenerate with `store/graphics/render-screenshots.js`) |
 
 Suggested screenshot captions: "Scan a card in seconds" · "Straightened automatically" · "Everything about a contact in one
 place" · "Never miss a follow-up" · "Share your card with a QR code" · "Private: no account, no server".

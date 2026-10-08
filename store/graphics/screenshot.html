@@ -1,0 +1,28 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Play Store screenshot: caption above a real app screen (CI render with fictional data). Parameters: ?img=&title=&sub= -->
+<style>
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_bold.ttf); font-weight: 700; }
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_medium.ttf); font-weight: 500; }
+* { margin: 0; box-sizing: border-box; }
+body { width: 1080px; height: 1920px; overflow: hidden; font-family: Jakarta, sans-serif; }
+.bg { position: relative; width: 1080px; height: 1920px; background: linear-gradient(160deg, #14276B 0%, #1D46C7 60%, #2F63F5 100%); overflow: hidden; }
+.glow { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.07); }
+.text { position: absolute; top: 96px; left: 80px; right: 80px; text-align: center; }
+h1 { color: #fff; font-weight: 700; font-size: 74px; line-height: 1.12; letter-spacing: -1.5px; }
+p { color: #C9D6FF; font-weight: 500; font-size: 36px; margin-top: 22px; }
+.phone { position: absolute; left: 50%; top: 420px; transform: translateX(-50%); width: 800px; padding: 18px; border-radius: 64px; background: #0B1433; box-shadow: 0 40px 90px rgba(3,8,30,0.55); }
+.phone img { display: block; width: 764px; border-radius: 48px; }
+</style></head>
+<body><div class="bg">
+  <div class="glow" style="width:700px;height:700px;left:-300px;top:-320px"></div>
+  <div class="glow" style="width:600px;height:600px;right:-260px;bottom:-200px"></div>
+  <div class="text"><h1 id="t"></h1><p id="s"></p></div>
+  <div class="phone"><img id="i"></div>
+</div>
+<script>
+const q = new URLSearchParams(location.search);
+document.getElementById('t').textContent = q.get('title');
+document.getElementById('s').textContent = q.get('sub');
+document.getElementById('i').src = 'src/' + q.get('img') + '.png';
+</script></body></html>
