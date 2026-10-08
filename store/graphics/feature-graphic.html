@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_bold.ttf); font-weight: 700; }
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_medium.ttf); font-weight: 500; }
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_semibold.ttf); font-weight: 600; }
+* { margin: 0; box-sizing: border-box; }
+body { width: 1024px; height: 500px; overflow: hidden; font-family: Jakarta, sans-serif; }
+.bg { position: relative; width: 1024px; height: 500px; background: linear-gradient(120deg, #14276B 0%, #1D46C7 55%, #2F63F5 100%); overflow: hidden; }
+.glow { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.07); }
+.left { position: absolute; left: 72px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; width: 470px; }
+.brand { display: flex; align-items: center; gap: 18px; }
+.mark { width: 84px; height: 84px; border-radius: 22px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); display: grid; place-items: center; }
+.name { color: #fff; font-weight: 700; font-size: 58px; letter-spacing: -1.5px; }
+.tag { color: #fff; font-weight: 600; font-size: 34px; line-height: 1.22; margin-top: 30px; letter-spacing: -0.5px; }
+.sub { color: #C9D6FF; font-weight: 500; font-size: 21px; margin-top: 16px; }
+.stage { position: absolute; right: 70px; top: 70px; width: 400px; height: 360px; }
+.card { position: absolute; left: 30px; top: 70px; width: 340px; height: 200px; border-radius: 16px; background: #fff; transform: rotate(-8deg); box-shadow: 0 30px 60px rgba(5,12,40,0.45); padding: 26px 28px; }
+.logo { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #2F63F5, #1D46C7); }
+.l { height: 12px; border-radius: 6px; background: #DCE3F5; margin-top: 12px; }
+.l.name2 { width: 62%; height: 18px; background: #14276B; margin-top: 20px; }
+.l.a { width: 44%; } .l.b { width: 70%; } .l.c { width: 54%; }
+.frame { position: absolute; left: 30px; top: 70px; width: 340px; height: 200px; transform: rotate(-8deg); border: 3px solid #fff; border-radius: 4px; }
+.h { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: #3B6FFF; border: 5px solid #fff; }
+.h.tl { left: -15px; top: -15px; } .h.tr { right: -15px; top: -15px; } .h.bl { left: -15px; bottom: -15px; } .h.br { right: -15px; bottom: -15px; }
+.chip { position: absolute; right: 8px; bottom: 6px; background: #fff; color: #14276B; font-weight: 700; font-size: 18px; padding: 12px 18px; border-radius: 999px; display: flex; gap: 10px; align-items: center; box-shadow: 0 12px 30px rgba(5,12,40,0.35); }
+.dot { width: 22px; height: 22px; border-radius: 50%; background: #1E9E5A; display: grid; place-items: center; }
+</style></head>
+<body><div class="bg">
+  <div class="glow" style="width:520px;height:520px;left:-160px;top:-260px"></div>
+  <div class="glow" style="width:420px;height:420px;right:-120px;bottom:-240px"></div>
+  <div class="left">
+    <div class="brand">
+      <div class="mark"><svg width="62" height="62" viewBox="28 30 52 48"><path fill="#fff" d="M32,38.9 L45.2,38.9 L56.6,61.2 L50.5,70.6 Z"/><path fill="#B9CBFF" d="M50.5,70.6 L62.8,38.9 L76,38.9 L57.5,70.6 Z"/></svg></div>
+      <div class="name">VCardly</div>
+    </div>
+    <div class="tag">Scan visiting cards.<br>Never miss a follow-up.</div>
+    <div class="sub">Private: your contacts stay on your phone.</div>
+  </div>
+  <div class="stage">
+    <div class="card"><div class="logo"></div><div class="l name2"></div><div class="l a"></div><div class="l b"></div><div class="l c"></div></div>
+    <div class="frame"><div class="h tl"></div><div class="h tr"></div><div class="h bl"></div><div class="h br"></div></div>
+    <div class="chip"><span class="dot"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l2.5 2.5L10 3.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg></span>Card found</div>
+  </div>
+</div></body></html>
