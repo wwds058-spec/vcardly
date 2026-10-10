@@ -29,6 +29,9 @@ val testBannerId = "ca-app-pub-3940256099942544/9214589741"
 val releaseAppId = secrets.getProperty("admob.appId") ?: testAppId
 val releaseBannerId = secrets.getProperty("admob.bannerUnitId") ?: testBannerId
 val adsConfiguredForRelease = secrets.containsKey("admob.appId") && secrets.containsKey("admob.bannerUnitId")
+// VCardly Pro is only sold once its products exist in Play Console. Until secrets.properties says pro.forSale=true, every
+// feature is free: no scan limit, no locked exports, no upgrade prompts (a paywall nobody can pay would be broken).
+val proForSale = secrets.getProperty("pro.forSale")?.trim() == "true"
 
 // Optional single-ABI build for sideloading, e.g. ./gradlew :app:assembleDebug -Pabi=arm64-v8a
 // (nearly all phones are arm64; x86 emulators are not). Also stores native libs compressed, which makes the APK much smaller.
@@ -47,6 +50,7 @@ android {
         // Every upload to Play needs a higher versionCode. CI passes its run number (VERSION_CODE); local builds use 1.
         versionCode = (System.getenv("VERSION_CODE") ?: "1").toInt()
         versionName = "1.0.0"
+        buildConfigField("boolean", "PRO_FOR_SALE", "$proForSale")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["useTestStorageService"] = "true"
         if (abiFilter != null) ndk { abiFilters += abiFilter.split(",").map { it.trim() } }

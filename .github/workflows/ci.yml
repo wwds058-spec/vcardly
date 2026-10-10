@@ -143,10 +143,14 @@ jobs:
           ls -la /tmp/vcardly-release-test.apk
           # Without AdMob IDs the release must not ask for the advertising ID (Play Console declarations depend on it).
           "$bt/aapt2" dump badging /tmp/vcardly-release-test.apk | grep -E "^(package|targetSdkVersion|sdkVersion)" || true
-          if "$bt/aapt2" dump permissions /tmp/vcardly-release-test.apk | grep -q "AD_ID"; then
-            echo "::error::The release build still declares the AD_ID permission although ads are not configured."; exit 1
-          fi
-          echo "Release permissions:"; "$bt/aapt2" dump permissions /tmp/vcardly-release-test.apk
+          perms=$("$bt/aapt2" dump permissions /tmp/vcardly-release-test.apk)
+          echo "Release permissions:"; echo "$perms"
+          for p in com.google.android.gms.permission.AD_ID android.permission.ACCESS_ADSERVICES_AD_ID \
+                   android.permission.ACCESS_ADSERVICES_ATTRIBUTION android.permission.ACCESS_ADSERVICES_TOPICS; do
+            if echo "$perms" | grep -q "'$p'"; then
+              echo "::error::The release build declares $p although ads are not configured."; exit 1
+            fi
+          done
 
       - name: Enable KVM
         run: |

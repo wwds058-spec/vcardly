@@ -1,6 +1,6 @@
 # VCardly — Play Store checklist
 
-Work through this before the first production release. Items marked **(you)** need your accounts or decisions; the code side is
+Step-by-step Play Console walkthrough with every answer: `store/PLAY_CONSOLE_STEPS.md`. Work through this before the first production release. Items marked **(you)** need your accounts or decisions; the code side is
 already prepared. Details for billing, ads and declarations: `docs/PLAY_CONSOLE_SETUP.md`. Drive: `docs/GOOGLE_DRIVE_SETUP.md`.
 
 ## Build

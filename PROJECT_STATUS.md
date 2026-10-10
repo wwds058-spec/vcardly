@@ -105,6 +105,14 @@ prompt, Play Billing and AdMob (need your accounts), the PDF layout, TalkBack on
   after `await()` ("Not in application's main thread", shown as "The camera could not be started"). Both fixed; a failed
   photo now shows a message. `CameraCaptureTest` opens the real screen on the CI emulator (now started with
   `-camera-back emulated`) and checks the camera stays open; it failed before each fix and passes after (run 37429798155).
+- **Play Store release preparation (owner has a Play Console account)**: target and compile SDK 36 (Play requires API 36
+  since 31 August 2026; AGP 8.11.1), versionName 1.0.0, versionCode = CI run number. CI signs the APK and builds the `.aab`
+  with the upload key from repository secrets (owner adds them; this environment cannot write Actions secrets) and
+  publishes bundle + R8 mapping to the `release-aab` branch. A release without AdMob IDs removes the advertising-ID and
+  AdServices permissions and the ads start-up provider (CI fails if they return). Until `pro.forSale=true`
+  (secrets.properties), everything is free on Android too: no scan limit, exports open, no upgrade prompts, and the Privacy
+  screen says so (owner chose "free for now" for iPhone; a paywall nobody can pay would be broken). Step-by-step Play
+  Console guide: `store/PLAY_CONSOLE_STEPS.md`.
 - **Android perspective correction**: the crop is four free corners (`CropQuad`, `CropMath`: convex, no side under 10%,
   tested). A card photographed at an angle is straightened into a rectangle with `Matrix.setPolyToPoly` at full
   resolution, sized by the longer of each pair of opposite sides; an upright rectangle stays a plain crop. Screenshot

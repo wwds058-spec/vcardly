@@ -85,6 +85,8 @@ import com.yasin.vcardly.presentation.common.LocalAuthGate
 data class SettingsUiState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val isPro: Boolean = false,
+    /** False until VCardly Pro is sold (BuildConfig.PRO_FOR_SALE): everything is free, so no upgrade prompts. */
+    val proForSale: Boolean = true,
     val security: SecuritySettings = SecuritySettings(),
     val notificationsOn: Boolean = true,
     val exactAlarmsOn: Boolean = true,
@@ -150,6 +152,7 @@ fun SettingsScreen(
             exactAlarmsOn = exactOk,
             canOpenExactSettings = exactIntent != null,
             showAdPrivacy = !isPro && viewModel.ads.enabled && viewModel.ads.privacyOptionsRequired() && activity != null,
+            proForSale = com.yasin.vcardly.BuildConfig.PRO_FOR_SALE,
             version = BuildConfig.VERSION_NAME,
         ),
         actions = SettingsActions(
@@ -208,7 +211,7 @@ fun SettingsContent(state: SettingsUiState, actions: SettingsActions) {
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = MaterialTheme.spacing.screen).padding(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            ProBanner(state.isPro, actions.onOpenPro)
+            if (state.proForSale) ProBanner(state.isPro, actions.onOpenPro)
 
             Section(stringResource(R.string.settings_section_general)) {
                 VCardlyNavigationRow(
@@ -237,13 +240,15 @@ fun SettingsContent(state: SettingsUiState, actions: SettingsActions) {
                 VCardlyNavigationRow(Icons.Rounded.Badge, colors.navy, stringResource(R.string.settings_my_card), description = stringResource(R.string.settings_my_card_hint), onClick = actions.onOpenMyCard)
             }
 
-            Section(stringResource(R.string.settings_section_subscription)) {
-                VCardlyNavigationRow(
-                    Icons.Rounded.WorkspacePremium, colors.orange,
-                    stringResource(if (state.isPro) R.string.pro_settings_active else R.string.pro_settings_upgrade),
-                    description = stringResource(if (state.isPro) R.string.settings_pro_hint_active else R.string.settings_pro_hint),
-                    onClick = actions.onOpenPro,
-                )
+            if (state.proForSale || state.showAdPrivacy) Section(stringResource(R.string.settings_section_subscription)) {
+                if (state.proForSale) {
+                    VCardlyNavigationRow(
+                        Icons.Rounded.WorkspacePremium, colors.orange,
+                        stringResource(if (state.isPro) R.string.pro_settings_active else R.string.pro_settings_upgrade),
+                        description = stringResource(if (state.isPro) R.string.settings_pro_hint_active else R.string.settings_pro_hint),
+                        onClick = actions.onOpenPro,
+                    )
+                }
                 if (state.showAdPrivacy) {
                     VCardlyNavigationRow(Icons.Rounded.Tune, colors.navy, stringResource(R.string.ads_privacy_options), description = stringResource(R.string.settings_ad_privacy_hint), onClick = actions.onAdPrivacy)
                 }

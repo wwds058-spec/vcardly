@@ -1,5 +1,6 @@
 package com.yasin.vcardly.core.billing
 
+import com.yasin.vcardly.BuildConfig
 import com.yasin.vcardly.domain.entitlement.EntitlementPolicy
 import com.yasin.vcardly.domain.entitlement.EntitlementState
 import com.yasin.vcardly.domain.entitlement.Feature
@@ -56,6 +57,7 @@ class EntitlementManager @Inject constructor(
 
     /** How many card scans this user may still start this month. Counts contacts created by scanning since the 1st. */
     suspend fun scanAllowance(): ScanAllowance {
+        if (!BuildConfig.PRO_FOR_SALE) return ScanAllowance.Unlimited
         val since = EntitlementPolicy.monthStart(clock.instant(), clock.zone)
         val used = if (state.value.isPro) 0 else contacts.countScannedSince(since)
         return EntitlementPolicy.scanAllowance(state.value, used)

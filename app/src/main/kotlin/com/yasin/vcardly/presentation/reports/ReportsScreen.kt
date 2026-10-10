@@ -80,7 +80,7 @@ data class ReportsActions(
 @Composable
 fun ReportsScreen(onNavigateUp: () -> Unit, onUpgrade: () -> Unit, viewModel: ReportsViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
+    val isPro by viewModel.exportsUnlocked.collectAsStateWithLifecycle()
 
     // System file pickers: the user chooses where each file goes; the app needs no storage permission.
     val pdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { it?.let { u -> viewModel.export(ExportFormat.PDF, u) } }

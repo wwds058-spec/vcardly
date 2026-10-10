@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.yasin.vcardly.BuildConfig
 import com.yasin.vcardly.R
 import com.yasin.vcardly.core.designsystem.component.IconBadge
 import com.yasin.vcardly.core.designsystem.component.VCardlyCard
@@ -45,11 +46,21 @@ private data class PrivacySection(val icon: ImageVector, @StringRes val title: I
  * Plain-language statement of what the app does with data. It must stay true: when a feature changes what is collected or
  * sent (ads, billing, cloud backup), this text is updated in the same change.
  */
-private val sections = listOf(
+// A build without ads and without Pro for sale (the first Play release) says exactly that instead of describing ads and
+// purchases it does not have.
+private val monetised = BuildConfig.ADS_ENABLED || BuildConfig.PRO_FOR_SALE
+
+private val sections = listOfNotNull(
     PrivacySection(Icons.Rounded.PhoneAndroid, R.string.privacy_stays_title, R.string.privacy_stays_body),
-    PrivacySection(Icons.Rounded.NoAccounts, R.string.privacy_no_account_title, R.string.privacy_no_account_body),
-    PrivacySection(Icons.Rounded.VerifiedUser, R.string.privacy_permissions_title, R.string.privacy_permissions_body),
-    PrivacySection(Icons.Rounded.Campaign, R.string.privacy_ads_title, R.string.privacy_ads_body),
+    PrivacySection(
+        Icons.Rounded.NoAccounts, R.string.privacy_no_account_title,
+        if (monetised) R.string.privacy_no_account_body else R.string.privacy_no_account_body_basic,
+    ),
+    PrivacySection(
+        Icons.Rounded.VerifiedUser, R.string.privacy_permissions_title,
+        if (monetised) R.string.privacy_permissions_body else R.string.privacy_permissions_body_basic,
+    ),
+    if (monetised) PrivacySection(Icons.Rounded.Campaign, R.string.privacy_ads_title, R.string.privacy_ads_body) else null,
     PrivacySection(Icons.Rounded.DocumentScanner, R.string.privacy_ocr_title, R.string.privacy_ocr_body),
     PrivacySection(Icons.Rounded.Share, R.string.privacy_sharing_title, R.string.privacy_sharing_body),
     PrivacySection(Icons.Rounded.Backup, R.string.privacy_backup_title, R.string.privacy_backup_body),

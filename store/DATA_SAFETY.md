@@ -8,7 +8,26 @@ guidance pages for each SDK, which can change:
 - ML Kit: developers.google.com/ml-kit/android-data-disclosure
 - Google Play Billing: developer.android.com/google/play/billing (data safety section)
 
-These answers assume AdMob is configured (free plan shows ads). If you release **without** ads, remove the AdMob rows.
+## First release (no ads) — use this now
+
+The build CI produces has no AdMob IDs: the ads SDK never starts and the advertising-ID permission is removed (CI fails if
+it comes back). Only ML Kit's anonymous diagnostics leave the device.
+
+| Question | Answer |
+|---|---|
+| Does your app collect or share any of the required user data types? | Yes |
+| Is all of the user data collected by your app encrypted in transit? | Yes |
+| Do you provide a way for users to request that their data is deleted? | No (no account and no server data; everything is on the phone and is deleted by "Erase all data" or uninstalling) |
+
+| Data type | Collected | Shared | Ephemeral? | Required or optional | Purposes |
+|---|---|---|---|---|---|
+| App info and performance → Diagnostics | Yes | No | No | Required (users cannot turn it off) | Analytics |
+
+Everything else: **not collected** (see the list at the end). Advertising ID: **No**.
+
+## Later, with ads (AdMob configured)
+
+The answers below apply once AdMob is configured (free plan shows ads).
 
 ## Overview questions
 

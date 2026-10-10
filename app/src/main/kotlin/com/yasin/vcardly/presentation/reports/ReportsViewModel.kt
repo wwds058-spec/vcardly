@@ -65,8 +65,9 @@ class ReportsViewModel @Inject constructor(
     private val writer: ExportWriter,
     private val entitlements: com.yasin.vcardly.core.billing.EntitlementManager,
 ) : ViewModel() {
-    val isPro: StateFlow<Boolean> = entitlements.state
-        .map { it.isPro }
+    /** PDF and Excel exports: open to everyone while Pro is not for sale, otherwise Pro only. */
+    val exportsUnlocked: StateFlow<Boolean> = entitlements.state
+        .map { it.isPro || !com.yasin.vcardly.BuildConfig.PRO_FOR_SALE }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val range = MutableStateFlow(ReportRange.LAST_12_MONTHS)

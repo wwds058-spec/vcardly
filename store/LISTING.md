@@ -49,8 +49,7 @@ IMPORT AND EXPORT
 
 Accessible: works with TalkBack and the largest font sizes, in light and dark themes.
 
-The free plan includes a monthly scan allowance and a banner ad on the Home screen. VCardly Pro unlocks unlimited scans,
-PDF and Excel reports, and removes ads.
+Free, with no ads and no limits: unlimited scans and every export included.
 
 ## What's new (first release, max 500)
 
@@ -63,7 +62,8 @@ your phone, share your own digital card by QR code, and back up with encryption.
 - Tags to pick in Play Console: Business card scanner, Contacts, CRM
 - Contact email: [YOUR SUPPORT EMAIL] (shown publicly on the listing)
 - Privacy policy URL: `https://wwds058-spec.github.io/vcardly/site/privacy.html` once published (see `docs/PLAY_CONSOLE_SETUP.md`)
-- Contains ads: Yes (free plan, once AdMob is configured). In-app purchases: Yes (once products are created).
+- Contains ads: **No** (first release). In-app purchases: **No** (first release). Change both, and this description, in
+  the update that turns on AdMob or VCardly Pro.
 
 ## Graphics you still need
 
