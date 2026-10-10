@@ -41,7 +41,7 @@ SHARE YOUR OWN CARD
 PRIVATE BY DESIGN
 • No account and no VCardly server: your contacts never leave your phone unless you share or export them.
 • Optional App lock with fingerprint, face or PIN, and screen privacy.
-• Encrypted backups you control, which also restore on iPhone.
+• Encrypted backups that you control and keep wherever you choose.
 
 IMPORT AND EXPORT
 • Import contacts from .vcf files and export all contacts to one file.

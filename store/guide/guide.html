@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VCardly on Google Play: the complete guide</title>
+<style>
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_regular.ttf); font-weight: 400; }
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_medium.ttf); font-weight: 500; }
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_semibold.ttf); font-weight: 600; }
+@font-face { font-family: Jakarta; src: url(../../app/src/main/res/font/plus_jakarta_sans_bold.ttf); font-weight: 700; }
+@page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+* { box-sizing: border-box; }
+body { font-family: Jakarta, sans-serif; color: #172033; font-size: 10.5pt; line-height: 1.5; margin: 0; }
+h1 { font-size: 22pt; color: #14276B; margin: 0 0 6px; line-height: 1.15; }
+h2 { font-size: 16pt; color: #14276B; margin: 0 0 4px; line-height: 1.2; }
+h3 { font-size: 12pt; color: #1D46C7; margin: 18px 0 6px; }
+p { margin: 6px 0; }
+.part { page-break-before: always; }
+.part-tag { display: inline-block; background: #E6ECFF; color: #1D46C7; font-weight: 700; font-size: 9pt; letter-spacing: 1px; padding: 3px 10px; border-radius: 99px; margin-bottom: 8px; }
+.lead { color: #4A5470; font-size: 11pt; margin-bottom: 14px; }
+ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 10px 0; }
+ol.steps > li { counter-increment: s; position: relative; padding: 8px 0 8px 40px; border-bottom: 1px solid #EEF1F7; page-break-inside: avoid; }
+ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 7px; width: 26px; height: 26px; border-radius: 50%; background: #1D46C7; color: #fff; font-weight: 700; font-size: 10pt; text-align: center; line-height: 26px; }
+.click { font-weight: 700; color: #14276B; background: #F1F4FB; border: 1px solid #DCE3F2; border-radius: 6px; padding: 0 6px; white-space: nowrap; }
+.type { background: #0F1A3D; color: #F1F5FF; border-radius: 10px; padding: 10px 14px; margin: 8px 0; font-family: "DejaVu Sans Mono", monospace; font-size: 9pt; white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; }
+.type .label { display: block; font-family: Jakarta, sans-serif; color: #9DB2FF; font-size: 8pt; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+.box { border-radius: 12px; padding: 10px 14px; margin: 10px 0; page-break-inside: avoid; }
+.tip { background: #E9F8EF; border-left: 5px solid #1E9E5A; }
+.warn { background: #FFF3E8; border-left: 5px solid #E07A12; }
+.stop { background: #FDECEE; border-left: 5px solid #C9304A; }
+.box b.t { display: block; margin-bottom: 2px; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 9.5pt; page-break-inside: avoid; }
+th, td { text-align: left; vertical-align: top; padding: 7px 8px; border-bottom: 1px solid #E3E8F2; }
+th { background: #F1F4FB; color: #14276B; font-weight: 700; }
+td.ans { font-weight: 700; color: #14276B; }
+.cover { height: 255mm; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(150deg, #14276B, #1D46C7 60%, #2F63F5); color: #fff; border-radius: 22px; padding: 26mm 18mm; }
+.cover h1 { color: #fff; font-size: 34pt; }
+.cover .sub { font-size: 14pt; color: #C9D6FF; margin-top: 10px; }
+.cover .mark { width: 70px; height: 70px; border-radius: 18px; background: rgba(255,255,255,0.14); display: grid; place-items: center; margin-bottom: 26px; }
+.cover .meta { color: #C9D6FF; font-size: 10pt; }
+.toc li { margin: 4px 0; }
+.toc { columns: 1; }
+.thumbs { display: flex; gap: 10px; align-items: flex-end; margin: 8px 0; }
+.thumbs img { border-radius: 8px; border: 1px solid #DCE3F2; }
+.check li { list-style: none; margin: 5px 0; }
+.check li::before { content: "☐  "; color: #1D46C7; font-weight: 700; }
+.small { font-size: 9pt; color: #4A5470; }
+a { color: #1D46C7; word-break: break-all; }
+.flow { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
+.flow span { background: #F1F4FB; border: 1px solid #DCE3F2; border-radius: 99px; padding: 4px 10px; font-size: 9pt; font-weight: 600; color: #14276B; }
+.flow span.arrow { background: none; border: none; color: #8A93AD; padding: 4px 0; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================ COVER -->
+<div class="cover">
+  <div>
+    <div class="mark"><svg width="50" height="50" viewBox="28 30 52 48"><path fill="#fff" d="M32,38.9 L45.2,38.9 L56.6,61.2 L50.5,70.6 Z"/><path fill="#B9CBFF" d="M50.5,70.6 L62.8,38.9 L76,38.9 L57.5,70.6 Z"/></svg></div>
+    <h1>Publishing VCardly on Google Play</h1>
+    <div class="sub">The complete A to Z guide, from an empty Play Console account to your app live in the Play Store. Every click, every answer, every text to paste.</div>
+  </div>
+  <div class="meta">
+    App: VCardly: Business Card Scanner · package <b>com.yasin.vcardly</b> · version 1.0.0<br>
+    Prepared {{DATE}} · Screens and button names in Play Console change from time to time; if a label differs slightly, look for the closest match.
+  </div>
+</div>
+
+<!-- ================================================================ CONTENTS -->
+<div class="part">
+  <h2>What this guide covers</h2>
+  <p class="lead">Follow the parts in order. Each part says how long it takes and ends with what you should see when it is done.</p>
+  <div class="flow"><span>A. Upload key</span><span class="arrow">→</span><span>B. App bundle (.aab)</span><span class="arrow">→</span><span>C. Privacy policy</span><span class="arrow">→</span><span>D. Create the app</span><span class="arrow">→</span><span>E. App content</span><span class="arrow">→</span><span>F. Store listing</span><span class="arrow">→</span><span>G. Closed test</span><span class="arrow">→</span><span>H. Production</span><span class="arrow">→</span><span>I. Updates</span></div>
+  <ol class="toc">
+    <li><b>Part A</b> · Put your upload key into GitHub (5 minutes)</li>
+    <li><b>Part B</b> · Get the Play Store file: the app bundle .aab (10 minutes, automatic)</li>
+    <li><b>Part C</b> · Publish your privacy policy (10 minutes)</li>
+    <li><b>Part D</b> · Create the app in Play Console (5 minutes)</li>
+    <li><b>Part E</b> · App content: the "Set up your app" tasks, with every answer (30 minutes)</li>
+    <li><b>Part F</b> · Store listing: name, descriptions, icon, graphics, screenshots, category, tags (20 minutes)</li>
+    <li><b>Part G</b> · Closed test with 12 testers for 14 days (required for new personal accounts)</li>
+    <li><b>Part H</b> · Production: apply, release, roll out</li>
+    <li><b>Part I</b> · Updating the app later</li>
+    <li><b>Part J</b> · Problems and how to fix them</li>
+    <li><b>Part K</b> · One-page checklist</li>
+  </ol>
+
+  <h3>Words you will meet</h3>
+  <table>
+    <tr><th style="width:28%">Word</th><th>What it means</th></tr>
+    <tr><td>Play Console</td><td>Google's website for developers: <a href="https://play.google.com/console">play.google.com/console</a>. Everything in this guide happens there or on GitHub.</td></tr>
+    <tr><td>App bundle (.aab)</td><td>The file you upload to Google. Google turns it into the right download for each phone. (The .apk files you installed for testing are a different format; Play wants the .aab.)</td></tr>
+    <tr><td>Upload key</td><td>A private digital signature that proves an upload comes from you. You received it as <b>vcardly-upload.jks</b> plus a private text file. Keep both safe.</td></tr>
+    <tr><td>Play App Signing</td><td>Google keeps the final signing key of your app; your upload key only signs what you upload. If you ever lose the upload key, Google support can reset it.</td></tr>
+    <tr><td>Track</td><td>Where a release goes: <b>Internal testing</b> (up to 100 testers, instant), <b>Closed testing</b> (chosen testers), <b>Production</b> (everyone).</td></tr>
+    <tr><td>versionCode</td><td>An internal build number that must be higher in every upload. Our automatic build (CI) raises it for you.</td></tr>
+    <tr><td>Package name</td><td><b>com.yasin.vcardly</b>. Fixed forever once uploaded; it is already set in the app.</td></tr>
+  </table>
+
+  <h3>What you already have</h3>
+  <table>
+    <tr><th style="width:34%">Item</th><th>Where</th></tr>
+    <tr><td>Upload key + its 4 values</td><td>The two private files sent in our chat: <b>VCardly-upload-key-PRIVATE.txt</b> and <b>vcardly-upload.jks</b></td></tr>
+    <tr><td>App icon 512 × 512</td><td><a href="https://github.com/wwds058-spec/vcardly/raw/claude/happy-goodall-tjw9vc/store/graphics/icon-512.png">store/graphics/icon-512.png</a></td></tr>
+    <tr><td>Feature graphic 1024 × 500</td><td><a href="https://github.com/wwds058-spec/vcardly/raw/claude/happy-goodall-tjw9vc/store/graphics/feature-graphic.png">store/graphics/feature-graphic.png</a></td></tr>
+    <tr><td>6 phone screenshots</td><td><a href="https://github.com/wwds058-spec/vcardly/tree/claude/happy-goodall-tjw9vc/store/graphics/screenshots">store/graphics/screenshots</a> (01 to 06)</td></tr>
+    <tr><td>All listing texts</td><td>Printed in Part F of this guide, ready to copy</td></tr>
+    <tr><td>Privacy policy page</td><td><a href="https://github.com/wwds058-spec/vcardly/blob/claude/happy-goodall-tjw9vc/site/privacy.html">site/privacy.html</a> (Part C publishes it)</td></tr>
+  </table>
+  <div class="thumbs">
+    <img src="../graphics/icon-512.png" style="width:70px">
+    <img src="../graphics/feature-graphic.png" style="width:240px">
+    <img src="../graphics/screenshots/01_scan.png" style="width:60px"><img src="../graphics/screenshots/02_contact.png" style="width:60px"><img src="../graphics/screenshots/03_followups.png" style="width:60px"><img src="../graphics/screenshots/04_mycard.png" style="width:60px"><img src="../graphics/screenshots/05_reports.png" style="width:60px"><img src="../graphics/screenshots/06_home.png" style="width:60px">
+  </div>
+  <div class="box tip"><b class="t">On a computer</b>Do Parts A to H on a computer (laptop or desktop) with a normal browser. Play Console works on a phone, but uploading files and long forms are much easier on a computer.</div>
+</div>
+
+<!-- ================================================================ PART A -->
+<div class="part">
+  <span class="part-tag">PART A · 5 MINUTES</span>
+  <h2>Put your upload key into GitHub</h2>
+  <p class="lead">The automatic build (CI) signs the Play Store file with your upload key. It reads the key from your repository's encrypted "Secrets", where nobody can see it, not even in the code.</p>
+  <ol class="steps">
+    <li>Open the private file <b>VCardly-upload-key-PRIVATE.txt</b> on your computer (any text editor, for example Notepad).</li>
+    <li>In the browser, sign in to GitHub and open:<div class="type"><span class="label">OPEN THIS ADDRESS</span>https://github.com/wwds058-spec/vcardly/settings/secrets/actions</div>(Or: your repository → <span class="click">Settings</span> → left menu <span class="click">Secrets and variables</span> → <span class="click">Actions</span>.)</li>
+    <li>Click <span class="click">New repository secret</span>.</li>
+    <li>In <b>Name</b> type exactly <b>UPLOAD_KEYSTORE_BASE64</b>. In <b>Secret</b> paste the long line under "1)" in the private file (it is one very long line; select all of it). Click <span class="click">Add secret</span>.</li>
+    <li>Click <span class="click">New repository secret</span> again: Name <b>UPLOAD_KEYSTORE_PASSWORD</b>, Secret: the password from the private file. <span class="click">Add secret</span>.</li>
+    <li>Again: Name <b>UPLOAD_KEY_ALIAS</b>, Secret: <b>vcardly-upload</b>. <span class="click">Add secret</span>.</li>
+    <li>Again: Name <b>UPLOAD_KEY_PASSWORD</b>, Secret: the same password. <span class="click">Add secret</span>.</li>
+  </ol>
+  <div class="box tip"><b class="t">Done when</b>The Secrets page lists four names: UPLOAD_KEY_ALIAS, UPLOAD_KEY_PASSWORD, UPLOAD_KEYSTORE_BASE64, UPLOAD_KEYSTORE_PASSWORD. GitHub never shows the values again; that is normal.</div>
+  <div class="box stop"><b class="t">Keep the key private</b>Never post the private file or the .jks file anywhere public, never put them in the code, never email them to anyone. Save a copy in a password manager or a private drive folder.</div>
+</div>
+
+<!-- ================================================================ PART B -->
+<div class="part">
+  <span class="part-tag">PART B · 10 MINUTES (AUTOMATIC)</span>
+  <h2>Get the Play Store file (.aab)</h2>
+  <p class="lead">Now that the key is in place, ask the automatic build to run once more. It makes the signed app bundle and puts it at a fixed download address.</p>
+  <ol class="steps">
+    <li>Open <a href="https://github.com/wwds058-spec/vcardly/actions">github.com/wwds058-spec/vcardly/actions</a>.</li>
+    <li>Click the newest run at the top of the list (named after the latest change).</li>
+    <li>Top right: <span class="click">Re-run jobs</span> → <span class="click">Re-run all jobs</span> → confirm.</li>
+    <li>Wait about 10 to 15 minutes until every job shows a green tick ✓ (build, instrumented, release, apk-arm64, ios).</li>
+    <li>Download the bundle and its mapping file:<div class="type"><span class="label">APP BUNDLE (UPLOAD THIS TO PLAY)</span>https://github.com/wwds058-spec/vcardly/raw/release-aab/vcardly-release.aab</div><div class="type"><span class="label">MAPPING FILE (UPLOAD LATER, PART G STEP 13)</span>https://github.com/wwds058-spec/vcardly/raw/release-aab/mapping.txt</div></li>
+  </ol>
+  <div class="box tip"><b class="t">Done when</b>You have <b>vcardly-release.aab</b> (about 25 to 45 MB) and <b>mapping.txt</b> on your computer.</div>
+  <div class="box warn"><b class="t">If the release job is red, or the link says 404</b>A secret name has a typo, or a value was not pasted completely. Check the four names in Part A (they must match exactly, all capitals), fix it with <span class="click">Update</span> next to the secret, and re-run. If it still fails, send the red job's name to Claude.</div>
+  <p class="small">Every later change to the app makes a new bundle at the same address with a higher versionCode, so for updates you just download again.</p>
+</div>
+
+<!-- ================================================================ PART C -->
+<div class="part">
+  <span class="part-tag">PART C · 10 MINUTES</span>
+  <h2>Publish your privacy policy</h2>
+  <p class="lead">Google requires a public web page with your privacy policy. It is already written (it matches exactly what the app does); you fill in three details and switch on free GitHub hosting.</p>
+  <h3>C1. Fill in your details</h3>
+  <ol class="steps">
+    <li>Open <a href="https://github.com/wwds058-spec/vcardly/blob/claude/happy-goodall-tjw9vc/site/privacy.html">the privacy page file on GitHub</a>.</li>
+    <li>Click the pencil icon <span class="click">✎ Edit this file</span> (top right of the file).</li>
+    <li>Press Ctrl+F (Cmd+F on Mac) to find and replace these three placeholders, including the square brackets:
+      <table>
+        <tr><th>Find</th><th>Replace with</th></tr>
+        <tr><td>[YOUR NAME OR BUSINESS NAME]</td><td>your name or your business name, e.g. <i>Yasin Khan</i> or <i>Your Company Pvt Ltd</i></td></tr>
+        <tr><td>[YOUR SUPPORT EMAIL]</td><td>an email you read, shown publicly (a separate support address is a good idea)</td></tr>
+        <tr><td>[DATE YOU PUBLISH]</td><td>today's date, e.g. <i>10 October 2026</i></td></tr>
+      </table>
+    </li>
+    <li>Click <span class="click">Commit changes…</span> → keep "Commit directly to the claude/happy-goodall-tjw9vc branch" → <span class="click">Commit changes</span>.</li>
+  </ol>
+  <h3>C2. Switch on GitHub Pages (free hosting)</h3>
+  <ol class="steps">
+    <li>Open <a href="https://github.com/wwds058-spec/vcardly/settings/pages">github.com/wwds058-spec/vcardly/settings/pages</a>.</li>
+    <li>Under <b>Build and deployment</b> → Source: <span class="click">Deploy from a branch</span>.</li>
+    <li>Branch: choose <b>claude/happy-goodall-tjw9vc</b>, folder <b>/ (root)</b> → <span class="click">Save</span>.</li>
+    <li>Wait 1 to 3 minutes, then open the page and check your name and email appear:<div class="type"><span class="label">YOUR PRIVACY POLICY ADDRESS (USED IN PART E)</span>https://wwds058-spec.github.io/vcardly/site/privacy.html</div></li>
+  </ol>
+  <div class="box warn"><b class="t">Your repository is public</b>Anyone can see the app's code on GitHub. That is fine for publishing, and it is what makes free GitHub Pages work. Your key is safe because it is in Secrets, not in the code.</div>
+</div>
+
+<!-- ================================================================ PART D -->
+<div class="part">
+  <span class="part-tag">PART D · 5 MINUTES</span>
+  <h2>Create the app in Play Console</h2>
+  <ol class="steps">
+    <li>Open <a href="https://play.google.com/console">play.google.com/console</a> and sign in with your developer account.</li>
+    <li>Left menu <span class="click">Home</span> → button <span class="click">Create app</span>.</li>
+    <li>Fill in the form:
+      <table>
+        <tr><th style="width:36%">Field</th><th>Answer</th></tr>
+        <tr><td>App name</td><td class="ans">VCardly: Business Card Scanner</td></tr>
+        <tr><td>Default language</td><td class="ans">English (United States) – en-US</td></tr>
+        <tr><td>App or game</td><td class="ans">App</td></tr>
+        <tr><td>Free or paid</td><td class="ans">Free</td></tr>
+        <tr><td>Declarations</td><td>Tick <b>Developer Program Policies</b> and <b>US export laws</b> (and Play App Signing terms if shown)</td></tr>
+      </table>
+    </li>
+    <li>Click <span class="click">Create app</span>. You land on the app's <b>Dashboard</b>.</li>
+  </ol>
+  <div class="box warn"><b class="t">Free is permanent</b>Once an app is published as free it can never become a paid download. That is fine for VCardly: Pro will be an optional in-app purchase later, which is allowed in a free app.</div>
+  <div class="box tip"><b class="t">Done when</b>The Dashboard shows sections such as "Start testing now", "Set up your app" and "Release your app", each with a list of tasks. The next parts go through them.</div>
+</div>
+
+<!-- ================================================================ PART E -->
+<div class="part">
+  <span class="part-tag">PART E · 30 MINUTES</span>
+  <h2>App content: the "Set up your app" tasks</h2>
+  <p class="lead">Dashboard → <b>Set up your app</b> → <span class="click">View tasks</span>. Do each task below; each one ends with <span class="click">Save</span>. (All of them are also under left menu <b>Policy and programmes → App content</b>.)</p>
+
+  <h3>E1. Privacy policy</h3>
+  <p>Paste the address from Part C → <span class="click">Save</span>.</p>
+  <div class="type"><span class="label">PRIVACY POLICY URL</span>https://wwds058-spec.github.io/vcardly/site/privacy.html</div>
+
+  <h3>E2. App access</h3>
+  <p>Choose <b>All functionality in my app is available without any access restrictions</b>. (There is no login or account in VCardly.) → <span class="click">Save</span>.</p>
+
+  <h3>E3. Ads</h3>
+  <p>Choose <b>No, my app does not contain ads</b> → <span class="click">Save</span>. This is true for this version: ads are not switched on and the advertising permissions are removed from the app.</p>
+
+  <h3>E4. Content rating</h3>
+  <ol class="steps">
+    <li><span class="click">Start questionnaire</span>. Email address: your support email. Category: <b>All Other App Types</b> (VCardly is a business utility) → <span class="click">Next</span>.</li>
+    <li>Answer <b>No</b> to every question about violence, fear, sexuality, nudity, language, controlled substances (drugs, alcohol, tobacco), crude humour and gambling.</li>
+    <li>Miscellaneous / interactive questions:
+      <table>
+        <tr><th style="width:62%">Question (wording may vary)</th><th>Answer</th></tr>
+        <tr><td>Can users interact or exchange content with other users (chat, posting, sharing photos with other users)?</td><td class="ans">No</td></tr>
+        <tr><td>Does the app share the user's current physical location with other users?</td><td class="ans">No</td></tr>
+        <tr><td>Does the app allow users to purchase digital goods?</td><td class="ans">No</td></tr>
+        <tr><td>Does the app contain a web browser / unrestricted internet access?</td><td class="ans">No</td></tr>
+        <tr><td>Is the app a web browser or search engine?</td><td class="ans">No</td></tr>
+      </table>
+    </li>
+    <li><span class="click">Save</span> → <span class="click">Next</span> → check the summary → <span class="click">Submit</span>. Expected rating: suitable for everyone (for example "3+", "Everyone").</li>
+  </ol>
+
+  <h3>E5. Target audience and content</h3>
+  <ol class="steps">
+    <li>Target age: tick only <b>18 and over</b> → <span class="click">Next</span>.</li>
+    <li>"Could your store listing unintentionally appeal to children?": <b>No</b> → <span class="click">Next</span> → <span class="click">Save</span>.</li>
+  </ol>
+
+  <h3>E6. Short questions</h3>
+  <table>
+    <tr><th style="width:55%">Task</th><th>Answer</th></tr>
+    <tr><td>News apps</td><td class="ans">No, my app is not a news app</td></tr>
+    <tr><td>COVID-19 contact tracing and status apps</td><td class="ans">My app is not a publicly available COVID-19 contact tracing or status app</td></tr>
+    <tr><td>Government apps</td><td class="ans">No</td></tr>
+    <tr><td>Financial features</td><td class="ans">My app doesn't provide any financial features</td></tr>
+    <tr><td>Health apps</td><td class="ans">My app does not have any health features</td></tr>
+    <tr><td>Advertising ID</td><td class="ans">No (the app does not use advertising ID)</td></tr>
+  </table>
+</div>
+
+<div class="part">
+  <span class="part-tag">PART E · CONTINUED</span>
+  <h3 style="margin-top:0">E7. Data safety (the longest form, take it slowly)</h3>
+  <p>"Collected" means <b>sent off the phone</b>. VCardly sends no contacts, photos or notes anywhere. The only thing that leaves the phone is anonymous diagnostics from Google's text-recognition library (ML Kit): device model and how long reading a card took, never the image or the text.</p>
+  <ol class="steps">
+    <li><span class="click">Start</span> (or Manage). Read the overview → <span class="click">Next</span>.</li>
+    <li><b>Data collection and security</b>:
+      <table>
+        <tr><th style="width:62%">Question</th><th>Answer</th></tr>
+        <tr><td>Does your app collect or share any of the required user data types?</td><td class="ans">Yes</td></tr>
+        <tr><td>Is all of the user data collected by your app encrypted in transit?</td><td class="ans">Yes</td></tr>
+        <tr><td>Which of the following methods of account creation does your app support?</td><td class="ans">My app does not allow users to create an account</td></tr>
+        <tr><td>(If asked) Do you provide a way for users to request that their data is deleted?</td><td class="ans">No (there is no account or server data; everything stays on the phone and is deleted by "Erase all data" or uninstalling)</td></tr>
+      </table>
+    </li>
+    <li><b>Data types</b>: tick only <b>App info and performance → Diagnostics</b>. Leave everything else (location, personal info, contacts, photos, financial, messages, device IDs…) unticked → <span class="click">Next</span>.</li>
+    <li><b>Data usage and handling</b> → next to <i>Diagnostics</i> click <span class="click">Start</span>:
+      <table>
+        <tr><th style="width:62%">Question</th><th>Answer</th></tr>
+        <tr><td>Is this data collected, shared, or both?</td><td class="ans">Collected (not shared)</td></tr>
+        <tr><td>Is this data processed ephemerally?</td><td class="ans">No</td></tr>
+        <tr><td>Is this data required for your app, or can users choose whether it's collected?</td><td class="ans">Data collection is required</td></tr>
+        <tr><td>Why is this user data collected?</td><td class="ans">Analytics</td></tr>
+      </table>
+      <span class="click">Save</span> → <span class="click">Next</span>.</li>
+    <li>Check the <b>Preview</b> (it should say: no data shared; collects App info and performance) → <span class="click">Save</span> → <span class="click">Submit</span> if asked.</li>
+  </ol>
+  <div class="box warn"><b class="t">Contacts are not "collected"</b>The app stores contacts and card photos only on the phone. Do not tick Contacts, Photos, Personal info or Location: Google's form is only about data that leaves the device.</div>
+
+  <h3 style="page-break-before: always; margin-top: 0">E8. If Play Console asks about permissions</h3>
+  <table>
+    <tr><th style="width:36%">It asks about</th><th>Answer</th></tr>
+    <tr><td>Foreground service</td><td>The app does not use foreground services (the permission comes from Android's WorkManager library and declares no service types).</td></tr>
+    <tr><td>Exact alarms</td><td>Used only for follow-up reminders at a time the user chooses.</td></tr>
+    <tr><td>Camera</td><td>Used only to photograph visiting cards while scanning; photos stay on the phone.</td></tr>
+  </table>
+  <div class="box tip"><b class="t">Done when</b>Dashboard → Set up your app shows a green tick next to every task you have done. Store listing (Part F) is the last task in this section.</div>
+</div>
+
+<!-- ================================================================ PART F -->
+<div class="part">
+  <span class="part-tag">PART F · 20 MINUTES</span>
+  <h2>Store listing: texts, graphics, category, tags</h2>
+  <p class="lead">Left menu <b>Grow users → Store presence → Main store listing</b> (sometimes "Grow → Store presence"). Copy each text below into the matching box.</p>
+
+  <h3>F1. App details</h3>
+  <div class="type"><span class="label">APP NAME (MAX 30 CHARACTERS)</span>{{APP_NAME}}</div>
+  <div class="type"><span class="label">SHORT DESCRIPTION (MAX 80 CHARACTERS)</span>{{SHORT_DESC}}</div>
+  <div class="type"><span class="label">FULL DESCRIPTION (MAX 4000 CHARACTERS)</span>{{FULL_DESC}}</div>
+</div>
+
+<div class="part">
+  <span class="part-tag">PART F · CONTINUED</span>
+  <h3 style="margin-top:0">F2. Graphics (on the same page, scroll down)</h3>
+  <table>
+    <tr><th style="width:30%">Box</th><th>Upload this file</th></tr>
+    <tr><td>App icon</td><td><b>icon-512.png</b> (512 × 512)</td></tr>
+    <tr><td>Feature graphic</td><td><b>feature-graphic.png</b> (1024 × 500)</td></tr>
+    <tr><td>Phone screenshots</td><td>All six, in order: <b>01_scan, 02_contact, 03_followups, 04_mycard, 05_reports, 06_home</b> (1080 × 1920)</td></tr>
+    <tr><td>Video</td><td>Leave empty</td></tr>
+    <tr><td>Tablet / Chromebook screenshots</td><td>Leave empty (optional)</td></tr>
+  </table>
+  <p class="small">Download the images from GitHub: open each link in "What you already have" (page 2) and use the download button (↓) at the top right of the file view.</p>
+  <p>Click <span class="click">Save</span> at the bottom of the page.</p>
+
+  <h3>F3. Category, tags and contact details</h3>
+  <p>Left menu <b>Grow users → Store presence → Store settings</b>:</p>
+  <table>
+    <tr><th style="width:30%">Field</th><th>Answer</th></tr>
+    <tr><td>App or game</td><td class="ans">App</td></tr>
+    <tr><td>Category</td><td class="ans">Business</td></tr>
+    <tr><td>Tags</td><td><span class="click">Manage tags</span> → pick up to 5 from Google's list that fit best. Look for tags such as <b>Business cards</b>, <b>Contacts / Contact management</b>, <b>Scanner / Document scanner</b>, <b>Productivity</b>, <b>CRM</b>. Pick the closest ones Google offers; you cannot type your own.</td></tr>
+    <tr><td>Email address</td><td class="ans">your support email (shown publicly)</td></tr>
+    <tr><td>Phone number</td><td>Optional; leave empty</td></tr>
+    <tr><td>Website</td><td>Optional: https://wwds058-spec.github.io/vcardly/site/privacy.html or leave empty</td></tr>
+    <tr><td>External marketing</td><td>Leave on (lets Google show the app in promotions)</td></tr>
+  </table>
+  <p><span class="click">Save</span>.</p>
+
+  <h3>F4. Release notes (used in Part G)</h3>
+  <div class="type"><span class="label">WHAT'S NEW IN THIS RELEASE (MAX 500 CHARACTERS)</span>{{WHATS_NEW}}</div>
+  <div class="box tip"><b class="t">Done when</b>Main store listing and Store settings both show "Saved" with no red errors. The listing becomes public only when a release reaches Production.</div>
+</div>
+
+<!-- ================================================================ PART G -->
+<div class="part">
+  <span class="part-tag">PART G · 14 DAYS (MOSTLY WAITING)</span>
+  <h2>Closed test: 12 testers for 14 days</h2>
+  <p class="lead">Personal developer accounts created after 13 November 2023 must run a closed test with <b>at least 12 testers</b> who stay opted in <b>for 14 days in a row</b> before they can publish to everyone. Your Dashboard shows this requirement if it applies to you. (Organisation accounts can skip to Part H.)</p>
+
+  <h3>G1. Collect 12 or more testers</h3>
+  <p>Ask friends, family or colleagues with an Android phone for the <b>Gmail / Google account email</b> they use in the Play Store. Ask for 15 to 20, because some drop out, and the count must stay at 12 or more for 14 days.</p>
+
+  <h3>G2. Create the closed test</h3>
+  <ol class="steps">
+    <li>Left menu <b>Test and release → Testing → Closed testing</b> → on the "Closed testing - Alpha" track click <span class="click">Manage track</span>.</li>
+    <li>Tab <span class="click">Countries / regions</span> → <span class="click">Add countries / regions</span> → tick <b>India</b> (and any other countries your testers live in) → <span class="click">Add</span>.</li>
+    <li>Tab <span class="click">Testers</span> → <span class="click">Create email list</span> → List name <b>VCardly testers</b> → paste the emails (comma separated or one per line) → <span class="click">Save changes</span>. Make sure the list is ticked.</li>
+    <li>Feedback URL or email: your support email → <span class="click">Save</span>.</li>
+    <li>Still on Testers: find <b>Join on the web</b> or <b>Copy link</b> (the opt-in link). Copy it and keep it for G4.</li>
+  </ol>
+
+  <h3>G3. Upload the first release</h3>
+  <ol class="steps">
+    <li>On the same track click <span class="click">Create new release</span>.</li>
+    <li><b>App integrity / Play App Signing</b>: if asked, choose <span class="click">Use Google-generated key</span> (recommended) → continue. Google keeps the app signing key safe; your upload key only signs uploads.</li>
+    <li><b>App bundles</b>: <span class="click">Upload</span> → choose <b>vcardly-release.aab</b> from Part B. Wait until it shows <i>1.0.0 (versionCode …)</i> with no errors.</li>
+    <li><b>Release name</b>: filled in automatically (e.g. <i>65 (1.0.0)</i>); keep it.</li>
+    <li><b>Release notes</b>: paste the text from F4 between the <code>&lt;en-US&gt;</code> tags that are already there.</li>
+    <li><span class="click">Next</span> (or "Save" then "Review release"). Read any warnings. Warnings in yellow are fine; red errors must be fixed (see Part J).</li>
+    <li><span class="click">Save and publish</span> / <span class="click">Start rollout to Closed testing</span> → confirm.</li>
+    <li>Google reviews the first release: this takes from a few hours to about 7 days. You get an email; the status shows <b>In review</b>, then <b>Available to testers</b>.</li>
+  </ol>
+
+  <h3 style="page-break-before: always; margin-top: 0">G4. Let the testers in</h3>
+  <ol class="steps">
+    <li>Once the release is available, send the testers the opt-in link from G2 step 5 with a short message, for example:<div class="type"><span class="label">MESSAGE TO TESTERS (EXAMPLE)</span>Hi! Please help me test my new app VCardly. 1) Open this link on your Android phone, signed in with the Google account you gave me: [OPT-IN LINK]. 2) Tap "Become a tester". 3) Tap "Download it on Google Play" and install. Please keep it installed for at least 14 days, open it now and then, and tell me anything that goes wrong. Thank you!</div></li>
+    <li>Watch <b>Closed testing → Testers</b>: it shows how many have opted in. It must reach 12 or more and stay there.</li>
+  </ol>
+
+  <h3>G5. Upload the mapping file (once per release)</h3>
+  <ol class="steps">
+    <li>Left menu <b>Test and release → Latest releases and bundles → App bundle explorer</b> (or "App bundle explorer").</li>
+    <li>Select the version you uploaded → tab <span class="click">Downloads</span> → <b>Assets</b> → <b>ReTrace mapping file / Deobfuscation file</b> → <span class="click">Upload</span> → choose <b>mapping.txt</b> from Part B.</li>
+  </ol>
+  <div class="box tip"><b class="t">Why</b>The Play Store version is compressed and its code renamed to make it small. The mapping file lets Play Console show readable crash reports, which Claude can then fix.</div>
+</div>
+
+<!-- ================================================================ PART H -->
+<div class="part">
+  <span class="part-tag">PART H · AFTER 14 DAYS</span>
+  <h2>Production: release to everyone</h2>
+  <ol class="steps">
+    <li>After 14 days with 12+ testers, Dashboard shows <span class="click">Apply for production</span>. Click it.</li>
+    <li>Answer the questions about your test honestly, for example:
+      <table>
+        <tr><th style="width:48%">Question (wording may vary)</th><th>Example answer</th></tr>
+        <tr><td>How did you recruit testers?</td><td>Friends, family and colleagues who collect business cards.</td></tr>
+        <tr><td>How easy was it to recruit?</td><td>Choose the option that matches your experience.</td></tr>
+        <tr><td>Describe the engagement you received</td><td>Testers scanned their own visiting cards, saved contacts, set follow-up reminders and shared QR cards; they reported issues by message, which were fixed in updated test releases.</td></tr>
+        <tr><td>What changes did you make based on testing?</td><td>List real fixes, e.g. "Improved card edge detection on real photos; fixed the camera on some phones."</td></tr>
+        <tr><td>Who is the intended audience?</td><td>Professionals and small-business owners who exchange visiting cards and want to keep contacts organised and private on their phone.</td></tr>
+        <tr><td>How does the app provide value?</td><td>Turns paper visiting cards into contacts in seconds, reminds users to follow up, and keeps everything on the phone without an account.</td></tr>
+        <tr><td>Expected installs in the first year</td><td>Choose a realistic range (e.g. 0 – 10K).</td></tr>
+      </table>
+    </li>
+    <li><span class="click">Submit</span>. Google answers by email, usually within 7 days.</li>
+    <li>When approved: left menu <b>Test and release → Production</b> → tab <span class="click">Countries / regions</span> → add <b>India</b> (or <span class="click">Add all</span>) → Save.</li>
+    <li><span class="click">Create new release</span> → <span class="click">Add from library</span> → pick the bundle already tested (or upload the newest .aab from Part B) → release notes (F4) → <span class="click">Next</span>.</li>
+    <li><b>Staged rollout</b>: set <b>20%</b> to start (only a part of users get it first, so a problem affects few people). <span class="click">Save and publish</span>.</li>
+    <li>After a few days with no crashes (left menu <b>Monitor and improve → Android vitals → Crashes and ANRs</b>), open the release and click <span class="click">Increase rollout</span> → <b>100%</b>.</li>
+  </ol>
+  <div class="box tip"><b class="t">Done when</b>The app's store page is live at <a href="https://play.google.com/store/apps/details?id=com.yasin.vcardly">play.google.com/store/apps/details?id=com.yasin.vcardly</a> and anyone can install it.</div>
+</div>
+
+<!-- ================================================================ PART I + J -->
+<div class="part">
+  <span class="part-tag">PART I</span>
+  <h2>Updating the app later</h2>
+  <ol class="steps">
+    <li>Ask Claude for the change. Every change is pushed to GitHub and the automatic build makes a new bundle with a higher versionCode.</li>
+    <li>When all checks are green, download the new <b>vcardly-release.aab</b> and <b>mapping.txt</b> (same links as Part B).</li>
+    <li>Play Console → the track (Closed testing or Production) → <span class="click">Create new release</span> → upload → release notes describing what changed → <span class="click">Save and publish</span>.</li>
+    <li>Upload the new mapping.txt to that version (Part G5).</li>
+    <li>For a new user-visible version number (e.g. 1.1.0), ask Claude to change <i>versionName</i>.</li>
+  </ol>
+  <h3>Switching on ads or VCardly Pro (optional, later)</h3>
+  <p>This first version is completely free with no ads. If you later want income, ask Claude to switch on <b>AdMob ads</b> (needs an AdMob account) and/or <b>VCardly Pro</b> (create two products in Play Console: <i>vcardly_pro_lifetime</i> and <i>vcardly_pro_yearly</i>). Then the answers in E3 (Ads), E6 (Advertising ID), E7 (Data safety), the description and the privacy policy must be updated in the same update; Claude prepares all of them.</p>
+
+  <span class="part-tag" style="margin-top:18px">PART J</span>
+  <h2>Problems and how to fix them</h2>
+  <table>
+    <tr><th style="width:40%">Message or problem</th><th>What to do</th></tr>
+    <tr><td>"Version code … has already been used"</td><td>You uploaded the same bundle twice. Download the newest one (Part B), or ask Claude to trigger a new build.</td></tr>
+    <tr><td>"Your app must target Android 16 (API level 36)"</td><td>Already done (VCardly targets API 36). If it ever appears for a later year, ask Claude to raise it.</td></tr>
+    <tr><td>"The Android App Bundle was not signed" / "signed with the wrong key"</td><td>Check the four GitHub secrets (Part A). Use only bundles from the release-aab link. If you ever lose the key: Play Console → Setup → App signing → <b>Request upload key reset</b>.</td></tr>
+    <tr><td>Privacy policy URL "invalid" or "not reachable"</td><td>Open it in a browser; if it shows 404, re-check GitHub Pages (Part C2) and wait a few minutes.</td></tr>
+    <tr><td>Advertising ID warning</td><td>Answer "No" in E6; this build has no advertising permission (the automatic build checks it every time).</td></tr>
+    <tr><td>"You need at least 12 testers"</td><td>Add more emails to the tester list and make sure each person opened the opt-in link and tapped "Become a tester".</td></tr>
+    <tr><td>Testers cannot find the app</td><td>They must use the same Google account on the phone as the email you added, open the opt-in link first, and their country must be in the track's countries.</td></tr>
+    <tr><td>Release rejected for "Policy" reasons</td><td>Read the email from Google; send the exact text to Claude. Most are fixed by changing a listing text or an App content answer.</td></tr>
+    <tr><td>Crashes in Android vitals</td><td>Make sure mapping.txt is uploaded (G5), then send Claude a screenshot of the crash.</td></tr>
+  </table>
+</div>
+
+<!-- ================================================================ PART K -->
+<div class="part">
+  <span class="part-tag">PART K</span>
+  <h2>One-page checklist</h2>
+  <ul class="check">
+    <li>Private key files saved safely (password manager or private drive)</li>
+    <li>4 GitHub secrets added: UPLOAD_KEYSTORE_BASE64, UPLOAD_KEYSTORE_PASSWORD, UPLOAD_KEY_ALIAS, UPLOAD_KEY_PASSWORD</li>
+    <li>CI re-run, all green; vcardly-release.aab and mapping.txt downloaded</li>
+    <li>privacy.html: name, support email, date filled in</li>
+    <li>GitHub Pages on; privacy policy opens at wwds058-spec.github.io/vcardly/site/privacy.html</li>
+    <li>App created: "VCardly: Business Card Scanner", English (US), App, Free</li>
+    <li>Privacy policy URL saved</li>
+    <li>App access: all functionality available</li>
+    <li>Ads: No</li>
+    <li>Content rating questionnaire submitted (All Other App Types, all No)</li>
+    <li>Target audience: 18 and over; not appealing to children</li>
+    <li>News: No · COVID-19: No · Government: No · Financial: none · Health: none</li>
+    <li>Advertising ID: No</li>
+    <li>Data safety: only App info and performance → Diagnostics, collected, not shared, required, Analytics</li>
+    <li>Store listing: name, short and full description saved</li>
+    <li>Icon, feature graphic and 6 screenshots uploaded</li>
+    <li>Store settings: category Business, tags chosen, support email</li>
+    <li>Closed testing: countries added, tester list with 12+ emails, opt-in link copied</li>
+    <li>First release uploaded (Google-generated app signing key), release notes, rollout started</li>
+    <li>mapping.txt uploaded to the release</li>
+    <li>Testers opted in and installed; 14 days passed with 12+ testers</li>
+    <li>Applied for production; approved</li>
+    <li>Production: countries added, release at 20%, then 100% after a few quiet days</li>
+  </ul>
+  <div class="box tip"><b class="t">Stuck anywhere?</b>Take a screenshot of the Play Console page and send it to Claude together with what you clicked. That is all that is needed to work out the next step.</div>
+</div>
+
+</body>
+</html>
