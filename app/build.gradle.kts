@@ -37,14 +37,16 @@ val abiFilter: String? = providers.gradleProperty("abi").orNull
 
 android {
     namespace = "com.yasin.vcardly"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.yasin.vcardly"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        // Google Play requires API 36 (Android 16) for new apps and updates since 31 August 2026.
+        targetSdk = 36
+        // Every upload to Play needs a higher versionCode. CI passes its run number (VERSION_CODE); local builds use 1.
+        versionCode = (System.getenv("VERSION_CODE") ?: "1").toInt()
+        versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["useTestStorageService"] = "true"
         if (abiFilter != null) ndk { abiFilters += abiFilter.split(",").map { it.trim() } }
@@ -101,6 +103,8 @@ android {
 
     // Exported Room schemas are used by MigrationTestHelper in androidTest.
     sourceSets["androidTest"].assets.srcDir("$projectDir/schemas")
+    // A release without AdMob IDs never shows ads: drop the ads library's advertising-ID permission and start-up provider.
+    if (!adsConfiguredForRelease) sourceSets["release"].manifest.srcFile("src/releaseNoAds/AndroidManifest.xml")
 }
 
 kotlin {

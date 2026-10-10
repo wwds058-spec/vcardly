@@ -90,6 +90,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      VERSION_CODE: ${{ github.run_number }}   # rises with every CI run, as Play requires for each upload
     steps:
       - uses: actions/checkout@v4
 
@@ -100,19 +102,51 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      # The upload key lives only in the repository's encrypted secrets (see store/PLAY_CONSOLE_STEPS.md), never in git.
+      - name: Set up the upload key from repository secrets
+        id: key
+        env:
+          KS_B64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KS_B64" ]; then
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No upload key in the repository secrets yet, so no Play Store bundle (.aab) is built. See store/PLAY_CONSOLE_STEPS.md."
+            exit 0
+          fi
+          echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' "$RUNNER_TEMP/upload.jks" "$KS_PASS" "$KEY_ALIAS" "$KEY_PASS" > keystore.properties
+          echo "signed=true" >> "$GITHUB_OUTPUT"
+
       - name: Build release APK (R8 minify and resource shrinking)
         run: ./gradlew :app:assembleRelease --stacktrace
 
-      - name: Sign with a throw-away test key
+      - name: Build the Play Store bundle (.aab), signed with the upload key
+        if: steps.key.outputs.signed == 'true'
+        run: ./gradlew :app:bundleRelease --stacktrace
+
+      - name: Sign the test APK (upload key if set up, else a throw-away key)
         run: |
           set -e
-          unsigned=$(ls app/build/outputs/apk/release/*.apk | head -1)
           bt=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
-          keytool -genkeypair -keystore /tmp/test.jks -storepass testtest -keypass testtest -alias test \
-            -keyalg RSA -keysize 2048 -validity 30 -dname "CN=VCardly release test" > /dev/null
-          "$bt/apksigner" sign --ks /tmp/test.jks --ks-pass pass:testtest --out /tmp/vcardly-release-test.apk "$unsigned"
-          "$bt/apksigner" verify /tmp/vcardly-release-test.apk
+          if [ "${{ steps.key.outputs.signed }}" = "true" ]; then
+            cp app/build/outputs/apk/release/app-release.apk /tmp/vcardly-release-test.apk
+          else
+            unsigned=$(ls app/build/outputs/apk/release/*.apk | head -1)
+            keytool -genkeypair -keystore /tmp/test.jks -storepass testtest -keypass testtest -alias test \
+              -keyalg RSA -keysize 2048 -validity 30 -dname "CN=VCardly release test" > /dev/null
+            "$bt/apksigner" sign --ks /tmp/test.jks --ks-pass pass:testtest --out /tmp/vcardly-release-test.apk "$unsigned"
+          fi
+          "$bt/apksigner" verify --print-certs /tmp/vcardly-release-test.apk | head -3
           ls -la /tmp/vcardly-release-test.apk
+          # Without AdMob IDs the release must not ask for the advertising ID (Play Console declarations depend on it).
+          "$bt/aapt2" dump badging /tmp/vcardly-release-test.apk | grep -E "^(package|targetSdkVersion|sdkVersion)" || true
+          if "$bt/aapt2" dump permissions /tmp/vcardly-release-test.apk | grep -q "AD_ID"; then
+            echo "::error::The release build still declares the AD_ID permission although ads are not configured."; exit 1
+          fi
+          echo "Release permissions:"; "$bt/aapt2" dump permissions /tmp/vcardly-release-test.apk
 
       - name: Enable KVM
         run: |
@@ -137,11 +171,29 @@ jobs:
           mkdir /tmp/rel && cp /tmp/vcardly-release-test.apk /tmp/rel/
           cd /tmp/rel
           sha256sum vcardly-release-test.apk > vcardly-release-test.apk.sha256
-          printf 'Release build (R8 minified, as the Play Store gets it) of commit %s, signed with a throw-away test key, so it cannot update a debug or Play install: uninstall those first. Ads are off unless AdMob IDs are configured.\n' "$GITHUB_SHA" > README.txt
+          printf 'Release build (R8 minified, as the Play Store gets it) of commit %s, versionCode %s. Signed with the upload key when it is set up in the repository secrets (then it updates earlier release test builds), otherwise with a throw-away key. It cannot update a debug install: uninstall that first. Ads are off unless AdMob IDs are configured.\n' "$GITHUB_SHA" "$VERSION_CODE" > README.txt
           git init -q -b release-test-apk
           git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
           git add . && git commit -q -m "Release test APK from $GITHUB_SHA"
           git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" release-test-apk
+
+      - name: Publish the Play Store bundle to the release-aab branch
+        if: steps.key.outputs.signed == 'true' && github.event_name == 'push' && github.ref_name == 'claude/happy-goodall-tjw9vc'
+        run: |
+          set -e
+          mkdir /tmp/aab && cp app/build/outputs/bundle/release/app-release.aab /tmp/aab/vcardly-release.aab
+          cp app/build/outputs/mapping/release/mapping.txt /tmp/aab/mapping.txt
+          cd /tmp/aab
+          sha256sum vcardly-release.aab > vcardly-release.aab.sha256
+          printf 'Play Store bundle of commit %s: versionName 1.0.0, versionCode %s, signed with the upload key. Upload vcardly-release.aab in Play Console; upload mapping.txt as its deobfuscation file (App bundle explorer) so crash reports are readable.\n' "$GITHUB_SHA" "$VERSION_CODE" > README.txt
+          git init -q -b release-aab
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -q -m "Play Store bundle from $GITHUB_SHA (versionCode $VERSION_CODE)"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" release-aab
+
+      - name: Remove the upload key from the runner
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks" keystore.properties
 
       - name: Upload R8 mapping (to read crash stack traces)
         if: always()

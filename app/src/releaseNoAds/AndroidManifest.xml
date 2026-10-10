@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Used only for release builds WITHOUT AdMob IDs (see app/build.gradle.kts). Ads never start in such a build, so the ads
+  library's advertising-ID permission and its start-up provider are removed: the app then truthfully declares "no ads" and
+  "no advertising ID" in Play Console. With AdMob configured this file is not used and both come back.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
+
+    <application>
+        <provider
+            android:name="com.google.android.gms.ads.MobileAdsInitProvider"
+            android:authorities="${applicationId}.mobileadsinitprovider"
+            tools:node="remove" />
+    </application>
+</manifest>
