@@ -51,6 +51,17 @@ Play Console → **Create app**:
 | **Health** | My app does not have any health features |
 | **Advertising ID** | **No** (this build does not declare the permission; CI checks it) |
 
+### If Play Console asks about permissions
+
+The release build declares: CAMERA, INTERNET, ACCESS_NETWORK_STATE, USE_BIOMETRIC, USE_FINGERPRINT, POST_NOTIFICATIONS,
+SCHEDULE_EXACT_ALARM, RECEIVE_BOOT_COMPLETED, BILLING, WAKE_LOCK, FOREGROUND_SERVICE (CI prints this list on every build).
+
+- **Foreground service**: only the generic permission from Android's WorkManager library; VCardly declares no
+  foreground-service types, so there is nothing to declare. If asked anyway: the app does not use foreground services.
+- **Exact alarms** (`SCHEDULE_EXACT_ALARM`): follow-up reminders at a time the user sets. Android 14+ asks the user to
+  allow it; reminders still arrive (a few minutes less precisely) if they do not.
+- **No advertising ID** and none of Android's ad-services permissions in this build (CI fails if one appears).
+
 ## 3. Store listing
 
 Grow → Store presence → **Main store listing** (copy from `store/LISTING.md`):
