@@ -1,0 +1,1 @@
+Release build (R8 minified, as the Play Store gets it) of commit bde7243af2871d39ce8843fb06ae00b15270392c, versionCode 67. Signed with the upload key when it is set up in the repository secrets (then it updates earlier release test builds), otherwise with a throw-away key. It cannot update a debug install: uninstall that first. Ads are off unless AdMob IDs are configured.
