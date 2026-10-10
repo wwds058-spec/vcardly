@@ -1,0 +1,1 @@
+Debug build of commit bde7243af2871d39ce8843fb06ae00b15270392c. Signed with a throw-away debug key created on the CI runner, so each build has a different signature: uninstall the old one before installing a new one. Test ad IDs only.
